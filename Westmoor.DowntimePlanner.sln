@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westmoor.DowntimePlanner", "Westmoor.DowntimePlanner\Westmoor.DowntimePlanner.csproj", "{C33FA1CE-F2A5-4229-B975-48607BD1A9EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C33FA1CE-F2A5-4229-B975-48607BD1A9EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C33FA1CE-F2A5-4229-B975-48607BD1A9EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C33FA1CE-F2A5-4229-B975-48607BD1A9EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C33FA1CE-F2A5-4229-B975-48607BD1A9EF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
