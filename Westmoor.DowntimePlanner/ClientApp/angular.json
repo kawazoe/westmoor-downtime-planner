@@ -26,7 +26,10 @@
               "src/bootstrap.scss",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "jexl"
+            ]
           },
           "configurations": {
             "production": {
