@@ -1,11 +1,14 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+
 import { RouterModule } from '@angular/router';
 
-import { ApiKeyAuthHttpInterceptorService } from './api-key-auth-http-interceptor.service';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 
+import { ApiKeyAuthHttpInterceptorService } from './api-key-auth-http-interceptor.service';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
@@ -26,6 +29,7 @@ import { SignInComponent } from './sign-in/sign-in.component';
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
@@ -34,7 +38,8 @@ import { SignInComponent } from './sign-in/sign-in.component';
       { path: 'characters', component: CharactersComponent, pathMatch: 'full' },
       { path: 'users', component: UsersComponent, pathMatch: 'full' },
       { path: 'signin', component: SignInComponent, pathMatch: 'full' },
-    ])
+    ]),
+    CollapseModule.forRoot()
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ApiKeyAuthHttpInterceptorService, multi: true }

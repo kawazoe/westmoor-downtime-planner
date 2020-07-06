@@ -22,7 +22,6 @@ export class SignInComponent {
       .pipe(
         map(user => {
           if (user) {
-            alert(`Signed in as ${user.owner}.`);
             return this.router.navigate(['/']);
           } else {
             alert('Invalid api key.');

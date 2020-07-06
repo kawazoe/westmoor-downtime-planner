@@ -1,7 +1,7 @@
 <header>
   <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
     <div class="container">
-      <a class="navbar-brand" [routerLink]="['/']">Westmoor.DowntimePlanner</a>
+      <a class="navbar-brand" [routerLink]="['/']">Westmoor - Downtime Planner</a>
       <button class="navbar-toggler"
               type="button"
               data-toggle="collapse"
@@ -12,28 +12,32 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
-           [ngClass]="{ show: isExpanded }">
+           [collapse]="!isExpanded">
         <ul class="navbar-nav flex-grow">
           <li class="nav-item"
               [routerLinkActive]="['link-active']"
               [routerLinkActiveOptions]="{ exact: true }">
             <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
           </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/characters']">Characters</a>
-          </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/activities']">Activities</a>
-          </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/users']">Users</a>
-          </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/signin']">Sign in</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-dark" href="/swagger">Swagger</a>
-          </li>
+          <ng-container *ngIf="isAdmin$ | async">
+            <li class="nav-item" [routerLinkActive]="['link-active']">
+              <a class="nav-link text-dark" [routerLink]="['/characters']">Characters</a>
+            </li>
+            <li class="nav-item" [routerLinkActive]="['link-active']">
+              <a class="nav-link text-dark" [routerLink]="['/activities']">Activities</a>
+            </li>
+            <li class="nav-item" [routerLinkActive]="['link-active']">
+              <a class="nav-link text-dark" [routerLink]="['/users']">Users</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="/swagger">Swagger</a>
+            </li>
+          </ng-container>
+          <ng-container *ngIf="isSignedOut$ | async">
+            <li class="nav-item" [routerLinkActive]="['link-active']">
+              <a class="nav-link text-dark" [routerLink]="['/signin']">Sign in</a>
+            </li>
+          </ng-container>
         </ul>
       </div>
     </div>

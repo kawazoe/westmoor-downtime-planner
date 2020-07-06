@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { AuthService, hasRole } from '../auth.service';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-nav-menu',
@@ -7,6 +9,12 @@ import { Component } from '@angular/core';
 })
 export class NavMenuComponent {
   isExpanded = false;
+
+  isSignedOut$ = map(u => !u)(this.auth.user$);
+  isAdmin$ = hasRole('Admin')(this.auth.user$);
+
+  constructor(private auth: AuthService) {
+  }
 
   collapse() {
     this.isExpanded = false;

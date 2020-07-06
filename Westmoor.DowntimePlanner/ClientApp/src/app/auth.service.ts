@@ -1,7 +1,14 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, OperatorFunction } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { ApiService, UserResponse } from './api.service';
+
+export type Roles =
+  'Admin';
+
+export function hasRole(role: Roles): OperatorFunction<UserResponse, boolean> {
+  return o => o.pipe(map(u => u && u.roles.includes(role)));
+}
 
 @Injectable({
   providedIn: 'root'
