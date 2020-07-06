@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using Westmoor.DowntimePlanner.Repositories;
+using Westmoor.DowntimePlanner.Security;
+using Westmoor.DowntimePlanner.Services;
 
 namespace Westmoor.DowntimePlanner
 {
@@ -19,9 +23,45 @@ namespace Westmoor.DowntimePlanner
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IApiKeyRepository, ApiKeyRepository>();
+            services.AddSingleton<IApiKeyService, ApiKeyService>();
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = ApiKeyAuthenticationOptions.DefaultScheme;
+                    options.DefaultChallengeScheme = ApiKeyAuthenticationOptions.DefaultScheme;
+                })
+                .AddApiKeySupport();
+            services.AddAuthorization(options =>
+            {
+                foreach (var (name, role) in Policies.All)
+                {
+                    options.AddPolicy(name, b => b.RequireRole(role));
+                }
+            });
+
+            services.AddScoped<IActivityRepository, ActivityRepository>();
+            services.AddScoped<ICharacterRepository, CharacterRepository>();
+            services.AddScoped<IDowntimeRepository, DowntimeRepository>();
+
+            services.AddScoped<IActivityService, ActivityService>();
+            services.AddScoped<ICharacterService, CharacterService>();
+            services.AddScoped<IDowntimeService, DowntimeService>();
+
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
+
+            services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
+                {
+                    Description = "Api key provided by the API. Will be passed in the X-Api-Key HTTP header.",
+                    In = ParameterLocation.Header,
+                    Name = "X-Api-Key",
+                    Type = SecuritySchemeType.ApiKey
+                });
+                options.OperationFilter<SecurityRequirementsOperationFilter>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,7 +85,16 @@ namespace Westmoor.DowntimePlanner
                 app.UseSpaStaticFiles();
             }
 
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Westmoor Downtime API v1");
+            });
+
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
