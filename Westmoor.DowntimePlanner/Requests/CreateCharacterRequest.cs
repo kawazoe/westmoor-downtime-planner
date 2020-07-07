@@ -4,6 +4,5 @@ namespace Westmoor.DowntimePlanner.Requests
     {
         public string PlayerFullName { get; set; }
         public string CharacterFullName { get; set; }
-        public int AccruedDowntimeDays { get; set; }
     }
 }

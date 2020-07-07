@@ -67,7 +67,6 @@ export interface CharacterResponse {
 export interface CreateCharacterRequest {
   playerFullName: string;
   characterFullName: string;
-  accruedDowntimeDays: number;
 }
 
 export interface UpdateCharacterRequest {

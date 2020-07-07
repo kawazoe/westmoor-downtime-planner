@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Westmoor.DowntimePlanner.Requests;
 using Westmoor.DowntimePlanner.Responses;
 using Westmoor.DowntimePlanner.Services;
