@@ -1,64 +1,76 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Azure.Cosmos;
 using Westmoor.DowntimePlanner.Entities;
+using Westmoor.DowntimePlanner.Extensions;
 using Westmoor.DowntimePlanner.Requests;
 
 namespace Westmoor.DowntimePlanner.Repositories
 {
     public class ApiKeyRepository : IApiKeyRepository
     {
-        private readonly List<ApiKeyEntity> _data = new List<ApiKeyEntity>
+        private readonly IClock _clock;
+        private readonly Task<Container> _container;
+
+        private const string KindKeyValue = nameof(ApiKeyEntity);
+        private static PartitionKey KindKey => new PartitionKey(KindKeyValue);
+
+        public ApiKeyRepository(IClock clock, Task<Container> container)
         {
-            new ApiKeyEntity
-            {
-                Key = "dev",
-                Owner = "Test User",
-                Roles = new [] { Roles.Admin },
-                CreatedOn = DateTimeOffset.UtcNow
-            },
-        };
+            _clock = clock;
+            _container = container;
+        }
 
         public async Task<ApiKeyEntity[]> GetAllAsync()
         {
-            return _data.ToArray();
+            return await (await _container).GetItemLinqQueryable<ApiKeyEntity>(
+                    requestOptions: new QueryRequestOptions { PartitionKey = KindKey }
+                )
+                .ToAsyncEnumerable()
+                .ToArrayAsync();
         }
 
         public async Task<ApiKeyEntity> GetByKeyAsync(string key)
         {
-            return _data.FirstOrDefault(e => e.Key == key);
+            return await (await _container).ReadItemAsync<ApiKeyEntity>(key, KindKey);
         }
 
         public async Task CreateAsync(CreateApiKeyRequest request)
         {
-            _data.Add(new ApiKeyEntity
-            {
-                Key = Guid.NewGuid().ToString(),
-                Owner = request.Owner,
-                Roles = request.Roles,
-                CreatedOn = DateTimeOffset.UnixEpoch
-            });
+            await (await _container).CreateItemAsync(
+                new ApiKeyEntity
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Idp = KindKeyValue,
+                    Owner = request.Owner,
+                    Roles = request.Roles,
+                    CreatedOn = _clock.UtcNow
+                }
+            );
         }
 
         public async Task UpdateAsync(string key, UpdateApiKeyRequest request)
         {
-            var entity = _data.First(e => e.Key == key);
+            var entity = await GetByKeyAsync(key);
 
-            _data.Add(new ApiKeyEntity
-            {
-                Key = entity.Key,
-                Owner = request.Owner ?? entity.Owner,
-                Roles = request.Roles ?? entity.Roles,
-                CreatedOn = entity.CreatedOn
-            });
+            await (await _container).ReplaceItemAsync(
+                new ApiKeyEntity
+                {
+                    Id = entity.Id,
+                    Idp = entity.Idp,
+                    Owner = request.Owner ?? entity.Owner,
+                    Roles = request.Roles ?? entity.Roles,
+                    CreatedOn = entity.CreatedOn,
+                    ModifiedOn = _clock.UtcNow
+                },
+                key
+            );
         }
 
         public async Task DeleteAsync(string key)
         {
-            var entity = _data.First(e => e.Key == key);
-
-            _data.Remove(entity);
+            await (await _container).DeleteItemAsync<ApiKeyEntity>(key, KindKey);
         }
     }
 }

@@ -1,12 +1,11 @@
-using System;
-
 namespace Westmoor.DowntimePlanner.Entities
 {
-    public class ApiKeyEntity
+    public class ApiKeyEntity : CosmosEntity
     {
-        public string Key { get; set; }
+        public override string Idp { get; set; }
+        public override string Kind { get; set; } = nameof(ApiKeyEntity);
+
         public string Owner { get; set; }
         public string[] Roles { get; set; }
-        public DateTimeOffset CreatedOn { get; set; }
     }
 }

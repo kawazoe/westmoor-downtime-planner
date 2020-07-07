@@ -1,9 +1,12 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Westmoor.DowntimePlanner.Repositories;
 using Westmoor.DowntimePlanner.Security;
@@ -23,6 +26,32 @@ namespace Westmoor.DowntimePlanner
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IClock, SystemClock>();
+
+            services.AddSingleton(p => new CosmosClient(
+                Configuration["CosmosConnectionString"],
+                new CosmosClientOptions
+                {
+                    SerializerOptions = new CosmosSerializationOptions
+                    {
+                        PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
+                    }
+                }
+            ));
+            services.AddSingleton(async p =>
+            {
+                var database = p.GetRequiredService<CosmosClient>().GetDatabase(Configuration["CosmosDatabase"]);
+                await database.ReadAsync();
+                return database;
+            });
+            services.AddSingleton(async p =>
+            {
+                var database = await p.GetRequiredService<Task<Database>>();
+                var container = database.GetContainer(Configuration["CosmosContainer"]);
+                await container.ReadContainerAsync();
+                return container;
+            });
+
             services.AddSingleton<IApiKeyRepository, ApiKeyRepository>();
             services.AddSingleton<IApiKeyService, ApiKeyService>();
             services.AddAuthentication(options =>
