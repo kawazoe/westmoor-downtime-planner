@@ -31,6 +31,8 @@ export class AuthService {
   }
 
   public signOut(): void {
-    this.user.next(null);
+    if (this.user.getValue()) {
+      this.user.next(null);
+    }
   }
 }

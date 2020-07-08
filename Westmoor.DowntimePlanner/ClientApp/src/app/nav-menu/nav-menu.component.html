@@ -33,11 +33,19 @@
               <a class="nav-link text-dark" href="/swagger">Swagger</a>
             </li>
           </ng-container>
-          <ng-container *ngIf="isSignedOut$ | async">
+          <ng-container *ngIf="user$ | async as user; else signedOut">
+            <div class="btn-group" dropdown>
+              <button type="button" dropdownToggle class="btn btn-outline-secondary dropdown-toggle">{{user.owner}} <span class="caret"></span></button>
+              <ul role="menu" *dropdownMenu class="dropdown-menu">
+                <li role="menuitem"><a class="dropdown-item" [routerLink]="['/signout']">Sign Out</a></li>
+              </ul>
+            </div>
+          </ng-container>
+          <ng-template #signedOut>
             <li class="nav-item" [routerLinkActive]="['link-active']">
               <a class="nav-link text-dark" [routerLink]="['/signin']">Sign in</a>
             </li>
-          </ng-container>
+          </ng-template>
         </ul>
       </div>
     </div>
