@@ -5,7 +5,7 @@ import { switchMap, take } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
 function whitelist(url: string) {
-  return url.startsWith('/');
+  return url.startsWith('/api');
 }
 
 @Injectable({

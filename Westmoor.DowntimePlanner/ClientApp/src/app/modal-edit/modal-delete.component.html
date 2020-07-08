@@ -1,0 +1,12 @@
+<div class="modal-header">
+  <h4 class="modal-title">Delete {{type}}...</h4>
+</div>
+<div class="modal-body">
+  <p>This operation will delete the {{type}} with id:</p>
+  <p>{{id}}</p>
+  <p>Are you sure?</p>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-danger" (click)="confirm()" [disabled]="processing">Yes</button>
+  <button type="button" class="btn btn-primary" (click)="modalRef.hide()" [disabled]="processing">No</button>
+</div>

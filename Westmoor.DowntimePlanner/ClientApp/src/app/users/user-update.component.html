@@ -1,0 +1,19 @@
+<app-modal-header title="Hide user..." (close)="modalRef.hide()"></app-modal-header>
+<form [formGroup]="form" (ngSubmit)="confirm()">
+  <div class="modal-body">
+    <h5>General</h5>
+    <div class="form-group">
+      <label for="ownerInput">Owner</label>
+      <input type="text" class="form-control" id="ownerInput" formControlName="owner" required>
+    </div>
+
+    <h5>Roles</h5>
+    <div class="form-group form-check">
+      <input type="checkbox" class="form-check-input" id="isRoleAdmin" formControlName="isRoleAdmin">
+      <label class="form-check-label" for="isRoleAdmin">Admin</label>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary" [disabled]="!form.valid || processing">Save</button>
+  </div>
+</form>

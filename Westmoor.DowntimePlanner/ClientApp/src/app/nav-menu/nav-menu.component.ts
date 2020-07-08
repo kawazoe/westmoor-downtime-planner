@@ -1,10 +1,5 @@
 import { Component } from '@angular/core';
 import { AuthService, hasRole } from '../auth.service';
-import { switchMapTo, tap } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
-import { UserResponse } from '../api.service';
-
-const apiKeyStorageId = 'wmdp.apiKey';
 
 @Component({
   selector: 'app-nav-menu',
@@ -14,27 +9,12 @@ const apiKeyStorageId = 'wmdp.apiKey';
 export class NavMenuComponent {
   isExpanded = false;
 
-  user$: Observable<UserResponse>;
+  user$ = this.auth.user$;
   isAdmin$ = hasRole('Admin')(this.auth.user$);
 
-  constructor(private auth: AuthService) {
-    const apiKey = sessionStorage.getItem(apiKeyStorageId);
-
-    const initialAction = apiKey
-      ? this.auth.signIn(apiKey)
-      : of(null);
-
-    this.user$ = initialAction
-      .pipe(
-        switchMapTo(this.auth.user$),
-        tap(user => {
-          if (user) {
-            sessionStorage.setItem(apiKeyStorageId, user.key);
-          } else {
-            sessionStorage.removeItem(apiKeyStorageId);
-          }
-        })
-      );
+  constructor(
+    private auth: AuthService
+  ) {
   }
 
   toggle() {

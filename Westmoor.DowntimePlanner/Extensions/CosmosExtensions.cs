@@ -1,22 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Microsoft.Azure.Cosmos.Linq;
 
 namespace Westmoor.DowntimePlanner.Extensions
 {
     public static class CosmosExtensions
     {
-        private static readonly Lazy<Type> CosmosLinqQueryType = new Lazy<Type>(() => Assembly
-            .GetAssembly(typeof(CosmosLinqExtensions))
-            ?.GetTypes()
-            .First(t => t.Name == "CosmosLinqQuery")
-        );
+        private static readonly Type CosmosLinqQueryType = typeof(CosmosLinqExtensions)
+            .Assembly
+            .GetType("Microsoft.Azure.Cosmos.Linq.CosmosLinqQuery`1");
 
         public static bool IsCosmosQuery<T>(this IQueryable<T> source)
         {
-            return source.GetType() == CosmosLinqQueryType.Value;
+            return source.GetType() == CosmosLinqQueryType.MakeGenericType(typeof(T));
         }
 
         public static async IAsyncEnumerable<T> ToAsyncEnumerable<T>(this IQueryable<T> source)

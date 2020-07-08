@@ -1,1 +1,23 @@
 <h1>Users</h1>
+<button type="button" class="btn btn-success mb-2" (click)="create()">Create...</button>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Api Key</th>
+      <th scope="col">Owner</th>
+      <th scope="col">Roles</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody *ngIf="users$ | async as users">
+    <tr *ngFor="let user of users">
+      <td>{{user.key}}</td>
+      <td>{{user.owner}}</td>
+      <td>{{user.roles | json}}</td>
+      <td>
+        <button type="button" class="btn btn-info mr-1" (click)="edit(user)">Edit...</button>
+        <button type="button" class="btn btn-danger" (click)="revoke(user)">Revoke...</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
