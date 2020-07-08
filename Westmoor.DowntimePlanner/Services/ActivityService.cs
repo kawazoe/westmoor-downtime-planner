@@ -31,6 +31,26 @@ namespace Westmoor.DowntimePlanner.Services
             await _repository.DeleteAsync(id);
 
         private ActivityResponse ToResponse(ActivityEntity entity) =>
-            new ActivityResponse();
+            new ActivityResponse
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+                DescriptionMarkdown = entity.DescriptionMarkdown,
+                ComplicationMarkdown = entity.ComplicationMarkdown,
+                Costs = entity.Costs
+                    .Select(c => new ActivityCostResponse
+                    {
+                        Kind = c.Kind,
+                        JexlExpression = c.JexlExpression,
+                        Parameters = c.Parameters
+                            .Select(p => new ActivityParameterResponse
+                            {
+                                VariableName = p.VariableName,
+                                Description = p.Description
+                            })
+                            .ToArray()
+                    })
+                    .ToArray()
+            };
     }
 }

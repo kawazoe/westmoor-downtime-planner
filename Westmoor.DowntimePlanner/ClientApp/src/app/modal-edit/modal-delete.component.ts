@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { of } from 'rxjs';
+import { defer, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 @Component({
@@ -20,7 +20,8 @@ export class ModalDeleteComponent {
 
   public confirm() {
     this.processing = true;
-    this.onConfirm()
+
+    defer(() => this.onConfirm() ?? of(null))
       .pipe(
         tap(() => this.modalRef.hide(), () => { this.processing = false; })
       )

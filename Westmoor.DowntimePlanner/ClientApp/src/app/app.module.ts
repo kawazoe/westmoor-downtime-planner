@@ -21,7 +21,11 @@ import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { ActivitiesComponent } from './activities/activities.component';
+import { ActivityCreateComponent } from './activities/activity-create.component';
+import { ActivityUpdateComponent } from './activities/activity-update.component';
 import { CharactersComponent } from './characters/characters.component';
+import { CharacterCreateComponent } from './characters/character-create.component';
+import { CharacterUpdateComponent } from './characters/character-update.component';
 import { UsersComponent } from './users/users.component';
 import { UserCreateComponent } from './users/user-create.component';
 import { UserUpdateComponent } from './users/user-update.component';
@@ -29,6 +33,7 @@ import { ModalHeaderComponent } from './modal-edit/modal-header.component';
 import { ModalDeleteComponent } from './modal-edit/modal-delete.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { AlertBoxComponent } from './alert-box/alert-box.component';
+import { CastPipe } from './Pipes/cast.pipe';
 
 @NgModule({
   declarations: [
@@ -36,14 +41,19 @@ import { AlertBoxComponent } from './alert-box/alert-box.component';
     NavMenuComponent,
     HomeComponent,
     ActivitiesComponent,
+    ActivityCreateComponent,
+    ActivityUpdateComponent,
     CharactersComponent,
+    CharacterCreateComponent,
+    CharacterUpdateComponent,
     UsersComponent,
     UserCreateComponent,
     UserUpdateComponent,
     ModalHeaderComponent,
     ModalDeleteComponent,
     SignInComponent,
-    AlertBoxComponent
+    AlertBoxComponent,
+    CastPipe
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

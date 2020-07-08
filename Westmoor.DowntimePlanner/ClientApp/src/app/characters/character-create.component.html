@@ -1,0 +1,17 @@
+<app-modal-header title="Create character..." (close)="modalRef.hide()"></app-modal-header>
+<form [formGroup]="form" (ngSubmit)="confirm()">
+  <div class="modal-body">
+    <h3>General</h3>
+    <div class="form-group">
+      <label for="playerFullNameInput">Player</label>
+      <input type="text" class="form-control" id="playerFullNameInput" formControlName="playerFullName" required>
+    </div>
+    <div class="form-group">
+      <label for="characterFullNameInput">Character</label>
+      <input type="text" class="form-control" id="characterFullNameInput" formControlName="characterFullName" required>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary" [disabled]="!form.valid || processing">Create</button>
+  </div>
+</form>

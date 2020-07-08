@@ -1,1 +1,26 @@
 <h1>Activities</h1>
+<button type="button" class="btn btn-success mb-2" (click)="create()">Create...</button>
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th scope="col">Id</th>
+    <th scope="col">Name</th>
+    <th scope="col">Description</th>
+    <th scope="col">Complication</th>
+    <th scope="col">Costs</th>
+  </tr>
+  </thead>
+  <tbody *ngIf="activities$ | async as activities">
+  <tr *ngFor="let activity of activities">
+    <td>{{activity.id}}</td>
+    <td>{{activity.name}}</td>
+    <td>{{activity.descriptionMarkdown}}</td>
+    <td>{{activity.complicationMarkdown}}</td>
+    <td>{{activity.costs.length}}</td>
+    <td>
+      <button type="button" class="btn btn-info mr-1" (click)="edit(activity)">Edit...</button>
+      <button type="button" class="btn btn-danger" (click)="delete(activity)">Delete...</button>
+    </td>
+  </tr>
+  </tbody>
+</table>

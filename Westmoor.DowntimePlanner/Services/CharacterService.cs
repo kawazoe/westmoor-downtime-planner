@@ -31,6 +31,12 @@ namespace Westmoor.DowntimePlanner.Services
             await _repository.DeleteAsync(id);
 
         private CharacterResponse ToResponse(CharacterEntity entity) =>
-            new CharacterResponse();
+            new CharacterResponse
+            {
+                Id = entity.Id,
+                PlayerFullName = entity.PlayerFullName,
+                CharacterFullName = entity.CharacterFullName,
+                AccruedDowntimeDays = entity.AccruedDowntimeDays
+            };
     }
 }
