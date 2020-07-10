@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { AuthService, hasRole } from '../auth.service';
-import { ApiService, CharacterResponse, DowntimeResponse } from '../api.service';
+import { ApiService, CharacterResponse, DowntimeResponse, UserResponse } from '../api.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { AwardDowntimeComponent } from './award-downtime.component';
-import { FormArray, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AwardProgressComponent } from './award-progress.component';
 import { ScheduleDowntimeComponent } from './schedule-downtime.component';
-import { BehaviorSubject, concat, of, OperatorFunction } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, concat, of, OperatorFunction } from 'rxjs';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
 
 @Component({
@@ -27,6 +27,11 @@ export class HomeComponent {
   public selectedCharacters: CharacterResponse[] = [];
   public selectedDowntimes: DowntimeResponse[] = [];
 
+  public impersonateForm = new FormGroup({
+    playerName: new FormControl('', Validators.required)
+  });
+  public impersonatePlayerFullName: string;
+
   private modalRef: BsModalRef;
 
   public isCompleted = (v: DowntimeResponse) => v.progresses.every(p => p.value >= p.goal);
@@ -37,8 +42,7 @@ export class HomeComponent {
     private api: ApiService,
     private modal: BsModalService
   ) {
-    of(null).pipe(this.refreshCharacters()).subscribe();
-    of(null).pipe(this.refreshDowntimes()).subscribe();
+    of(null).pipe(this.refreshCharacters(), this.refreshDowntimes()).subscribe();
   }
 
   public beginAwardDowntime() {
@@ -162,23 +166,37 @@ export class HomeComponent {
     };
   }
 
-  private refreshCharacters(): OperatorFunction<any, CharacterResponse[]> {
-    return o => o.pipe(
-      switchMap(() => this.api.getAllCharacters()),
-      tap(cs => {
-        this.selectedCharacters = [];
-        this.characters.next(cs);
-      })
-    );
+  private refreshCharacters(): OperatorFunction<any, void> {
+    return o => combineLatest([o, this.api.getAllCharacters(), this.user$])
+      .pipe(
+        take(1),
+        map(([_, cs, user]: [any, CharacterResponse[], UserResponse]) => {
+          this.selectedCharacters = [];
+          this.characters.next(cs.filter(c =>
+            c.playerFullName === this.impersonatePlayerFullName ||
+            user?.roles.includes('Admin')
+          ));
+        })
+      );
   }
 
-  private refreshDowntimes(): OperatorFunction<any, DowntimeResponse[]> {
-    return o => o.pipe(
-      switchMap(() => this.api.getAllDowntimes()),
-      tap(ds => {
-        this.selectedDowntimes = [];
-        this.downtimes.next(ds);
-      })
-    );
+  private refreshDowntimes(): OperatorFunction<any, void> {
+    return o => combineLatest([o, this.api.getAllDowntimes(), this.user$])
+      .pipe(
+        take(1),
+        map(([_, ds, user]: [any, DowntimeResponse[], UserResponse]) => {
+          this.selectedDowntimes = [];
+          this.downtimes.next(ds.filter(d =>
+            d.character.playerFullName === this.impersonatePlayerFullName ||
+            user?.roles.includes('Admin')
+          ));
+        })
+      );
+  }
+
+  public impersonate() {
+    this.impersonatePlayerFullName = this.impersonateForm.controls.playerName.value;
+
+    of(null).pipe(this.refreshCharacters(), this.refreshDowntimes()).subscribe();
   }
 }
