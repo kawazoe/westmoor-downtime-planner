@@ -79,34 +79,34 @@ export interface DowntimeResponse {
   id: string;
   character: CharacterResponse;
   activity: ActivityResponse;
-  progresses: DowntimeProgressResponse[];
+  progresses: DowntimeCostResponse[];
 }
 
-export interface DowntimeProgressResponse {
+export interface DowntimeCostResponse {
   activityCostKind: string;
   value: number;
+  goal: number;
 }
 
 export interface CreateDowntimeRequest {
   characterId: string;
   activityId: string;
-  progresses: CreateDowntimeProgressRequest[];
+  costs: CreateDowntimeCostRequest[];
 }
 
-export interface CreateDowntimeProgressRequest {
+export interface CreateDowntimeCostRequest {
   activityCostKind: string;
-  value: number;
+  goal: number;
 }
 
 export interface UpdateDowntimeRequest {
-  characterId: string;
-  activityId: string;
-  progresses: UpdateDowntimeProgressRequest[];
+  costs: UpdateDowntimeCostRequest[];
 }
 
-export interface UpdateDowntimeProgressRequest {
+export interface UpdateDowntimeCostRequest {
   activityCostKind: string;
   value: number;
+  goal: number;
 }
 
 export interface UserResponse {

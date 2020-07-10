@@ -21,14 +21,18 @@
       <h3>Costs</h3>
       <button type="button" class="btn btn-secondary" (click)="addCost(form)">Add</button>
 
-      <div *ngFor="let costForm of costs.controls; index as costIndex">
+      <div class="ml-3" *ngFor="let costForm of costs.controls; index as costIndex">
         <ng-container *ngIf="costForm | cast:FormGroupType as costGroup" [formGroupName]="costIndex">
           <h4>{{costIndex}}</h4>
           <button type="button" class="btn btn-danger" (click)="removeCost(form, costGroup)">Remove...</button>
 
           <div class="form-group">
             <label [for]="'kindInput_' + costIndex">Kind</label>
-            <input type="text" class="form-control" [id]="'kindInput_' + costIndex" formControlName="kind" required>
+            <app-activity-cost-kind-picker class="d-block"
+                                           [id]="'kindInput_' + costIndex"
+                                           [value]="costGroup.controls.kind.value"
+                                           (change)="costGroup.controls.kind.setValue($event)">
+            </app-activity-cost-kind-picker>
           </div>
           <div class="form-group">
             <label [for]="'jexlExpressionInput_' + costIndex">Expression</label>
@@ -40,7 +44,7 @@
             <h4>Parameters</h4>
             <button type="button" class="btn btn-secondary" (click)="addParameter(costGroup)">Add</button>
 
-            <div *ngFor="let parameterForm of parameters.controls; index as parameterIndex">
+            <div class="ml-3" *ngFor="let parameterForm of parameters.controls; index as parameterIndex">
               <ng-container *ngIf="parameterForm | cast:FormGroupType as parameterGroup" [formGroupName]="parameterIndex">
                 <h5>{{parameterIndex}}</h5>
                 <button type="button" class="btn btn-danger" (click)="removeParameter(costGroup, parameterGroup)">Remove...</button>

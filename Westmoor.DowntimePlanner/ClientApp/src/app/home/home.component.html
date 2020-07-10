@@ -4,17 +4,114 @@
 <ng-template #guestWelcome>
   <h1>Welcome</h1>
 </ng-template>
-<h2>jexlResult: {{jexlResult$ | async}}</h2>
-<p>Welcome to your new single-page application, built with:</p>
-<ul>
-  <li><a href='https://get.asp.net/'>ASP.NET Core</a> and <a href='https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx'>C#</a> for cross-platform server-side code</li>
-  <li><a href='https://angular.io/'>Angular</a> and <a href='http://www.typescriptlang.org/'>TypeScript</a> for client-side code</li>
-  <li><a href='http://getbootstrap.com/'>Bootstrap</a> for layout and styling</li>
-</ul>
-<p>To help you get started, we've also set up:</p>
-<ul>
-  <li><strong>Client-side navigation</strong>. For example, click <em>Counter</em> then <em>Back</em> to return here.</li>
-  <li><strong>Angular CLI integration</strong>. In development mode, there's no need to run <code>ng serve</code>. It runs in the background automatically, so your client-side resources are dynamically built on demand and the page refreshes when you modify any file.</li>
-  <li><strong>Efficient production builds</strong>. In production mode, development-time features are disabled, and your <code>dotnet publish</code> configuration automatically invokes <code>ng build</code> to produce minified, ahead-of-time compiled JavaScript files.</li>
-</ul>
-<p>The <code>ClientApp</code> subdirectory is a standard Angular CLI application. If you open a command prompt in that directory, you can run any <code>ng</code> command (e.g., <code>ng test</code>), or use <code>npm</code> to install extra packages into it.</p>
+
+<h2>Current downtime</h2>
+<button type="button"
+        class="btn btn-secondary mb-1 mr-2"
+        (click)="beginAwardDowntime()"
+        [disabled]="!selectedCharacters.length"
+        *ngIf="isAdmin$ | async">
+  Award downtime...
+</button>
+<button type="button"
+        class="btn btn-secondary mb-1"
+        (click)="beginScheduleDowntime()"
+        [disabled]="!selectedCharacters.length"
+        *ngIf="isAdmin$ | async">
+  Schedule downtime...
+</button>
+
+<table class="table table-striped" *ngIf="characters$ | async as characters">
+  <thead>
+  <tr>
+    <th style="width: 3rem"></th>
+    <th>Player</th>
+    <th>Character</th>
+    <th>Accrued</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr *ngFor="let character of characters" (click)="toggleCharacter(character)">
+    <td>
+      <div class="form-check">
+        <input type="checkbox"
+               class="form-check-input"
+               [checked]="selectedCharacters | includes:character">
+      </div>
+    </td>
+    <td>{{character.playerFullName}}</td>
+    <td>{{character.characterFullName}}</td>
+    <td>{{character.accruedDowntimeDays}} days</td>
+  </tr>
+  </tbody>
+</table>
+
+<h2>Scheduled downtimes</h2>
+<button type="button"
+        class="btn btn-secondary mb-1 mr-2"
+        (click)="beginAwardProgress()"
+        [disabled]="!selectedDowntimes.length"
+        *ngIf="isAdmin$ | async">
+  Award progress...
+</button>
+<button type="button"
+        class="btn btn-danger mb-1"
+        (click)="cancelDowntimes()"
+        [disabled]="!selectedDowntimes.length"
+        *ngIf="isAdmin$ | async">
+  Cancel downtime...
+</button>
+
+<table class="table table-striped" *ngIf="downtimes$ | async as downtimes">
+  <thead>
+  <tr>
+    <th style="width: 3rem"></th>
+    <th>Player</th>
+    <th>Character</th>
+    <th>Activity</th>
+    <th>Progress</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr *ngFor="let downtime of downtimes | filter:isScheduled" (click)="toggleDowntime(downtime)">
+    <td>
+      <div class="form-check">
+        <input type="checkbox"
+               class="form-check-input"
+               [checked]="selectedDowntimes | includes:downtime">
+      </div>
+    </td>
+    <td>{{downtime.character.playerFullName}}</td>
+    <td>{{downtime.character.characterFullName}}</td>
+    <td>{{downtime.activity.name}}</td>
+    <td>
+      <app-progresses-presenter [progresses]="downtime.progresses" [animate]="true"></app-progresses-presenter>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h2>Completed downtimes</h2>
+<table class="table table-striped" *ngIf="downtimes$ | async as downtimes">
+  <thead>
+  <tr>
+    <th>Player</th>
+    <th>Character</th>
+    <th>Activity</th>
+    <th>Spent</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr *ngFor="let downtime of downtimes | filter:isCompleted">
+    <td>{{downtime.character.playerFullName}}</td>
+    <td>{{downtime.character.characterFullName}}</td>
+    <td>{{downtime.activity.name}}</td>
+    <td>
+      <app-progresses-presenter [progresses]="downtime.progresses" [animate]="false"></app-progresses-presenter>
+    </td>
+  </tr>
+  </tbody>
+</table>

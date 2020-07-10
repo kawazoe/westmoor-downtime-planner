@@ -49,11 +49,12 @@ namespace Westmoor.DowntimePlanner.Repositories
         {
             var character = await _characterRepository.GetByIdAsync(request.CharacterId);
             var activity = await _activityRepository.GetByIdAsync(request.ActivityId);
-            var progresses = request.Progresses
-                .Select(p => new DowntimeProgressEntity
+            var costs = request.Costs
+                .Select(p => new DowntimeCostEntity
                 {
                     ActivityCostKind = p.ActivityCostKind,
-                    Value = p.Value
+                    Value = 0,
+                    Goal = p.Goal
                 })
                 .ToArray();
 
@@ -64,7 +65,7 @@ namespace Westmoor.DowntimePlanner.Repositories
                     Idp = KindKeyValue,
                     Character = character,
                     Activity = activity,
-                    Progresses = progresses,
+                    Costs = costs,
                     CreatedOn = _clock.UtcNow
                 }
             );
@@ -74,13 +75,12 @@ namespace Westmoor.DowntimePlanner.Repositories
         {
             var entity = await GetByIdAsync(id);
 
-            var character = await _characterRepository.GetByIdAsync(request.CharacterId);
-            var activity = await _activityRepository.GetByIdAsync(request.ActivityId);
-            var progresses = request.Progresses
-                .Select(p => new DowntimeProgressEntity
+            var costs = request.Costs
+                .Select(p => new DowntimeCostEntity
                 {
                     ActivityCostKind = p.ActivityCostKind,
-                    Value = p.Value
+                    Value = p.Value,
+                    Goal = p.Goal
                 })
                 .ToArray();
 
@@ -89,9 +89,9 @@ namespace Westmoor.DowntimePlanner.Repositories
                 {
                     Id = entity.Id,
                     Idp = entity.Idp,
-                    Character = character,
-                    Activity = activity,
-                    Progresses = progresses,
+                    Character = entity.Character,
+                    Activity = entity.Activity,
+                    Costs = costs,
                     CreatedOn = entity.CreatedOn,
                     ModifiedOn = _clock.UtcNow
                 },

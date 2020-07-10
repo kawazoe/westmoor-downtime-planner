@@ -31,6 +31,45 @@ namespace Westmoor.DowntimePlanner.Services
             await _repository.DeleteAsync(id);
 
         private DowntimeResponse ToResponse(DowntimeEntity entity) =>
-            new DowntimeResponse();
+            new DowntimeResponse
+            {
+                Id = entity.Id,
+                Character = new CharacterResponse
+                {
+                    Id = entity.Character.Id,
+                    PlayerFullName = entity.Character.PlayerFullName,
+                    CharacterFullName = entity.Character.CharacterFullName,
+                    AccruedDowntimeDays = entity.Character.AccruedDowntimeDays
+                },
+                Activity = new ActivityResponse
+                {
+                    Id = entity.Activity.Id,
+                    Name = entity.Activity.Name,
+                    DescriptionMarkdown = entity.Activity.DescriptionMarkdown,
+                    ComplicationMarkdown = entity.Activity.ComplicationMarkdown,
+                    Costs = entity.Activity.Costs
+                        .Select(c => new ActivityCostResponse
+                        {
+                            Kind = c.Kind,
+                            JexlExpression = c.JexlExpression,
+                            Parameters = c.Parameters
+                                .Select(p => new ActivityParameterResponse
+                                {
+                                    VariableName = p.VariableName,
+                                    Description = p.Description
+                                })
+                                .ToArray()
+                        })
+                        .ToArray()
+                },
+                Progresses = entity.Costs
+                    .Select(p => new DowntimeProgressResponse
+                    {
+                        ActivityCostKind = p.ActivityCostKind,
+                        Value = p.Value,
+                        Goal = p.Goal
+                    })
+                    .ToArray()
+            };
     }
 }

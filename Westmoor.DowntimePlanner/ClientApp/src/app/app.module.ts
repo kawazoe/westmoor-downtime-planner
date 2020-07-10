@@ -20,6 +20,9 @@ import { AuthGuard } from './auth.guard';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
+import { AwardDowntimeComponent } from './home/award-downtime.component';
+import { AwardProgressComponent } from './home/award-progress.component';
+import { ScheduleDowntimeComponent } from './home/schedule-downtime.component';
 import { ActivitiesComponent } from './activities/activities.component';
 import { ActivityCreateComponent } from './activities/activity-create.component';
 import { ActivityUpdateComponent } from './activities/activity-update.component';
@@ -33,13 +36,20 @@ import { ModalHeaderComponent } from './modal-edit/modal-header.component';
 import { ModalDeleteComponent } from './modal-edit/modal-delete.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { AlertBoxComponent } from './alert-box/alert-box.component';
+import { ActivityCostKindPickerComponent } from './activity-cost-kind-picker/activity-cost-kind-picker.component';
+import { ProgressesPresenterComponent } from './progresses-presenter/progresses-presenter.component';
 import { CastPipe } from './Pipes/cast.pipe';
+import { IncludesPipe } from './Pipes/includes.pipe';
+import { FilterPipe } from './Pipes/filter.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
     HomeComponent,
+    AwardDowntimeComponent,
+    AwardProgressComponent,
+    ScheduleDowntimeComponent,
     ActivitiesComponent,
     ActivityCreateComponent,
     ActivityUpdateComponent,
@@ -53,7 +63,11 @@ import { CastPipe } from './Pipes/cast.pipe';
     ModalDeleteComponent,
     SignInComponent,
     AlertBoxComponent,
-    CastPipe
+    ActivityCostKindPickerComponent,
+    ProgressesPresenterComponent,
+    CastPipe,
+    IncludesPipe,
+    FilterPipe
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

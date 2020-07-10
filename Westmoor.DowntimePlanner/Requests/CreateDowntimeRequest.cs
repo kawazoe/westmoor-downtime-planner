@@ -4,6 +4,6 @@ namespace Westmoor.DowntimePlanner.Requests
     {
         public string CharacterId { get; set; }
         public string ActivityId { get; set; }
-        public CreateDowntimeProgressResponse[] Progresses { get; set; }
+        public CreateDowntimeCostRequest[] Costs { get; set; }
     }
 }

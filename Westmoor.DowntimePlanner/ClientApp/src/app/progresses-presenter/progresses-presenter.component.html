@@ -1,0 +1,17 @@
+<ul role="group" class="list-unstyled mb-0">
+  <li *ngFor="let progress of progresses">
+    <progressbar [value]="progress.value > progress.goal ? progress.goal : progress.value"
+                 [max]="progress.goal"
+                 [type]="progress.value >= progress.goal ? 'success' : null"
+                 [striped]="animate"
+                 [animate]="animate"
+                 style="height: 1.4rem;"
+                 class="my-1"
+                 [title]="progress.activityCostKind + ': ' + progress.value + '/' + progress.goal">
+      <div class="mw-100 d-flex">
+        <div class="m-2">{{progress.activityCostKind}}</div>
+        <div class="m-2 flex-grow-1">{{progress.value}}/{{progress.goal}}</div>
+      </div>
+    </progressbar>
+  </li>
+</ul>
