@@ -25,7 +25,7 @@
     "bootstrap": "^4.5.0",
     "core-js": "^3.3.3",
     "jexl": "^2.2.2",
-    "jquery": "3.4.1",
+    "jquery": "3.5.0",
     "ngx-bootstrap": "^5.6.1",
     "oidc-client": "^1.9.1",
     "popper.js": "^1.16.0",
