@@ -36,6 +36,7 @@ namespace Westmoor.DowntimePlanner.Repositories
             return await (await _container).GetItemLinqQueryable<DowntimeEntity>(
                     requestOptions: new QueryRequestOptions { PartitionKey = KindKey }
                 )
+                .OrderByDescending(d => d.CreatedOn)
                 .ToAsyncEnumerable()
                 .ToArrayAsync();
         }
