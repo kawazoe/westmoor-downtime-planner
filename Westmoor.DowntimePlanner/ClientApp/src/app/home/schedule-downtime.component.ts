@@ -7,6 +7,52 @@ import { ActivityCostResponse, ActivityResponse, ApiService } from '../api.servi
 
 import * as jexl from 'jexl';
 
+const dispatchNoMatch = Symbol.for('dispatchNoMatch');
+
+const equalExpression = jexl.compile('left == right');
+
+jexl.addTransform('min', (value: number, min: number) => Math.min(value, min));
+jexl.addTransform('max', (value: number, max: number) => Math.max(value, max));
+jexl.addTransform('between', (value: number, min: number, max: number) => Math.max(Math.min(value, max), min));
+jexl.addTransform('eval', (expression: string, ctx: any) => jexl.eval(expression, ctx));
+jexl.addTransform('dispatch', (value: any, ...targets: [any, any][]) => {
+  const evalTarget = (predicate, selector) => {
+    if (typeof predicate === 'string') {
+      return jexl.eval(predicate, {v: value})
+        .then(success => success ? selector : dispatchNoMatch);
+    } else if (predicate === true) {
+      return Promise.resolve(selector);
+    } else {
+      return equalExpression.eval({left: predicate, right: value})
+        .then(r => r ? selector : dispatchNoMatch);
+    }
+  };
+
+  const evalSelector = (selector) => {
+    if (selector === dispatchNoMatch) {
+      return dispatchNoMatch;
+    } else if (typeof selector === 'string') {
+      return jexl.eval(selector, {v: value});
+    } else {
+      return selector;
+    }
+  };
+
+  const iteration = (predicate, selector, accumulator) => accumulator === dispatchNoMatch
+    ? evalTarget(predicate, selector).then(s => evalSelector(s))
+    : accumulator;
+
+  let result = Promise.resolve(dispatchNoMatch);
+
+  for (const target of targets) {
+    const [predicate, selector] = target;
+
+    result = result.then(acc => iteration(predicate, selector, acc));
+  }
+
+  return result;
+});
+
 @Component({
   selector: 'app-schedule-downtime',
   templateUrl: './schedule-downtime.component.html',
