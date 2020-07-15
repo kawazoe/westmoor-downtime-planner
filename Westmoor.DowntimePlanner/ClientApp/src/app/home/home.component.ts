@@ -7,8 +7,9 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AwardProgressComponent } from './award-progress.component';
 import { ScheduleDowntimeComponent } from './schedule-downtime.component';
 import { BehaviorSubject, combineLatest, concat, of, OperatorFunction } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { last, map, switchMap, take, tap } from 'rxjs/operators';
 import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
+import { groupBy, uniq } from '../../lib/functional';
 
 @Component({
   selector: 'app-home',
@@ -57,7 +58,7 @@ export class HomeComponent {
         }))
         .map(r => this.api.updateCharacter(r.characterId, r));
 
-      return concat(...batch).pipe(this.refreshCharacters());
+      return concat(...batch).pipe(last(), this.refreshCharacters());
     };
   }
 
@@ -85,7 +86,7 @@ export class HomeComponent {
         }))
         .map(r => this.api.createDowntime(r));
 
-      return concat(...batch).pipe(this.refreshCharacters(), this.refreshDowntimes());
+      return concat(...batch).pipe(last(), this.refreshCharacters(), this.refreshDowntimes());
     };
   }
 
@@ -123,24 +124,39 @@ export class HomeComponent {
             character: character,
             costs: costs
           };
-        })
-        .map(r => this.api
-          .updateDowntime(r.downtimeId, r)
-          .pipe(
-            switchMap(() => {
-              const costDays = r.costs.find(c => c.activityCostKind === 'days');
-              const accruedDowntimeDays = r.character.accruedDowntimeDays - (costDays && costDays['delta'] || 0);
+        });
 
-              return this.api.updateCharacter(r.character.id, {
-                playerFullName: r.character.playerFullName,
-                characterFullName: r.character.characterFullName,
-                accruedDowntimeDays: accruedDowntimeDays
-              });
-            })
-          )
+      const downtimeBatch = batch.map(r => this.api.updateDowntime(r.downtimeId, r));
+
+      const characterBatch = groupBy(batch, d => d.character.id)
+        .map(group => {
+          const costDays = group.values
+            .map(d => d.costs.find(c => c.activityCostKind === 'days'))
+            .map(c => c && c['delta'] || 0)
+            .reduce((acc, cur) => acc + cur, 0);
+
+          return this.api.getCharacterById(group.key)
+            .pipe(
+              switchMap(character => {
+                const accruedDowntimeDays = character.accruedDowntimeDays - costDays;
+
+                return this.api.updateCharacter(character.id, {
+                  playerFullName: character.playerFullName,
+                  characterFullName: character.characterFullName,
+                  accruedDowntimeDays: accruedDowntimeDays
+                });
+              })
+            );
+        });
+
+      return concat(...downtimeBatch)
+        .pipe(
+          last(),
+          switchMap(() => concat(...characterBatch)),
+          last(),
+          this.refreshCharacters(),
+          this.refreshDowntimes()
         );
-
-      return concat(...batch).pipe(this.refreshCharacters(), this.refreshDowntimes());
     };
   }
 
@@ -162,15 +178,15 @@ export class HomeComponent {
       const batch = this.selectedDowntimes
         .map(downtime => this.api.deleteDowntime(downtime.id));
 
-      return concat(...batch).pipe(this.refreshDowntimes());
+      return concat(...batch).pipe(last(), this.refreshDowntimes());
     };
   }
 
   private refreshCharacters(): OperatorFunction<any, void> {
-    return o => combineLatest([o, this.api.getAllCharacters(), this.user$])
+    return o => switchMap(() => combineLatest([this.api.getAllCharacters(), this.user$]))(o)
       .pipe(
         take(1),
-        map(([_, cs, user]: [any, CharacterResponse[], UserResponse]) => {
+        map(([cs, user]: [CharacterResponse[], UserResponse]) => {
           this.selectedCharacters = [];
           this.characters.next(cs.filter(c =>
             c.playerFullName === this.impersonatePlayerFullName ||
@@ -181,10 +197,10 @@ export class HomeComponent {
   }
 
   private refreshDowntimes(): OperatorFunction<any, void> {
-    return o => combineLatest([o, this.api.getAllDowntimes(), this.user$])
+    return o => switchMap(() => combineLatest([this.api.getAllDowntimes(), this.user$]))(o)
       .pipe(
         take(1),
-        map(([_, ds, user]: [any, DowntimeResponse[], UserResponse]) => {
+        map(([ds, user]: [DowntimeResponse[], UserResponse]) => {
           this.selectedDowntimes = [];
           this.downtimes.next(ds.filter(d =>
             d.character.playerFullName === this.impersonatePlayerFullName ||

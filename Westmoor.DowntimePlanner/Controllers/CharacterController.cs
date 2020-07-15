@@ -23,6 +23,10 @@ namespace Westmoor.DowntimePlanner.Controllers
         public async Task<CharacterResponse[]> GetAllAsync() =>
             await _service.GetAllAsync();
 
+        [HttpGet("{id}")]
+        public async Task<CharacterResponse> GetByIdAsync(string id) =>
+            await _service.GetByIdAsync(id);
+
         [HttpPost]
         [Authorize(Policy = Policies.OnlyAdmins)]
         public async Task CreateAsync(CreateCharacterRequest request) =>

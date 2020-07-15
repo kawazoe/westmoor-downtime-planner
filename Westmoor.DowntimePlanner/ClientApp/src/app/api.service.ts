@@ -140,6 +140,10 @@ export class ApiService {
     return this.http.get<ActivityResponse[]>(`${this.endpoint}/activity`);
   }
 
+  public getActivityById(id: string): Observable<ActivityResponse> {
+    return this.http.get<ActivityResponse>(`${this.endpoint}/activity/${id}`);
+  }
+
   public createActivity(request: CreateActivityRequest): Observable<void> {
     return this.http.post<void>(`${this.endpoint}/activity`, request);
   }
@@ -156,6 +160,10 @@ export class ApiService {
     return this.http.get<CharacterResponse[]>(`${this.endpoint}/character`);
   }
 
+  public getCharacterById(id: string): Observable<CharacterResponse> {
+    return this.http.get<CharacterResponse>(`${this.endpoint}/character/${id}`);
+  }
+
   public createCharacter(request: CreateCharacterRequest): Observable<void> {
     return this.http.post<void>(`${this.endpoint}/character`, request);
   }
@@ -170,6 +178,10 @@ export class ApiService {
 
   public getAllDowntimes(): Observable<DowntimeResponse[]> {
     return this.http.get<DowntimeResponse[]>(`${this.endpoint}/downtime`);
+  }
+
+  public getDowntimeById(id: string): Observable<DowntimeResponse> {
+    return this.http.get<DowntimeResponse>(`${this.endpoint}/downtime/${id}`);
   }
 
   public createDowntime(request: CreateDowntimeRequest): Observable<void> {

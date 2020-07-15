@@ -21,6 +21,9 @@ namespace Westmoor.DowntimePlanner.Services
                 .Select(ToResponse)
                 .ToArray();
 
+        public async Task<ActivityResponse> GetByIdAsync(string id) =>
+            ToResponse(await _repository.GetByIdAsync(id));
+
         public async Task CreateAsync(CreateActivityRequest request) =>
             await _repository.CreateAsync(request);
 
