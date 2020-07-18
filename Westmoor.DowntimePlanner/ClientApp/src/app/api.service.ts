@@ -118,7 +118,7 @@ export interface UpdateDowntimeCostRequest {
   goal: number;
 }
 
-export interface UserResponse {
+export interface ApiKeyResponse {
   key: string;
   owner: string;
   roles: string[];
@@ -126,13 +126,13 @@ export interface UserResponse {
   sharedWith: string[];
 }
 
-export interface CreateUserRequest {
+export interface CreateApiKeyRequest {
   owner: string;
   roles: string[];
   sharedWith: string[];
 }
 
-export interface UpdateUserRequest {
+export interface UpdateApiKeyRequest {
   owner: string;
   roles: string[];
   sharedWith: string[];
@@ -208,23 +208,23 @@ export class ApiService {
     return this.http.delete<void>(`${this.endpoint}/downtime/${id}`);
   }
 
-  public getAllUsers(): Observable<UserResponse[]> {
-    return this.http.get<UserResponse[]>(`${this.endpoint}/user`);
+  public getAllApiKeys(): Observable<ApiKeyResponse[]> {
+    return this.http.get<ApiKeyResponse[]>(`${this.endpoint}/apiKey`);
   }
 
-  public getUserByKey(key: string): Observable<UserResponse> {
-    return this.http.get<UserResponse>(`${this.endpoint}/user/${key}`);
+  public getApiKeyByKey(key: string): Observable<ApiKeyResponse> {
+    return this.http.get<ApiKeyResponse>(`${this.endpoint}/apiKey/${key}`);
   }
 
-  public createUser(request: CreateUserRequest): Observable<void> {
-    return this.http.post<void>(`${this.endpoint}/user`, request);
+  public createApiKey(request: CreateApiKeyRequest): Observable<void> {
+    return this.http.post<void>(`${this.endpoint}/apiKey`, request);
   }
 
-  public updateUser(id: string, request: UpdateUserRequest): Observable<void> {
-    return this.http.put<void>(`${this.endpoint}/user/${id}`, request);
+  public updateApiKey(id: string, request: UpdateApiKeyRequest): Observable<void> {
+    return this.http.put<void>(`${this.endpoint}/apiKey/${id}`, request);
   }
 
-  public deleteUser(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.endpoint}/user/${id}`);
+  public deleteApiKey(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.endpoint}/apiKey/${id}`);
   }
 }

@@ -1,0 +1,23 @@
+<h1>Api Keys</h1>
+<button type="button" class="btn btn-success mb-2" (click)="create()">Create...</button>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Key</th>
+      <th scope="col">Owner</th>
+      <th scope="col">Roles</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody *ngIf="apiKeys$ | async as apiKeys">
+    <tr *ngFor="let apiKey of apiKeys">
+      <td>{{apiKey.key}}</td>
+      <td>{{apiKey.owner}}</td>
+      <td>{{apiKey.roles | json}}</td>
+      <td>
+        <button type="button" class="btn btn-info mr-1" (click)="edit(apiKey)">Edit...</button>
+        <button type="button" class="btn btn-danger" (click)="revoke(apiKey)">Revoke...</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

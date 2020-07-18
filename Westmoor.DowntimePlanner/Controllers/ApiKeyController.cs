@@ -9,11 +9,11 @@ namespace Westmoor.DowntimePlanner.Controllers
     [ApiController]
     [Route("api/v1/[controller]")]
     [Authorize(Policy = Policies.WriteApiKeys)]
-    public class UserController : ControllerBase
+    public class ApiKeyController : ControllerBase
     {
         private readonly IApiKeyService _service;
 
-        public UserController(IApiKeyService service)
+        public ApiKeyController(IApiKeyService service)
         {
             _service = service;
         }

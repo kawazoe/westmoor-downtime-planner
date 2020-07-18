@@ -2,7 +2,7 @@ import { Directive } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { of } from 'rxjs';
 import { FormGroup } from '@angular/forms';
-import { UserResponse } from '../api.service';
+import { ApiKeyResponse } from '../api.service';
 import { tap } from 'rxjs/operators';
 
 @Directive({

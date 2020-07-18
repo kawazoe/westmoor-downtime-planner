@@ -1,23 +1,23 @@
 import { Component } from '@angular/core';
-import { ApiService, UserResponse } from '../api.service';
+import { ApiService, ApiKeyResponse } from '../api.service';
 import { BehaviorSubject, of, OperatorFunction } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { UserCreateComponent } from './user-create.component';
-import { UserUpdateComponent } from './user-update.component';
+import { ApiKeyCreateComponent } from './api-key-create.component';
+import { ApiKeyUpdateComponent } from './api-key-update.component';
 import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
 import { FormArray } from '@angular/forms';
 
 @Component({
-  selector: 'app-users',
-  templateUrl: './users.component.html',
+  selector: 'app-api-keys',
+  templateUrl: './api-keys.component.html',
 })
-export class UsersComponent {
-  private users = new BehaviorSubject<UserResponse[]>([]);
+export class ApiKeysComponent {
+  private apiKeys = new BehaviorSubject<ApiKeyResponse[]>([]);
 
   private modalRef: BsModalRef;
 
-  public users$ = this.users.asObservable();
+  public apiKeys$ = this.apiKeys.asObservable();
 
   constructor(
     private api: ApiService,
@@ -27,9 +27,9 @@ export class UsersComponent {
   }
 
   public create() {
-    this.modalRef = this.modal.show(UserCreateComponent);
+    this.modalRef = this.modal.show(ApiKeyCreateComponent);
     this.modalRef.content.onSave = form => this.api
-      .createUser({
+      .createApiKey({
         owner: form.controls.owner.value,
         roles: form.controls.isRoleAdmin.value ? ['Admin'] : [],
         sharedWith: (form.controls.sharedWith as FormArray).controls
@@ -38,10 +38,10 @@ export class UsersComponent {
       .pipe(this.refresh());
   }
 
-  public edit(user: UserResponse) {
-    this.modalRef = this.modal.show(UserUpdateComponent, { initialState: { source: user } });
+  public edit(apiKey: ApiKeyResponse) {
+    this.modalRef = this.modal.show(ApiKeyUpdateComponent, { initialState: { source: apiKey } });
     this.modalRef.content.onSave = form => this.api
-      .updateUser(user.key, {
+      .updateApiKey(apiKey.key, {
         owner: form.controls.owner.value,
         roles: form.controls.isRoleAdmin.value ? ['Admin'] : [],
         sharedWith: (form.controls.sharedWith as FormArray).controls
@@ -50,17 +50,17 @@ export class UsersComponent {
       .pipe(this.refresh());
   }
 
-  public revoke(user: UserResponse) {
-    this.modalRef = this.modal.show(ModalDeleteComponent, { initialState: { type: 'user', id: user.key } });
+  public revoke(apiKey: ApiKeyResponse) {
+    this.modalRef = this.modal.show(ModalDeleteComponent, { initialState: { type: 'api key', id: apiKey.key } });
     this.modalRef.content.onConfirm = () => this.api
-      .deleteUser(user.key)
+      .deleteApiKey(apiKey.key)
       .pipe(this.refresh());
   }
 
-  private refresh(): OperatorFunction<void, UserResponse[]> {
+  private refresh(): OperatorFunction<void, ApiKeyResponse[]> {
     return o => o.pipe(
-      switchMap(() => this.api.getAllUsers()),
-      tap(us => this.users.next(us))
+      switchMap(() => this.api.getAllApiKeys()),
+      tap(us => this.apiKeys.next(us))
     );
   }
 }

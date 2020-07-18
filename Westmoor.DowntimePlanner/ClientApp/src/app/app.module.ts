@@ -30,9 +30,9 @@ import { ActivityUpdateComponent } from './activities/activity-update.component'
 import { CharactersComponent } from './characters/characters.component';
 import { CharacterCreateComponent } from './characters/character-create.component';
 import { CharacterUpdateComponent } from './characters/character-update.component';
-import { UsersComponent } from './users/users.component';
-import { UserCreateComponent } from './users/user-create.component';
-import { UserUpdateComponent } from './users/user-update.component';
+import { ApiKeysComponent } from './api-keys/api-keys.component';
+import { ApiKeyCreateComponent } from './api-keys/api-key-create.component';
+import { ApiKeyUpdateComponent } from './api-keys/api-key-update.component';
 import { ModalHeaderComponent } from './modal-edit/modal-header.component';
 import { ModalDeleteComponent } from './modal-edit/modal-delete.component';
 import { AlertBoxComponent } from './alert-box/alert-box.component';
@@ -57,9 +57,9 @@ import { FilterPipe } from './Pipes/filter.pipe';
     CharactersComponent,
     CharacterCreateComponent,
     CharacterUpdateComponent,
-    UsersComponent,
-    UserCreateComponent,
-    UserUpdateComponent,
+    ApiKeysComponent,
+    ApiKeyCreateComponent,
+    ApiKeyUpdateComponent,
     ModalHeaderComponent,
     ModalDeleteComponent,
     AlertBoxComponent,
@@ -79,7 +79,7 @@ import { FilterPipe } from './Pipes/filter.pipe';
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'activities', component: ActivitiesComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { role: 'Admin' } },
       { path: 'characters', component: CharactersComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { role: 'Admin' } },
-      { path: 'users', component: UsersComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { role: 'Admin' } },
+      { path: 'api-keys', component: ApiKeysComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { role: 'Admin' } },
       { path: 'signout', component: HomeComponent, pathMatch: 'full', canActivate: [SignOutGuard] },
       { path: 'oidc-callback', component: HomeComponent, pathMatch: 'full', canActivate: [OidcCallbackGuard] },
     ]),

@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalUpdateComponentBase } from '../modal-edit/modal-update.component';
-import { UserResponse } from '../api.service';
+import { ApiKeyResponse } from '../api.service';
 
 @Component({
-  selector: 'app-user-edit',
-  templateUrl: './user-update.component.html',
+  selector: 'app-api-key-edit',
+  templateUrl: './api-key-update.component.html',
 })
-export class UserUpdateComponent extends ModalUpdateComponentBase<UserResponse> implements OnInit {
+export class ApiKeyUpdateComponent extends ModalUpdateComponentBase<ApiKeyResponse> implements OnInit {
   public FormArrayType = FormArray;
 
   constructor(

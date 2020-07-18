@@ -4,10 +4,10 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalCreateComponentBase } from '../modal-edit/modal-create.component';
 
 @Component({
-  selector: 'app-user-create',
-  templateUrl: './user-create.component.html',
+  selector: 'app-api-key-create',
+  templateUrl: './api-key-create.component.html',
 })
-export class UserCreateComponent extends ModalCreateComponentBase implements OnInit {
+export class ApiKeyCreateComponent extends ModalCreateComponentBase implements OnInit {
   public FormArrayType = FormArray;
 
   constructor(
