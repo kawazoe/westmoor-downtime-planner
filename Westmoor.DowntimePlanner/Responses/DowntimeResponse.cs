@@ -6,5 +6,6 @@ namespace Westmoor.DowntimePlanner.Responses
         public CharacterResponse Character { get; set; }
         public ActivityResponse Activity { get; set; }
         public DowntimeProgressResponse[] Progresses { get; set; }
+        public string[] SharedWith { get; set; }
     }
 }

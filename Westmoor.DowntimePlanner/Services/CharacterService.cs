@@ -39,7 +39,8 @@ namespace Westmoor.DowntimePlanner.Services
                 Id = entity.Id,
                 PlayerFullName = entity.PlayerFullName,
                 CharacterFullName = entity.CharacterFullName,
-                AccruedDowntimeDays = entity.AccruedDowntimeDays
+                AccruedDowntimeDays = entity.AccruedDowntimeDays,
+                SharedWith = entity.SharedWith
             };
     }
 }

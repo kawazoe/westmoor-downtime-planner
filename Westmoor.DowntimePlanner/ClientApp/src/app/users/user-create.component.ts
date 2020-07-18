@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalCreateComponentBase } from '../modal-edit/modal-create.component';
 
 @Component({
@@ -8,6 +8,8 @@ import { ModalCreateComponentBase } from '../modal-edit/modal-create.component';
   templateUrl: './user-create.component.html',
 })
 export class UserCreateComponent extends ModalCreateComponentBase implements OnInit {
+  public FormArrayType = FormArray;
+
   constructor(
     public modalRef: BsModalRef
   ) {
@@ -17,7 +19,8 @@ export class UserCreateComponent extends ModalCreateComponentBase implements OnI
   ngOnInit(): void {
     this.form = new FormGroup({
       owner: new FormControl('', Validators.required),
-      isRoleAdmin: new FormControl(false)
+      isRoleAdmin: new FormControl(false),
+      sharedWith: new FormArray([])
     });
   }
 }

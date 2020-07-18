@@ -104,7 +104,8 @@ namespace Westmoor.DowntimePlanner.Repositories
                 Name = request.Name,
                 DescriptionMarkdown = request.DescriptionMarkdown,
                 ComplicationMarkdown = request.ComplicationMarkdown,
-                Costs = costs
+                Costs = costs,
+                SharedWith = request.SharedWith
             };
 
             await (await _container).ReplaceItemAsync(

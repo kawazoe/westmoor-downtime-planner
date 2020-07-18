@@ -7,5 +7,6 @@ namespace Westmoor.DowntimePlanner.Responses
         public string DescriptionMarkdown { get; set; }
         public string ComplicationMarkdown { get; set; }
         public ActivityCostResponse[] Costs { get; set; }
+        public string[] SharedWith { get; set; }
     }
 }

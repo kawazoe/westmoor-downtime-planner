@@ -44,7 +44,9 @@ export class ActivitiesComponent {
                 variableName: parameter.variableName.value,
                 description: parameter.description.value
               }))
-          }))
+          })),
+        sharedWith: (form.controls.sharedWith as FormArray).controls
+          .map(ctrls => ctrls.value)
       })
       .pipe(this.refresh());
   }
@@ -67,7 +69,9 @@ export class ActivitiesComponent {
                 variableName: parameter.variableName.value,
                 description: parameter.description.value
               }))
-          }))
+          })),
+        sharedWith: (form.controls.sharedWith as FormArray).controls
+          .map(ctrls => ctrls.value)
       })
       .pipe(this.refresh());
   }

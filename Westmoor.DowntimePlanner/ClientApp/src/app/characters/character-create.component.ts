@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalCreateComponentBase } from '../modal-edit/modal-create.component';
 
 @Component({
@@ -8,6 +8,8 @@ import { ModalCreateComponentBase } from '../modal-edit/modal-create.component';
   templateUrl: './character-create.component.html',
 })
 export class CharacterCreateComponent extends ModalCreateComponentBase implements OnInit {
+  public FormArrayType = FormArray;
+
   constructor(
     public modalRef: BsModalRef
   ) {
@@ -17,7 +19,8 @@ export class CharacterCreateComponent extends ModalCreateComponentBase implement
   ngOnInit(): void {
     this.form = new FormGroup({
       playerFullName: new FormControl('', Validators.required),
-      characterFullName: new FormControl('', Validators.required)
+      characterFullName: new FormControl('', Validators.required),
+      sharedWith: new FormArray([])
     });
   }
 }

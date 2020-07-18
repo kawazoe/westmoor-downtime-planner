@@ -8,6 +8,7 @@ export interface ActivityResponse {
   descriptionMarkdown: string;
   complicationMarkdown: string;
   costs: ActivityCostResponse[];
+  sharedWith: string[];
 }
 
 export interface ActivityCostResponse {
@@ -26,6 +27,7 @@ export interface CreateActivityRequest {
   descriptionMarkdown: string;
   complicationMarkdown: string;
   costs: CreateActivityCostRequest[];
+  sharedWith: string[];
 }
 
 export interface CreateActivityCostRequest {
@@ -44,6 +46,7 @@ export interface UpdateActivityRequest {
   descriptionMarkdown: string;
   complicationMarkdown: string;
   costs: UpdateActivityCostRequest[];
+  sharedWith: string[];
 }
 
 export interface UpdateActivityCostRequest {
@@ -62,17 +65,20 @@ export interface CharacterResponse {
   playerFullName: string;
   characterFullName: string;
   accruedDowntimeDays: number;
+  sharedWith: string[];
 }
 
 export interface CreateCharacterRequest {
   playerFullName: string;
   characterFullName: string;
+  sharedWith: string[];
 }
 
 export interface UpdateCharacterRequest {
   playerFullName: string;
   characterFullName: string;
   accruedDowntimeDays: number;
+  sharedWith: string[];
 }
 
 export interface DowntimeResponse {
@@ -80,6 +86,7 @@ export interface DowntimeResponse {
   character: CharacterResponse;
   activity: ActivityResponse;
   progresses: DowntimeCostResponse[];
+  sharedWith: string[];
 }
 
 export interface DowntimeCostResponse {
@@ -92,6 +99,7 @@ export interface CreateDowntimeRequest {
   characterId: string;
   activityId: string;
   costs: CreateDowntimeCostRequest[];
+  sharedWith: string[];
 }
 
 export interface CreateDowntimeCostRequest {
@@ -101,6 +109,7 @@ export interface CreateDowntimeCostRequest {
 
 export interface UpdateDowntimeRequest {
   costs: UpdateDowntimeCostRequest[];
+  sharedWith: string[];
 }
 
 export interface UpdateDowntimeCostRequest {
@@ -114,16 +123,19 @@ export interface UserResponse {
   owner: string;
   roles: string[];
   createdOn: string;
+  sharedWith: string[];
 }
 
 export interface CreateUserRequest {
   owner: string;
   roles: string[];
+  sharedWith: string[];
 }
 
 export interface UpdateUserRequest {
   owner: string;
   roles: string[];
+  sharedWith: string[];
 }
 
 @Injectable({

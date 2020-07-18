@@ -36,6 +36,7 @@ import { UserUpdateComponent } from './users/user-update.component';
 import { ModalHeaderComponent } from './modal-edit/modal-header.component';
 import { ModalDeleteComponent } from './modal-edit/modal-delete.component';
 import { AlertBoxComponent } from './alert-box/alert-box.component';
+import { OwnershipComponent } from './ownership/ownership.component';
 import { ActivityCostKindPickerComponent } from './activity-cost-kind-picker/activity-cost-kind-picker.component';
 import { ProgressesPresenterComponent } from './progresses-presenter/progresses-presenter.component';
 import { CastPipe } from './Pipes/cast.pipe';
@@ -62,6 +63,7 @@ import { FilterPipe } from './Pipes/filter.pipe';
     ModalHeaderComponent,
     ModalDeleteComponent,
     AlertBoxComponent,
+    OwnershipComponent,
     ActivityCostKindPickerComponent,
     ProgressesPresenterComponent,
     CastPipe,

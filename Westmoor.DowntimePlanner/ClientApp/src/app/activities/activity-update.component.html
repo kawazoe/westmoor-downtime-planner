@@ -63,6 +63,9 @@
         </ng-container>
       </div>
     </ng-container>
+
+    <h3>Sharing</h3>
+    <app-ownership [sharedWith]="form.controls.sharedWith | cast:FormArrayType"></app-ownership>
   </div>
   <div class="modal-footer">
     <button type="submit" class="btn btn-primary" [disabled]="!form.valid || processing">Save</button>

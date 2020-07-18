@@ -54,7 +54,8 @@ export class HomeComponent {
           characterId: character.id,
           playerFullName: character.playerFullName,
           characterFullName: character.characterFullName,
-          accruedDowntimeDays: character.accruedDowntimeDays + parseInt(form.controls.downtimeDays.value, 10)
+          accruedDowntimeDays: character.accruedDowntimeDays + parseInt(form.controls.downtimeDays.value, 10),
+          sharedWith: character.sharedWith
         }))
         .map(r => this.api.updateCharacter(r.characterId, r));
 
@@ -82,7 +83,8 @@ export class HomeComponent {
             .map(cost => ({
               activityCostKind: cost.controls.activityCostKind.value,
               goal: cost.controls.goal.value
-            }))
+            })),
+          sharedWith: []
         }))
         .map(r => this.api.createDowntime(r));
 
@@ -122,7 +124,8 @@ export class HomeComponent {
           return {
             downtimeId: downtimeId,
             character: character,
-            costs: costs
+            costs: costs,
+            sharedWith: downtime.sharedWith
           };
         });
 
@@ -143,7 +146,8 @@ export class HomeComponent {
                 return this.api.updateCharacter(character.id, {
                   playerFullName: character.playerFullName,
                   characterFullName: character.characterFullName,
-                  accruedDowntimeDays: accruedDowntimeDays
+                  accruedDowntimeDays: accruedDowntimeDays,
+                  sharedWith: character.sharedWith
                 });
               })
             );
@@ -202,11 +206,5 @@ export class HomeComponent {
           this.downtimes.next(ds);
         })
       );
-  }
-
-  public impersonate() {
-    this.impersonatePlayerFullName = this.impersonateForm.controls.playerName.value;
-
-    of(null).pipe(this.refreshCharacters(), this.refreshDowntimes()).subscribe();
   }
 }

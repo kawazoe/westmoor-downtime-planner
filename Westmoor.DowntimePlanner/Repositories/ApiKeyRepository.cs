@@ -59,7 +59,8 @@ namespace Westmoor.DowntimePlanner.Repositories
             var updatedEntity = new ApiKeyEntity
             {
                 Owner = request.Owner ?? entity.Owner,
-                Roles = request.Roles ?? entity.Roles
+                Roles = request.Roles ?? entity.Roles,
+                SharedWith = request.SharedWith
             };
 
             await (await _container).ReplaceItemAsync(

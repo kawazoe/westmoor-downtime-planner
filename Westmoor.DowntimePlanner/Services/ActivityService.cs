@@ -53,7 +53,8 @@ namespace Westmoor.DowntimePlanner.Services
                             })
                             .ToArray()
                     })
-                    .ToArray()
+                    .ToArray(),
+                SharedWith = entity.SharedWith
             };
     }
 }

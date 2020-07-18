@@ -6,6 +6,7 @@ import { switchMap, tap } from 'rxjs/operators';
 import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
 import { CharacterCreateComponent } from './character-create.component';
 import { CharacterUpdateComponent } from './character-update.component';
+import { FormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-characters',
@@ -30,7 +31,9 @@ export class CharactersComponent {
     this.modalRef.content.onSave = form => this.api
       .createCharacter({
         playerFullName: form.controls.playerFullName.value,
-        characterFullName: form.controls.characterFullName.value
+        characterFullName: form.controls.characterFullName.value,
+        sharedWith: (form.controls.sharedWith as FormArray).controls
+          .map(ctrls => ctrls.value)
       })
       .pipe(this.refresh());
   }
@@ -41,7 +44,9 @@ export class CharactersComponent {
       .updateCharacter(character.id, {
         playerFullName: form.controls.playerFullName.value,
         characterFullName: form.controls.characterFullName.value,
-        accruedDowntimeDays: parseInt(form.controls.accruedDowntimeDays.value, 10)
+        accruedDowntimeDays: parseInt(form.controls.accruedDowntimeDays.value, 10),
+        sharedWith: (form.controls.sharedWith as FormArray).controls
+          .map(ctrls => ctrls.value)
       })
       .pipe(this.refresh());
   }

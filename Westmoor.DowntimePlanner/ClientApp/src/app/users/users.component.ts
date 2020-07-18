@@ -6,6 +6,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { UserCreateComponent } from './user-create.component';
 import { UserUpdateComponent } from './user-update.component';
 import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
+import { FormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-users',
@@ -30,7 +31,9 @@ export class UsersComponent {
     this.modalRef.content.onSave = form => this.api
       .createUser({
         owner: form.controls.owner.value,
-        roles: form.controls.isRoleAdmin.value ? ['Admin'] : []
+        roles: form.controls.isRoleAdmin.value ? ['Admin'] : [],
+        sharedWith: (form.controls.sharedWith as FormArray).controls
+          .map(ctrls => ctrls.value)
       })
       .pipe(this.refresh());
   }
@@ -40,7 +43,9 @@ export class UsersComponent {
     this.modalRef.content.onSave = form => this.api
       .updateUser(user.key, {
         owner: form.controls.owner.value,
-        roles: form.controls.isRoleAdmin.value ? ['Admin'] : []
+        roles: form.controls.isRoleAdmin.value ? ['Admin'] : [],
+        sharedWith: (form.controls.sharedWith as FormArray).controls
+          .map(ctrls => ctrls.value)
       })
       .pipe(this.refresh());
   }

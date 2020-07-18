@@ -35,6 +35,13 @@ namespace Westmoor.DowntimePlanner.Security
         private ApiKeyResponse ToResponse(ApiKeyEntity entity) =>
             entity == null
                 ? null
-                : new ApiKeyResponse(entity.Id, entity.Owner, entity.Roles, entity.CreatedOn);
+                : new ApiKeyResponse
+                {
+                    Key = entity.Id,
+                    Owner = entity.Owner,
+                    Roles = entity.Roles,
+                    SharedWith = entity.SharedWith,
+                    CreatedOn = entity.CreatedOn
+                };
     }
 }

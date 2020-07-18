@@ -24,7 +24,8 @@ export class ActivityCreateComponent extends ModalCreateComponentBase implements
       name: new FormControl('', Validators.required),
       descriptionMarkdown: new FormControl(''),
       complicationMarkdown: new FormControl(''),
-      costs: new FormArray([], Validators.required)
+      costs: new FormArray([], Validators.required),
+      sharedWith: new FormArray([])
     });
 
     this.addCost(this.form);

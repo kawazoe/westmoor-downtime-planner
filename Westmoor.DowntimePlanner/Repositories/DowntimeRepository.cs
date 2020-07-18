@@ -88,7 +88,8 @@ namespace Westmoor.DowntimePlanner.Repositories
             {
                 Character = entity.Character,
                 Activity = entity.Activity,
-                Costs = costs
+                Costs = costs,
+                SharedWith = request.SharedWith
             };
 
             await (await _container).ReplaceItemAsync(

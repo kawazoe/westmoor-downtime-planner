@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Cosmos;
@@ -35,6 +36,8 @@ namespace Westmoor.DowntimePlanner.Repositories
 
         public TEntity CreateMetadata(TEntity entity)
         {
+            var identity = _httpContextAccessor.HttpContext.User.Identity.Name;
+
             entity.Id = _uuidFactory.Create();
             entity.Idp = DefaultPartitionKeyValue;
             entity.SharedWith = new[]
@@ -42,7 +45,10 @@ namespace Westmoor.DowntimePlanner.Repositories
                 entity.CreatedBy
             };
             entity.CreatedOn = _clock.UtcNow;
-            entity.CreatedBy = _httpContextAccessor.HttpContext.User.Identity.Name;
+            entity.CreatedBy = identity;
+            entity.SharedWith = entity.SharedWith
+                .Prepend(identity)
+                .ToArray();
 
             return entity;
         }

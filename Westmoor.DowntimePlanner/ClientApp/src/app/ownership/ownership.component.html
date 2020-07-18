@@ -1,0 +1,26 @@
+<div class="form-group">
+  <label for="shareWithId">User</label>
+  <div class="input-group">
+    <input type="text" class="form-control" id="shareWithId" [value]="sharedWithId" (change)="sharedWithId = $event.target.value">
+    <div class="input-group-append">
+      <button type="button" class="btn btn-success mb-2" (click)="share(sharedWithId)">Share...</button>
+    </div>
+  </div>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th style="width: 100%">User</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let control of sharedWith.controls">
+      <td>{{control.value}}</td>
+      <td>
+        <button type="button" class="btn btn-danger" (click)="delete(control.value)">Delete...</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

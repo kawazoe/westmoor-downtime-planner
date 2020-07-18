@@ -12,6 +12,9 @@
       <input type="checkbox" class="form-check-input" id="isRoleAdmin" formControlName="isRoleAdmin">
       <label class="form-check-label" for="isRoleAdmin">Admin</label>
     </div>
+
+    <h3>Sharing</h3>
+    <app-ownership [sharedWith]="form.controls.sharedWith | cast:FormArrayType"></app-ownership>
   </div>
   <div class="modal-footer">
     <button type="submit" class="btn btn-primary" [disabled]="!form.valid || processing">Create</button>

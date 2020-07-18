@@ -72,7 +72,8 @@ namespace Westmoor.DowntimePlanner.Services
                         Value = p.Value,
                         Goal = p.Goal
                     })
-                    .ToArray()
+                    .ToArray(),
+                SharedWith = entity.SharedWith
             };
     }
 }

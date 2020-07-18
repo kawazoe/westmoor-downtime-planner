@@ -63,7 +63,8 @@ namespace Westmoor.DowntimePlanner.Repositories
             {
                 PlayerFullName = request.PlayerFullName,
                 CharacterFullName = request.CharacterFullName,
-                AccruedDowntimeDays = request.AccruedDowntimeDays
+                AccruedDowntimeDays = request.AccruedDowntimeDays,
+                SharedWith = request.SharedWith
             };
 
             await (await _container).ReplaceItemAsync(
