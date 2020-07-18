@@ -35,7 +35,7 @@ namespace Westmoor.DowntimePlanner.Security
 
             var oAuthScheme = new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "apiKey" }
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
             };
 
             operation.Security = new List<OpenApiSecurityRequirement>

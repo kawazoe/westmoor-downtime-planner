@@ -1,22 +1,22 @@
 import { Component } from '@angular/core';
 import { AuthService, hasRole } from '../auth.service';
-import { ApiService, CharacterResponse, DowntimeResponse, UserResponse } from '../api.service';
+import { ApiService, CharacterResponse, DowntimeResponse } from '../api.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { AwardDowntimeComponent } from './award-downtime.component';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AwardProgressComponent } from './award-progress.component';
 import { ScheduleDowntimeComponent } from './schedule-downtime.component';
-import { BehaviorSubject, combineLatest, concat, of, OperatorFunction } from 'rxjs';
-import { last, map, switchMap, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, concat, of, OperatorFunction } from 'rxjs';
+import { last, map, switchMap, take } from 'rxjs/operators';
 import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
-import { groupBy, uniq } from '../../lib/functional';
+import { groupBy } from '../../lib/functional';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
-  public user$ = this.auth.user$;
+  public userFullName$ = this.auth.user$.pipe(map(u => u?.name));
   public isAdmin$ = hasRole('Admin')(this.auth.user$);
 
   private characters = new BehaviorSubject<CharacterResponse[]>([]);
@@ -183,29 +183,23 @@ export class HomeComponent {
   }
 
   private refreshCharacters(): OperatorFunction<any, void> {
-    return o => switchMap(() => combineLatest([this.api.getAllCharacters(), this.user$]))(o)
+    return o => switchMap(() => this.api.getAllCharacters())(o)
       .pipe(
         take(1),
-        map(([cs, user]: [CharacterResponse[], UserResponse]) => {
+        map(cs => {
           this.selectedCharacters = [];
-          this.characters.next(cs.filter(c =>
-            c.playerFullName === this.impersonatePlayerFullName ||
-            user?.roles.includes('Admin')
-          ));
+          this.characters.next(cs);
         })
       );
   }
 
   private refreshDowntimes(): OperatorFunction<any, void> {
-    return o => switchMap(() => combineLatest([this.api.getAllDowntimes(), this.user$]))(o)
+    return o => switchMap(() => this.api.getAllDowntimes())(o)
       .pipe(
         take(1),
-        map(([ds, user]: [DowntimeResponse[], UserResponse]) => {
+        map(ds => {
           this.selectedDowntimes = [];
-          this.downtimes.next(ds.filter(d =>
-            d.character.playerFullName === this.impersonatePlayerFullName ||
-            user?.roles.includes('Admin')
-          ));
+          this.downtimes.next(ds);
         })
       );
   }

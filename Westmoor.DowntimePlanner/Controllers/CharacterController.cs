@@ -9,8 +9,8 @@ namespace Westmoor.DowntimePlanner.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    [AllowAnonymous]
-    public class CharacterController
+    [Authorize(Policy = Policies.ReadCharacters)]
+    public class CharacterController : ControllerBase
     {
         private readonly ICharacterService _service;
 
@@ -28,17 +28,17 @@ namespace Westmoor.DowntimePlanner.Controllers
             await _service.GetByIdAsync(id);
 
         [HttpPost]
-        [Authorize(Policy = Policies.OnlyAdmins)]
+        [Authorize(Policy = Policies.WriteCharacters)]
         public async Task CreateAsync(CreateCharacterRequest request) =>
             await _service.CreateAsync(request);
 
         [HttpPut("{id}")]
-        [Authorize(Policy = Policies.OnlyAdmins)]
+        [Authorize(Policy = Policies.WriteCharacters)]
         public async Task UpdateAsync(string id, UpdateCharacterRequest request) =>
             await _service.UpdateAsync(id, request);
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = Policies.OnlyAdmins)]
+        [Authorize(Policy = Policies.WriteCharacters)]
         public async Task DeleteAsync(string id) =>
             await _service.DeleteAsync(id);
     }

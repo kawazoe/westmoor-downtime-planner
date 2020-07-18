@@ -20,4 +20,8 @@ export class NavMenuComponent {
   toggle() {
     this.isExpanded = !this.isExpanded;
   }
+
+  signIn() {
+    this.auth.signIn().subscribe();
+  }
 }

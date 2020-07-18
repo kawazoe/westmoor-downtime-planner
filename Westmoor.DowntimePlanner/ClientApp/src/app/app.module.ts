@@ -13,9 +13,10 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 
-import { ApiKeyAuthHttpInterceptorService } from './api-key-auth-http-interceptor.service';
-import { SignoutGuard } from './signout.guard';
+import { AuthHttpInterceptorService } from './auth-http-interceptor.service';
+import { SignOutGuard } from './sign-out-guard.service';
 import { AuthGuard } from './auth.guard';
+import { OidcCallbackGuard } from './oidc-callback-guard.service';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -34,7 +35,6 @@ import { UserCreateComponent } from './users/user-create.component';
 import { UserUpdateComponent } from './users/user-update.component';
 import { ModalHeaderComponent } from './modal-edit/modal-header.component';
 import { ModalDeleteComponent } from './modal-edit/modal-delete.component';
-import { SignInComponent } from './sign-in/sign-in.component';
 import { AlertBoxComponent } from './alert-box/alert-box.component';
 import { ActivityCostKindPickerComponent } from './activity-cost-kind-picker/activity-cost-kind-picker.component';
 import { ProgressesPresenterComponent } from './progresses-presenter/progresses-presenter.component';
@@ -61,7 +61,6 @@ import { FilterPipe } from './Pipes/filter.pipe';
     UserUpdateComponent,
     ModalHeaderComponent,
     ModalDeleteComponent,
-    SignInComponent,
     AlertBoxComponent,
     ActivityCostKindPickerComponent,
     ProgressesPresenterComponent,
@@ -75,12 +74,12 @@ import { FilterPipe } from './Pipes/filter.pipe';
     HttpClientModule,
     ReactiveFormsModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+      { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'activities', component: ActivitiesComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { role: 'Admin' } },
       { path: 'characters', component: CharactersComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { role: 'Admin' } },
       { path: 'users', component: UsersComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { role: 'Admin' } },
-      { path: 'signin', component: SignInComponent, pathMatch: 'full', canActivate: [AuthGuard] },
-      { path: 'signout', component: SignInComponent, pathMatch: 'full', canActivate: [SignoutGuard] },
+      { path: 'signout', component: HomeComponent, pathMatch: 'full', canActivate: [SignOutGuard] },
+      { path: 'oidc-callback', component: HomeComponent, pathMatch: 'full', canActivate: [OidcCallbackGuard] },
     ]),
     AlertModule.forRoot(),
     BsDropdownModule.forRoot(),
@@ -90,7 +89,7 @@ import { FilterPipe } from './Pipes/filter.pipe';
     ProgressbarModule.forRoot()
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: ApiKeyAuthHttpInterceptorService, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptorService, multi: true }
   ],
   bootstrap: [AppComponent]
 })

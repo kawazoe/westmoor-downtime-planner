@@ -9,8 +9,8 @@ namespace Westmoor.DowntimePlanner.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    [AllowAnonymous]
-    public class DowntimeController
+    [Authorize(Policy = Policies.ReadDowntimes)]
+    public class DowntimeController : ControllerBase
     {
         private readonly IDowntimeService _service;
 
@@ -28,17 +28,17 @@ namespace Westmoor.DowntimePlanner.Controllers
             await _service.GetByIdAsync(id);
 
         [HttpPost]
-        [Authorize(Policy = Policies.OnlyAdmins)]
+        [Authorize(Policy = Policies.WriteDowntimes)]
         public async Task CreateAsync(CreateDowntimeRequest request) =>
             await _service.CreateAsync(request);
 
         [HttpPut("{id}")]
-        [Authorize(Policy = Policies.OnlyAdmins)]
+        [Authorize(Policy = Policies.WriteDowntimes)]
         public async Task UpdateAsync(string id, UpdateDowntimeRequest request) =>
             await _service.UpdateAsync(id, request);
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = Policies.OnlyAdmins)]
+        [Authorize(Policy = Policies.WriteDowntimes)]
         public async Task DeleteAsync(string id) =>
             await _service.DeleteAsync(id);
     }

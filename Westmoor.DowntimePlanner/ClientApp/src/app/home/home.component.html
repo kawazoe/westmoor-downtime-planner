@@ -1,15 +1,8 @@
-<ng-container *ngIf="user$ | async as user; else guestWelcome">
-  <h1 class="mb-4">Welcome back {{user.owner}}!</h1>
+<ng-container *ngIf="userFullName$ | async as fullName; else guestHeader">
+  <h1 class="mb-4">Welcome back {{fullName}}!</h1>
 </ng-container>
-<ng-template #guestWelcome>
-  <h1>Welcome guest!</h1>
-  <form class="mb-4" style="width: 20rem" [formGroup]="impersonateForm" (ngSubmit)="impersonate()">
-    <div class="form-group">
-      <label for="playerName">Player name:</label>
-      <input id="playerName" class="form-control" formControlName="playerName">
-    </div>
-    <button type="submit" class="btn btn-secondary" [disabled]="!impersonateForm.valid">It's me!</button>
-  </form>
+<ng-template #guestHeader>
+  <h1 class="mb-4">Welcome guest!</h1>
 </ng-template>
 
 <h2>Current downtime</h2>

@@ -8,8 +8,8 @@ namespace Westmoor.DowntimePlanner.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    [Authorize(Policy = Policies.OnlyAdmins)]
-    public class UserController
+    [Authorize(Policy = Policies.WriteApiKeys)]
+    public class UserController : ControllerBase
     {
         private readonly IApiKeyService _service;
 

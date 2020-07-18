@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from './auth.service';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SignoutGuard implements CanActivate {
+export class SignOutGuard implements CanActivate {
   constructor(
     private auth: AuthService,
     private router: Router
@@ -13,7 +14,9 @@ export class SignoutGuard implements CanActivate {
   }
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    this.auth.signOut();
-    return this.router.parseUrl('');
+    return this.auth.signOut$
+      .pipe(
+        map(() => this.router.parseUrl(''))
+      );
   }
 }

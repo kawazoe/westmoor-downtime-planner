@@ -3,7 +3,13 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  oidc: {
+    authority: 'dev-kawazoe.us.auth0.com',
+    client_id: 'VxaXJsnUSCHHjKVwN7jFemYVXkKP3F59',
+    redirect_url: '/oidc-callback',
+    audience: 'westmoor-downtime-planner.azurewebsites.net'
+  }
 };
 
 /*

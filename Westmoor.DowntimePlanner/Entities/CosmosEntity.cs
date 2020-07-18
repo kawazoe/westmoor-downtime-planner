@@ -10,7 +10,11 @@ namespace Westmoor.DowntimePlanner.Entities
         public virtual string TypeName => GetType().Name;
         public virtual int TypeVersion => 1;
 
+        public string[] SharedWith = new string[0];
+
         public DateTimeOffset CreatedOn { get; set; }
+        public string CreatedBy { get; set; }
         public DateTimeOffset? ModifiedOn { get; set; }
+        public string ModifiedBy { get; set; }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
@@ -10,23 +9,20 @@ namespace Westmoor.DowntimePlanner.Repositories
 {
     public class DowntimeRepository : IDowntimeRepository
     {
-        private readonly IClock _clock;
         private readonly Task<Container> _container;
+        private readonly ICosmosEntityManipulator<DowntimeEntity> _entityManipulator;
         private readonly ICharacterRepository _characterRepository;
         private readonly IActivityRepository _activityRepository;
 
-        private const string KindKeyValue = nameof(DowntimeEntity);
-        private static PartitionKey KindKey => new PartitionKey(KindKeyValue);
-
         public DowntimeRepository(
-            IClock clock,
             Task<Container> container,
+            ICosmosEntityManipulator<DowntimeEntity> entityManipulator,
             ICharacterRepository characterRepository,
             IActivityRepository activityRepository
         )
         {
-            _clock = clock;
             _container = container;
+            _entityManipulator = entityManipulator;
             _characterRepository = characterRepository;
             _activityRepository = activityRepository;
         }
@@ -34,8 +30,9 @@ namespace Westmoor.DowntimePlanner.Repositories
         public async Task<DowntimeEntity[]> GetAllAsync()
         {
             return await (await _container).GetItemLinqQueryable<DowntimeEntity>(
-                    requestOptions: new QueryRequestOptions { PartitionKey = KindKey }
+                    requestOptions: new QueryRequestOptions { PartitionKey = _entityManipulator.DefaultPartitionKey }
                 )
+                .Where(_entityManipulator.GetScopeFilterPredicate())
                 .OrderByDescending(d => d.CreatedOn)
                 .ToAsyncEnumerable()
                 .ToArrayAsync();
@@ -43,7 +40,12 @@ namespace Westmoor.DowntimePlanner.Repositories
 
         public async Task<DowntimeEntity> GetByIdAsync(string id)
         {
-            return await (await _container).ReadItemAsync<DowntimeEntity>(id, KindKey);
+            var entity = await (await _container)
+                .ReadItemAsync<DowntimeEntity>(id, _entityManipulator.DefaultPartitionKey);
+
+            return _entityManipulator.GetScopeFilterPredicate().Compile().Invoke(entity)
+                ? entity
+                : null;
         }
 
         public async Task CreateAsync(CreateDowntimeRequest request)
@@ -59,17 +61,14 @@ namespace Westmoor.DowntimePlanner.Repositories
                 })
                 .ToArray();
 
-            await (await _container).CreateItemAsync(
-                new DowntimeEntity
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Idp = KindKeyValue,
-                    Character = character,
-                    Activity = activity,
-                    Costs = costs,
-                    CreatedOn = _clock.UtcNow
-                }
-            );
+            var entity = new DowntimeEntity
+            {
+                Character = character,
+                Activity = activity,
+                Costs = costs
+            };
+
+            await (await _container).CreateItemAsync(_entityManipulator.CreateMetadata(entity));
         }
 
         public async Task UpdateAsync(string id, UpdateDowntimeRequest request)
@@ -85,24 +84,22 @@ namespace Westmoor.DowntimePlanner.Repositories
                 })
                 .ToArray();
 
+            var updatedEntity = new DowntimeEntity
+            {
+                Character = entity.Character,
+                Activity = entity.Activity,
+                Costs = costs
+            };
+
             await (await _container).ReplaceItemAsync(
-                new DowntimeEntity
-                {
-                    Id = entity.Id,
-                    Idp = entity.Idp,
-                    Character = entity.Character,
-                    Activity = entity.Activity,
-                    Costs = costs,
-                    CreatedOn = entity.CreatedOn,
-                    ModifiedOn = _clock.UtcNow
-                },
+                _entityManipulator.UpdateMetadata(updatedEntity, entity),
                 id
             );
         }
 
         public async Task DeleteAsync(string id)
         {
-            await (await _container).DeleteItemAsync<DowntimeEntity>(id, KindKey);
+            await (await _container).DeleteItemAsync<DowntimeEntity>(id, _entityManipulator.DefaultPartitionKey);
         }
     }
 }

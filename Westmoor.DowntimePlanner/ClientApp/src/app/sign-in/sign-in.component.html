@@ -1,9 +1,0 @@
-<h1>Sign In</h1>
-<form [formGroup]="form" (ngSubmit)="signIn()">
-  <div class="form-group">
-    <label for="inputApiKey">Api Key</label>
-    <input type="text" class="form-control" id="inputApiKey" formControlName="apiKey" required>
-  </div>
-
-  <button type="submit" class="btn btn-primary" [disabled]="!form.valid">Sign In</button>
-</form>

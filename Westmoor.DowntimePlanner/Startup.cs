@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -26,6 +27,7 @@ namespace Westmoor.DowntimePlanner
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IClock, SystemClock>();
+            services.AddSingleton<IUuidFactory, GuidUuidFactory>();
 
             services.AddSingleton(p => new CosmosClient(
                 Configuration["CosmosConnectionString"],
@@ -51,19 +53,26 @@ namespace Westmoor.DowntimePlanner
                 return container;
             });
 
-            services.AddSingleton<IApiKeyRepository, ApiKeyRepository>();
-            services.AddSingleton<IApiKeyService, ApiKeyService>();
-            services.AddAuthentication(options =>
+            services.AddHttpContextAccessor();
+            services.AddScoped(typeof(ICosmosEntityManipulator<>), typeof(AspNetCoreCosmosEntityManipulator<>));
+
+            services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
+            services.AddScoped<IApiKeyService, ApiKeyService>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
                 {
-                    options.DefaultAuthenticateScheme = ApiKeyAuthenticationOptions.DefaultScheme;
-                    options.DefaultChallengeScheme = ApiKeyAuthenticationOptions.DefaultScheme;
+                    options.Audience = "westmoor-downtime-planner.azurewebsites.net";
+                    options.Authority = "https://dev-kawazoe.us.auth0.com";
+
+                    options.TokenValidationParameters.NameClaimType = "https://furrybuilder.com/ownserhip_id";
                 })
                 .AddApiKeySupport();
             services.AddAuthorization(options =>
             {
-                foreach (var (name, role) in Policies.All)
+                foreach (var permission in Policies.All)
                 {
-                    options.AddPolicy(name, b => b.RequireRole(role));
+                    options.AddPolicy(permission, b => b.RequireClaim("permissions", permission));
                 }
             });
 
@@ -81,6 +90,13 @@ namespace Westmoor.DowntimePlanner
 
             services.AddSwaggerGen(options =>
             {
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    Description = "Oauth 2 identity provider.",
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.OAuth2
+                });
                 options.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
                 {
                     Description = "Api key provided by the API. Will be passed in the X-Api-Key HTTP header.",
@@ -126,9 +142,7 @@ namespace Westmoor.DowntimePlanner
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapControllers();
             });
 
             app.UseSpa(spa =>

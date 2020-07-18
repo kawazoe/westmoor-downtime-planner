@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
@@ -10,67 +9,68 @@ namespace Westmoor.DowntimePlanner.Repositories
 {
     public class ApiKeyRepository : IApiKeyRepository
     {
-        private readonly IClock _clock;
         private readonly Task<Container> _container;
+        private readonly ICosmosEntityManipulator<ApiKeyEntity> _entityManipulator;
 
-        private const string KindKeyValue = nameof(ApiKeyEntity);
-        private static PartitionKey KindKey => new PartitionKey(KindKeyValue);
-
-        public ApiKeyRepository(IClock clock, Task<Container> container)
+        public ApiKeyRepository(
+            Task<Container> container,
+            ICosmosEntityManipulator<ApiKeyEntity> entityManipulator
+        )
         {
-            _clock = clock;
             _container = container;
+            _entityManipulator = entityManipulator;
         }
 
         public async Task<ApiKeyEntity[]> GetAllAsync()
         {
             return await (await _container).GetItemLinqQueryable<ApiKeyEntity>(
-                    requestOptions: new QueryRequestOptions { PartitionKey = KindKey }
+                    requestOptions: new QueryRequestOptions { PartitionKey = _entityManipulator.DefaultPartitionKey }
                 )
+                .Where(_entityManipulator.GetScopeFilterPredicate())
                 .ToAsyncEnumerable()
                 .ToArrayAsync();
         }
 
         public async Task<ApiKeyEntity> GetByKeyAsync(string key)
         {
-            return await (await _container).ReadItemAsync<ApiKeyEntity>(key, KindKey);
+            var entity = await (await _container)
+                .ReadItemAsync<ApiKeyEntity>(key, _entityManipulator.DefaultPartitionKey);
+
+            return _entityManipulator.GetScopeFilterPredicate().Compile().Invoke(entity)
+                ? entity
+                : null;
         }
 
         public async Task CreateAsync(CreateApiKeyRequest request)
         {
-            await (await _container).CreateItemAsync(
-                new ApiKeyEntity
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Idp = KindKeyValue,
-                    Owner = request.Owner,
-                    Roles = request.Roles,
-                    CreatedOn = _clock.UtcNow
-                }
-            );
+            var entity = new ApiKeyEntity
+            {
+                Owner = request.Owner,
+                Roles = request.Roles
+            };
+
+            await (await _container).CreateItemAsync(_entityManipulator.CreateMetadata(entity));
         }
 
         public async Task UpdateAsync(string key, UpdateApiKeyRequest request)
         {
             var entity = await GetByKeyAsync(key);
 
+            var updatedEntity = new ApiKeyEntity
+            {
+                Owner = request.Owner ?? entity.Owner,
+                Roles = request.Roles ?? entity.Roles
+            };
+
             await (await _container).ReplaceItemAsync(
-                new ApiKeyEntity
-                {
-                    Id = entity.Id,
-                    Idp = entity.Idp,
-                    Owner = request.Owner ?? entity.Owner,
-                    Roles = request.Roles ?? entity.Roles,
-                    CreatedOn = entity.CreatedOn,
-                    ModifiedOn = _clock.UtcNow
-                },
+                _entityManipulator.UpdateMetadata(updatedEntity, entity),
                 key
             );
         }
 
         public async Task DeleteAsync(string key)
         {
-            await (await _container).DeleteItemAsync<ApiKeyEntity>(key, KindKey);
+            await (await _container).DeleteItemAsync<ApiKeyEntity>(key, _entityManipulator.DefaultPartitionKey);
         }
     }
 }

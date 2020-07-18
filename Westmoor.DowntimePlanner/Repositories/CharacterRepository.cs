@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
@@ -10,23 +9,24 @@ namespace Westmoor.DowntimePlanner.Repositories
 {
     public class CharacterRepository : ICharacterRepository
     {
-        private readonly IClock _clock;
         private readonly Task<Container> _container;
+        private readonly ICosmosEntityManipulator<CharacterEntity> _entityManipulator;
 
-        private const string KindKeyValue = nameof(CharacterEntity);
-        private static PartitionKey KindKey => new PartitionKey(KindKeyValue);
-
-        public CharacterRepository(IClock clock, Task<Container> container)
+        public CharacterRepository(
+            Task<Container> container,
+            ICosmosEntityManipulator<CharacterEntity> entityManipulator
+        )
         {
-            _clock = clock;
             _container = container;
+            _entityManipulator = entityManipulator;
         }
 
         public async Task<CharacterEntity[]> GetAllAsync()
         {
             return await (await _container).GetItemLinqQueryable<CharacterEntity>(
-                    requestOptions: new QueryRequestOptions { PartitionKey = KindKey }
+                    requestOptions: new QueryRequestOptions { PartitionKey = _entityManipulator.DefaultPartitionKey }
                 )
+                .Where(_entityManipulator.GetScopeFilterPredicate())
                 .OrderBy(c => c.PlayerFullName)
                 .ThenBy(c => c.CharacterFullName)
                 .ToAsyncEnumerable()
@@ -35,46 +35,46 @@ namespace Westmoor.DowntimePlanner.Repositories
 
         public async Task<CharacterEntity> GetByIdAsync(string id)
         {
-            return await (await _container).ReadItemAsync<CharacterEntity>(id, KindKey);
+            var entity = await (await _container)
+                .ReadItemAsync<CharacterEntity>(id, _entityManipulator.DefaultPartitionKey);
+
+            return _entityManipulator.GetScopeFilterPredicate().Compile().Invoke(entity)
+                ? entity
+                : null;
         }
 
         public async Task CreateAsync(CreateCharacterRequest request)
         {
-            await (await _container).CreateItemAsync(
-                new CharacterEntity
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Idp = KindKeyValue,
-                    PlayerFullName = request.PlayerFullName,
-                    CharacterFullName = request.CharacterFullName,
-                    AccruedDowntimeDays = 0,
-                    CreatedOn = _clock.UtcNow
-                }
-            );
+            var entity = new CharacterEntity
+            {
+                PlayerFullName = request.PlayerFullName,
+                CharacterFullName = request.CharacterFullName,
+                AccruedDowntimeDays = 0
+            };
+
+            await (await _container).CreateItemAsync(_entityManipulator.CreateMetadata(entity));
         }
 
         public async Task UpdateAsync(string id, UpdateCharacterRequest request)
         {
             var entity = await GetByIdAsync(id);
 
+            var updatedEntity = new CharacterEntity
+            {
+                PlayerFullName = request.PlayerFullName,
+                CharacterFullName = request.CharacterFullName,
+                AccruedDowntimeDays = request.AccruedDowntimeDays
+            };
+
             await (await _container).ReplaceItemAsync(
-                new CharacterEntity
-                {
-                    Id = entity.Id,
-                    Idp = entity.Idp,
-                    PlayerFullName = request.PlayerFullName,
-                    CharacterFullName = request.CharacterFullName,
-                    AccruedDowntimeDays = request.AccruedDowntimeDays,
-                    CreatedOn = entity.CreatedOn,
-                    ModifiedOn = _clock.UtcNow
-                },
+                _entityManipulator.UpdateMetadata(updatedEntity, entity),
                 id
             );
         }
 
         public async Task DeleteAsync(string id)
         {
-            await (await _container).DeleteItemAsync<CharacterEntity>(id, KindKey);
+            await (await _container).DeleteItemAsync<CharacterEntity>(id, _entityManipulator.DefaultPartitionKey);
         }
     }
 }
