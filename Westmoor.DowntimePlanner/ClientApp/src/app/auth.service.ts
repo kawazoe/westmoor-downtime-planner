@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import createAuth0Client from '@auth0/auth0-spa-js';
-import { from, Observable, of, OperatorFunction, ReplaySubject, throwError } from 'rxjs';
-import { catchError, first, map, multicast, refCount, shareReplay, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, from, Observable, of, OperatorFunction, throwError } from 'rxjs';
+import { catchError, first, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { environment } from '../environments/environment';
 import { ParamMap } from '@angular/router';
@@ -16,10 +16,12 @@ export interface UserProfile {
   nickname: string;
   picture: string;
   updated_at: string;
+
+  'https://furrybuilder.com/permissions': string[];
 }
 
-export function hasRole(role: string): OperatorFunction<UserProfile, boolean> {
-  return map(user => true);
+export function can(permission: string): OperatorFunction<UserProfile, boolean> {
+  return map(user => user && user['https://furrybuilder.com/permissions']?.includes(permission));
 }
 
 @Injectable({
@@ -64,12 +66,15 @@ export class AuthService {
       map(c => { c.logout(this.logoutOptions); })
     );
 
-  public user$ = this.auth0Client$
+  public getUser$ = this.auth0Client$
     .pipe(
       switchMap(c => from(c.getUser())),
-      multicast(() => new ReplaySubject(1)),
-      refCount()
+      tap(u => this.userSubject.next(u))
     ) as Observable<UserProfile>;
+
+  private userSubject = new BehaviorSubject<UserProfile>(null);
+
+  public user$ = this.userSubject.asObservable();
 
   constructor() {
     // Set up local auth streams
@@ -98,13 +103,14 @@ export class AuthService {
     if (query.has('code') && query.has('state')) {
       return this.handleRedirectCallback$
         .pipe(
-          map(cbRes => {
-            return cbRes.appState && cbRes.appState.target ? cbRes.appState.target : '/';
-          })
+          switchMap(cbRes => combineLatest([
+            this.getUser$,
+            of(cbRes.appState && cbRes.appState.target ? cbRes.appState.target : '/')
+          ]))
         );
     }
 
-    return of(null);
+    return of([]);
   }
 
   private localAuthSetup() {
@@ -113,7 +119,7 @@ export class AuthService {
     this.isAuthenticated$
       .pipe(
         switchMap(isAuthenticated => isAuthenticated
-          ? this.user$
+          ? this.getUser$
           : of(isAuthenticated)
         )
       )

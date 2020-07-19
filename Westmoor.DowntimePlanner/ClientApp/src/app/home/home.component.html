@@ -10,21 +10,21 @@
         class="btn btn-secondary mb-1 mr-2"
         (click)="beginAwardDowntime()"
         [disabled]="!selectedCharacters.length"
-        *ngIf="isAdmin$ | async">
+        *ngIf="user$ | can:'write:characters' | async">
   Award downtime...
 </button>
 <button type="button"
         class="btn btn-secondary mb-1"
         (click)="beginScheduleDowntime()"
         [disabled]="!selectedCharacters.length"
-        *ngIf="isAdmin$ | async">
+        *ngIf="user$ | can:'write:downtimes' | async">
   Schedule downtime...
 </button>
 
 <table class="table table-striped mb-4" *ngIf="characters$ | async as characters">
   <thead>
   <tr>
-    <th style="width: 3rem" *ngIf="isAdmin$ | async"></th>
+    <th style="width: 3rem" *ngIf="user$ | can:'write:characters' | async"></th>
     <th>Player</th>
     <th>Character</th>
     <th>Accrued</th>
@@ -33,7 +33,7 @@
 
   <tbody>
   <tr *ngFor="let character of characters" (click)="toggleCharacter(character)">
-    <td *ngIf="isAdmin$ | async">
+    <td *ngIf="user$ | can:'write:characters' | async">
       <div class="form-check">
         <input type="checkbox"
                class="form-check-input"
@@ -52,21 +52,21 @@
         class="btn btn-secondary mb-1 mr-2"
         (click)="beginAwardProgress()"
         [disabled]="!selectedDowntimes.length"
-        *ngIf="isAdmin$ | async">
+        *ngIf="user$ | can:'write:downtimes' | async">
   Award progress...
 </button>
 <button type="button"
         class="btn btn-danger mb-1"
         (click)="cancelDowntimes()"
         [disabled]="!selectedDowntimes.length"
-        *ngIf="isAdmin$ | async">
+        *ngIf="user$ | can:'write:downtimes' | async">
   Cancel downtime...
 </button>
 
 <table class="table table-striped mb-4" *ngIf="downtimes$ | async as downtimes">
   <thead>
   <tr>
-    <th style="width: 3rem" *ngIf="isAdmin$ | async"></th>
+    <th style="width: 3rem" *ngIf="user$ | can:'write:downtimes' | async"></th>
     <th>Player</th>
     <th>Character</th>
     <th>Activity</th>
@@ -76,7 +76,7 @@
 
   <tbody>
   <tr *ngFor="let downtime of downtimes | filter:isScheduled" (click)="toggleDowntime(downtime)">
-    <td *ngIf="isAdmin$ | async">
+    <td *ngIf="user$ | can:'write:downtimes' | async">
       <div class="form-check">
         <input type="checkbox"
                class="form-check-input"

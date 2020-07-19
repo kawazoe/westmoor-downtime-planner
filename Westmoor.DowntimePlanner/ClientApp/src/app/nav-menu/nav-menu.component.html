@@ -19,20 +19,18 @@
               [routerLinkActiveOptions]="{ exact: true }">
             <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
           </li>
-          <ng-container *ngIf="isAdmin$ | async">
-            <li class="nav-item" [routerLinkActive]="['link-active']">
-              <a class="nav-link text-dark" [routerLink]="['/characters']">Characters</a>
-            </li>
-            <li class="nav-item" [routerLinkActive]="['link-active']">
-              <a class="nav-link text-dark" [routerLink]="['/activities']">Activities</a>
-            </li>
-            <li class="nav-item" [routerLinkActive]="['link-active']">
-              <a class="nav-link text-dark" [routerLink]="['/api-keys']">Api Keys</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-dark" href="/swagger">Swagger</a>
-            </li>
-          </ng-container>
+          <li class="nav-item" [routerLinkActive]="['link-active']" *ngIf="user$ | can:'read:characters' | async">
+            <a class="nav-link text-dark" [routerLink]="['/characters']">Characters</a>
+          </li>
+          <li class="nav-item" [routerLinkActive]="['link-active']" *ngIf="user$ | can:'read:activities' | async">
+            <a class="nav-link text-dark" [routerLink]="['/activities']">Activities</a>
+          </li>
+          <li class="nav-item" [routerLinkActive]="['link-active']" *ngIf="user$ | can:'write:apikeys' | async">
+            <a class="nav-link text-dark" [routerLink]="['/api-keys']">Api Keys</a>
+          </li>
+          <li class="nav-item" *ngIf="user$ | can:'write:apikeys' | async">
+            <a class="nav-link text-dark" href="/swagger">Swagger</a>
+          </li>
           <ng-container *ngIf="user$ | async as user; else signedOut">
             <div class="btn-group mx-2" dropdown placement="bottom right">
               <button type="button" dropdownToggle class="btn rounded-circle">
@@ -45,7 +43,7 @@
           </ng-container>
           <ng-template #signedOut>
             <li class="nav-item">
-              <a class="nav-link text-dark" (click)="signIn()">Sign in</a>
+              <a class="nav-link text-dark" href="#" (click)="signIn()">Sign in</a>
             </li>
           </ng-template>
         </ul>

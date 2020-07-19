@@ -16,7 +16,7 @@ export class OidcCallbackGuard implements CanActivate {
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     return this.auth.handleAuthCallback(state.root.queryParamMap)
       .pipe(
-        map(targetRoute => targetRoute ? this.router.parseUrl(targetRoute) : true)
+        map(([_, targetRoute]) => targetRoute ? this.router.parseUrl(targetRoute) : true)
       );
   }
 }

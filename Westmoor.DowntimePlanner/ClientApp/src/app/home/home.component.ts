@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthService, hasRole } from '../auth.service';
+import { AuthService } from '../auth.service';
 import { ApiService, CharacterResponse, DowntimeResponse } from '../api.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { AwardDowntimeComponent } from './award-downtime.component';
@@ -17,7 +17,7 @@ import { groupBy } from '../../lib/functional';
 })
 export class HomeComponent {
   public userFullName$ = this.auth.user$.pipe(map(u => u?.name));
-  public isAdmin$ = hasRole('Admin')(this.auth.user$);
+  public user$ = this.auth.user$;
 
   private characters = new BehaviorSubject<CharacterResponse[]>([]);
   private downtimes = new BehaviorSubject<DowntimeResponse[]>([]);

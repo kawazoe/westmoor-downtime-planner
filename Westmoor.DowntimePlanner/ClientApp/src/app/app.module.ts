@@ -41,6 +41,7 @@ import { OwnershipComponent } from './ownership/ownership.component';
 import { ActivityCostKindPickerComponent } from './activity-cost-kind-picker/activity-cost-kind-picker.component';
 import { ProgressesPresenterComponent } from './progresses-presenter/progresses-presenter.component';
 import { CastPipe } from './Pipes/cast.pipe';
+import { CanPipe } from './Pipes/can.pipe';
 import { IncludesPipe } from './Pipes/includes.pipe';
 import { FilterPipe } from './Pipes/filter.pipe';
 
@@ -68,6 +69,7 @@ import { FilterPipe } from './Pipes/filter.pipe';
     ActivityCostKindPickerComponent,
     ProgressesPresenterComponent,
     CastPipe,
+    CanPipe,
     IncludesPipe,
     FilterPipe
   ],

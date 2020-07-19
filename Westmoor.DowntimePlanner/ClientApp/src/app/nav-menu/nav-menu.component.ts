@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthService, hasRole } from '../auth.service';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -10,7 +10,6 @@ export class NavMenuComponent {
   isExpanded = false;
 
   user$ = this.auth.user$;
-  isAdmin$ = hasRole('Admin')(this.auth.user$);
 
   constructor(
     private auth: AuthService
