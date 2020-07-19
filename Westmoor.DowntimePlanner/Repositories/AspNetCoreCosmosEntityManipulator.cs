@@ -57,7 +57,6 @@ namespace Westmoor.DowntimePlanner.Repositories
         {
             updatedEntity.Id = entity.Id;
             updatedEntity.Idp = entity.Idp;
-            updatedEntity.SharedWith = entity.SharedWith;
             updatedEntity.CreatedOn = entity.CreatedOn;
             updatedEntity.CreatedBy = entity.CreatedBy;
             updatedEntity.ModifiedOn = _clock.UtcNow;

@@ -72,7 +72,7 @@ namespace Westmoor.DowntimePlanner
                     options.Audience = "westmoor-downtime-planner.azurewebsites.net";
                     options.Authority = Configuration.GetSection("Auth0").GetValue<string>("EndpointUrl");
 
-                    options.TokenValidationParameters.NameClaimType = "https://westmoor.rpg/ownserhip_id";
+                    options.TokenValidationParameters.NameClaimType = "https://westmoor.rpg/ownership_id";
                 })
                 .AddApiKeySupport();
             services.AddAuthorization(options =>
