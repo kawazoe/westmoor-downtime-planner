@@ -1,117 +1,138 @@
 <ng-container *ngIf="userFullName$ | async as fullName; else guestHeader">
   <h1 class="mb-4">Welcome back {{fullName}}!</h1>
+
+  <h2>Current downtime</h2>
+  <button type="button"
+          class="btn btn-secondary mb-1 mr-2"
+          (click)="beginAwardDowntime()"
+          [disabled]="!selectedCharacters.length"
+          *ngIf="user$ | can:'write:characters' | async">
+    Award downtime...
+  </button>
+  <button type="button"
+          class="btn btn-secondary mb-1"
+          (click)="beginScheduleDowntime()"
+          [disabled]="!selectedCharacters.length"
+          *ngIf="user$ | can:'write:downtimes' | async">
+    Schedule downtime...
+  </button>
+
+  <table class="table table-striped mb-4" *ngIf="characters$ | async as characters">
+    <thead>
+    <tr>
+      <th style="width: 3rem" *ngIf="user$ | can:'write:characters' | async"></th>
+      <th>Player</th>
+      <th>Character</th>
+      <th>Accrued</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr *ngFor="let character of characters" (click)="toggleCharacter(character)">
+      <td *ngIf="user$ | can:'write:characters' | async">
+        <div class="form-check">
+          <input type="checkbox"
+                 class="form-check-input"
+                 [checked]="selectedCharacters | includes:character">
+        </div>
+      </td>
+      <td>{{character.playerFullName}}</td>
+      <td>{{character.characterFullName}}</td>
+      <td>{{character.accruedDowntimeDays}} days</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <h2>Scheduled downtimes</h2>
+  <button type="button"
+          class="btn btn-secondary mb-1 mr-2"
+          (click)="beginAwardProgress()"
+          [disabled]="!selectedDowntimes.length"
+          *ngIf="user$ | can:'write:downtimes' | async">
+    Award progress...
+  </button>
+  <button type="button"
+          class="btn btn-danger mb-1"
+          (click)="cancelDowntimes()"
+          [disabled]="!selectedDowntimes.length"
+          *ngIf="user$ | can:'write:downtimes' | async">
+    Cancel downtime...
+  </button>
+
+  <table class="table table-striped mb-4" *ngIf="downtimes$ | async as downtimes">
+    <thead>
+    <tr>
+      <th style="width: 3rem" *ngIf="user$ | can:'write:downtimes' | async"></th>
+      <th>Player</th>
+      <th>Character</th>
+      <th>Activity</th>
+      <th>Progress</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr *ngFor="let downtime of downtimes | filter:isScheduled" (click)="toggleDowntime(downtime)">
+      <td *ngIf="user$ | can:'write:downtimes' | async">
+        <div class="form-check">
+          <input type="checkbox"
+                 class="form-check-input"
+                 [checked]="selectedDowntimes | includes:downtime">
+        </div>
+      </td>
+      <td>{{downtime.character.playerFullName}}</td>
+      <td>{{downtime.character.characterFullName}}</td>
+      <td>{{downtime.activity.name}}</td>
+      <td>
+        <app-progresses-presenter [progresses]="downtime.progresses" [animate]="true"></app-progresses-presenter>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <h2>Completed downtimes</h2>
+  <table class="table table-striped mb-4" *ngIf="downtimes$ | async as downtimes">
+    <thead>
+    <tr>
+      <th>Player</th>
+      <th>Character</th>
+      <th>Activity</th>
+      <th>Spent</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr *ngFor="let downtime of downtimes | filter:isCompleted">
+      <td>{{downtime.character.playerFullName}}</td>
+      <td>{{downtime.character.characterFullName}}</td>
+      <td>{{downtime.activity.name}}</td>
+      <td>
+        <app-progresses-presenter [progresses]="downtime.progresses" [animate]="false"></app-progresses-presenter>
+      </td>
+    </tr>
+    </tbody>
+  </table>
 </ng-container>
 <ng-template #guestHeader>
   <h1 class="mb-4">Welcome guest!</h1>
+
+  <button class="btn btn-primary btn-lg mb-4" routerLink="/sign-in">Sign in</button>
+
+  <p>
+    The Westmoor Downtime Planner is an app design to simplify your D&D downtime experience.
+    If you are playing in or hosting a D&D 5e game where your characters are often spending
+    time between adventures and you are getting tired for managing all of time-keeping
+    details of the downtime rules of D&D, this app is for you.
+  </p>
+  <p>
+    Initially designed for the Westmoor campaign, a live show inspired from the Westmarch
+    classic adventure with over 10 players that you can watch live on
+    <a href="https://www.twitch.tv/yell_ho">Twitch</a>, this application can be used for
+    any D&D 5e campaign... and probably even other table top game systems that provides a
+    similar concept.
+  </p>
+  <p>
+    This app is still a work in progress and so has some pretty heavy limitation. To follow
+    the project, take a look at our
+    <a href="https://github.com/kawazoe/westmoor-downtime-planner">GitHub page</a>.
+  </p>
 </ng-template>
-
-<h2>Current downtime</h2>
-<button type="button"
-        class="btn btn-secondary mb-1 mr-2"
-        (click)="beginAwardDowntime()"
-        [disabled]="!selectedCharacters.length"
-        *ngIf="user$ | can:'write:characters' | async">
-  Award downtime...
-</button>
-<button type="button"
-        class="btn btn-secondary mb-1"
-        (click)="beginScheduleDowntime()"
-        [disabled]="!selectedCharacters.length"
-        *ngIf="user$ | can:'write:downtimes' | async">
-  Schedule downtime...
-</button>
-
-<table class="table table-striped mb-4" *ngIf="characters$ | async as characters">
-  <thead>
-  <tr>
-    <th style="width: 3rem" *ngIf="user$ | can:'write:characters' | async"></th>
-    <th>Player</th>
-    <th>Character</th>
-    <th>Accrued</th>
-  </tr>
-  </thead>
-
-  <tbody>
-  <tr *ngFor="let character of characters" (click)="toggleCharacter(character)">
-    <td *ngIf="user$ | can:'write:characters' | async">
-      <div class="form-check">
-        <input type="checkbox"
-               class="form-check-input"
-               [checked]="selectedCharacters | includes:character">
-      </div>
-    </td>
-    <td>{{character.playerFullName}}</td>
-    <td>{{character.characterFullName}}</td>
-    <td>{{character.accruedDowntimeDays}} days</td>
-  </tr>
-  </tbody>
-</table>
-
-<h2>Scheduled downtimes</h2>
-<button type="button"
-        class="btn btn-secondary mb-1 mr-2"
-        (click)="beginAwardProgress()"
-        [disabled]="!selectedDowntimes.length"
-        *ngIf="user$ | can:'write:downtimes' | async">
-  Award progress...
-</button>
-<button type="button"
-        class="btn btn-danger mb-1"
-        (click)="cancelDowntimes()"
-        [disabled]="!selectedDowntimes.length"
-        *ngIf="user$ | can:'write:downtimes' | async">
-  Cancel downtime...
-</button>
-
-<table class="table table-striped mb-4" *ngIf="downtimes$ | async as downtimes">
-  <thead>
-  <tr>
-    <th style="width: 3rem" *ngIf="user$ | can:'write:downtimes' | async"></th>
-    <th>Player</th>
-    <th>Character</th>
-    <th>Activity</th>
-    <th>Progress</th>
-  </tr>
-  </thead>
-
-  <tbody>
-  <tr *ngFor="let downtime of downtimes | filter:isScheduled" (click)="toggleDowntime(downtime)">
-    <td *ngIf="user$ | can:'write:downtimes' | async">
-      <div class="form-check">
-        <input type="checkbox"
-               class="form-check-input"
-               [checked]="selectedDowntimes | includes:downtime">
-      </div>
-    </td>
-    <td>{{downtime.character.playerFullName}}</td>
-    <td>{{downtime.character.characterFullName}}</td>
-    <td>{{downtime.activity.name}}</td>
-    <td>
-      <app-progresses-presenter [progresses]="downtime.progresses" [animate]="true"></app-progresses-presenter>
-    </td>
-  </tr>
-  </tbody>
-</table>
-
-<h2>Completed downtimes</h2>
-<table class="table table-striped mb-4" *ngIf="downtimes$ | async as downtimes">
-  <thead>
-  <tr>
-    <th>Player</th>
-    <th>Character</th>
-    <th>Activity</th>
-    <th>Spent</th>
-  </tr>
-  </thead>
-
-  <tbody>
-  <tr *ngFor="let downtime of downtimes | filter:isCompleted">
-    <td>{{downtime.character.playerFullName}}</td>
-    <td>{{downtime.character.characterFullName}}</td>
-    <td>{{downtime.activity.name}}</td>
-    <td>
-      <app-progresses-presenter [progresses]="downtime.progresses" [animate]="false"></app-progresses-presenter>
-    </td>
-  </tr>
-  </tbody>
-</table>
