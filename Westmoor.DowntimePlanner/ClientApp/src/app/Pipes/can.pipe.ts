@@ -7,7 +7,9 @@ import { can, UserProfile } from '../auth.service';
   pure: true
 })
 export class CanPipe implements PipeTransform {
-  transform(value: Observable<UserProfile>, permission: string): Observable<boolean> {
+  transform(value: UserProfile, permission: string): boolean;
+  transform(value: Observable<UserProfile>, permission: string): Observable<boolean>;
+  transform(value: any, permission: string): boolean | Observable<boolean> {
     return can(permission)(value);
   }
 }

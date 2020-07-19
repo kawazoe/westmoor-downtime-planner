@@ -70,9 +70,9 @@ namespace Westmoor.DowntimePlanner
                 .AddJwtBearer(options =>
                 {
                     options.Audience = "westmoor-downtime-planner.azurewebsites.net";
-                    options.Authority = "https://dev-kawazoe.us.auth0.com";
+                    options.Authority = Configuration.GetSection("Auth0").GetValue<string>("EndpointUrl");
 
-                    options.TokenValidationParameters.NameClaimType = "https://furrybuilder.com/ownserhip_id";
+                    options.TokenValidationParameters.NameClaimType = "https://westmoor.rpg/ownserhip_id";
                 })
                 .AddApiKeySupport();
             services.AddAuthorization(options =>

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
+import { ParamMap } from '@angular/router';
 import createAuth0Client from '@auth0/auth0-spa-js';
-import { BehaviorSubject, combineLatest, from, Observable, of, OperatorFunction, throwError } from 'rxjs';
+import { BehaviorSubject, combineLatest, from, isObservable, Observable, of, throwError } from 'rxjs';
 import { catchError, first, map, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { OperatorProjection } from '../lib/rxjs/types';
 
 import { environment } from '../environments/environment';
-import { ParamMap } from '@angular/router';
 
 export interface UserProfile {
   sub: string;
@@ -17,11 +18,23 @@ export interface UserProfile {
   picture: string;
   updated_at: string;
 
-  'https://furrybuilder.com/permissions': string[];
+  'https://westmoor.rpg/permissions': string[];
 }
 
-export function can(permission: string): OperatorFunction<UserProfile, boolean> {
-  return map(user => user && user['https://furrybuilder.com/permissions']?.includes(permission));
+export function can(permission: string): OperatorProjection<UserProfile, boolean> {
+  const selector = user => user && user['https://westmoor.rpg/permissions']?.includes(permission);
+
+  function _can(user: UserProfile): boolean;
+  function _can(observable: Observable<UserProfile>): Observable<boolean>;
+  function _can(userOrObservable) {
+    if (isObservable<UserProfile>(userOrObservable)) {
+      return map(selector)(userOrObservable);
+    }
+
+    return selector(userOrObservable);
+  }
+
+  return _can;
 }
 
 @Injectable({

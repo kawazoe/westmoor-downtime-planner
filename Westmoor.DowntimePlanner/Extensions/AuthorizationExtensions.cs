@@ -8,7 +8,7 @@ namespace Westmoor.DowntimePlanner.Extensions
 {
     public static class AuthorizationExtensions
     {
-        private const string ClaimsNamespace = "https://furrybuilder.com/";
+        private const string ClaimsNamespace = "https://westmoor.rpg/";
 
         public static Expression<Func<T, bool>> GetMyContentPredicate<T>(this ClaimsPrincipal user) where T : CosmosEntity
         {
