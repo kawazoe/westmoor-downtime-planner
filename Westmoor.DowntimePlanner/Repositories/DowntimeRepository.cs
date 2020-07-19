@@ -65,7 +65,11 @@ namespace Westmoor.DowntimePlanner.Repositories
             {
                 Character = character,
                 Activity = activity,
-                Costs = costs
+                Costs = costs,
+                SharedWith = request.SharedWith
+                    .Concat(character.SharedWith)
+                    .Concat(activity.SharedWith)
+                    .ToArray()
             };
 
             await (await _container).CreateItemAsync(_entityManipulator.CreateMetadata(entity));
