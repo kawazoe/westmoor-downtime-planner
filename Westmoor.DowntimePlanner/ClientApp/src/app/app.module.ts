@@ -44,6 +44,7 @@ import { CastPipe } from './Pipes/cast.pipe';
 import { CanPipe } from './Pipes/can.pipe';
 import { IncludesPipe } from './Pipes/includes.pipe';
 import { FilterPipe } from './Pipes/filter.pipe';
+import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +72,8 @@ import { FilterPipe } from './Pipes/filter.pipe';
     CastPipe,
     CanPipe,
     IncludesPipe,
-    FilterPipe
+    FilterPipe,
+    TermsOfServiceComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
@@ -104,6 +106,7 @@ import { FilterPipe } from './Pipes/filter.pipe';
       },
       {path: 'signout', component: HomeComponent, pathMatch: 'full', canActivate: [SignOutGuard]},
       {path: 'oidc-callback', component: HomeComponent, pathMatch: 'full', canActivate: [OidcCallbackGuard]},
+      {path: 'terms-of-service', component: TermsOfServiceComponent, pathMatch: 'full'}
     ]),
     AlertModule.forRoot(),
     BsDropdownModule.forRoot(),
