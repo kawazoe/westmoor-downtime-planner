@@ -40,15 +40,12 @@ namespace Westmoor.DowntimePlanner.Repositories
 
             entity.Id = _uuidFactory.Create();
             entity.Idp = DefaultPartitionKeyValue;
-            entity.SharedWith = new[]
-            {
-                entity.CreatedBy
-            };
-            entity.CreatedOn = _clock.UtcNow;
-            entity.CreatedBy = identity;
             entity.SharedWith = entity.SharedWith
                 .Prepend(identity)
+                .Distinct()
                 .ToArray();
+            entity.CreatedOn = _clock.UtcNow;
+            entity.CreatedBy = identity;
 
             return entity;
         }
@@ -57,6 +54,9 @@ namespace Westmoor.DowntimePlanner.Repositories
         {
             updatedEntity.Id = entity.Id;
             updatedEntity.Idp = entity.Idp;
+            entity.SharedWith = updatedEntity.SharedWith
+                .Distinct()
+                .ToArray();
             updatedEntity.CreatedOn = entity.CreatedOn;
             updatedEntity.CreatedBy = entity.CreatedBy;
             updatedEntity.ModifiedOn = _clock.UtcNow;
