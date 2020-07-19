@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -28,6 +29,10 @@ namespace Westmoor.DowntimePlanner
         {
             services.AddSingleton<IClock, SystemClock>();
             services.AddSingleton<IUuidFactory, GuidUuidFactory>();
+            services.AddHttpContextAccessor();
+
+            services.AddHttpClient();
+            services.AddScoped<JwtSecurityTokenHandler>();
 
             services.AddSingleton(p => new CosmosClient(
                 Configuration["CosmosConnectionString"],
@@ -53,9 +58,11 @@ namespace Westmoor.DowntimePlanner
                 return container;
             });
 
-            services.AddHttpContextAccessor();
             services.AddScoped(typeof(ICosmosEntityManipulator<>), typeof(AspNetCoreCosmosEntityManipulator<>));
 
+            services.Configure<Auth0ApiUserRepository.Options>(Configuration.GetSection("auth0"));
+            services.AddScoped<IAuth0ApiUserRepository, Auth0ApiUserRepository>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
             services.AddScoped<IApiKeyService, ApiKeyService>();
 

@@ -1,11 +1,21 @@
 <div class="form-group">
-  <label for="shareWithId">User</label>
-  <div class="input-group">
-    <input type="text" class="form-control" id="shareWithId" [value]="sharedWithId" (change)="sharedWithId = $event.target.value">
-    <div class="input-group-append">
-      <button type="button" class="btn btn-success mb-2" (click)="share(sharedWithId)">Share...</button>
+  <ng-template #userResult let-item="item">
+    <div class="typeahead-item">
+      <img class="rounded-circle" [src]="item.picture || '/assets/default-profile.svg'">
+      <span class="ml-4">{{item.name}} - {{item.email}}</span>
     </div>
-  </div>
+  </ng-template>
+
+  <input type="text"
+         class="form-control"
+         id="shareWith"
+         [(ngModel)]="search"
+         [typeahead]="usersByEmail$"
+         [typeaheadAsync]="true"
+         [typeaheadItemTemplate]="userResult"
+         (typeaheadOnSelect)="share($event)"
+         typeaheadOptionField="email"
+         placeholder="Add by email...">
 </div>
 <table class="table table-striped">
   <thead>

@@ -138,6 +138,19 @@ export interface UpdateApiKeyRequest {
   sharedWith: string[];
 }
 
+export interface UserResponse {
+  userId: string;
+  email: string;
+  picture: string;
+  name: string;
+  userMetadata: UserMetadataResponse;
+}
+
+export interface UserMetadataResponse {
+  ownershipId: string;
+  campaigns: string[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -226,5 +239,9 @@ export class ApiService {
 
   public deleteApiKey(id: string): Observable<void> {
     return this.http.delete<void>(`${this.endpoint}/apiKey/${id}`);
+  }
+
+  public searchUsersByEmail(email: string): Observable<UserResponse[]> {
+    return this.http.get<UserResponse[]>(`${this.endpoint}/user/${email}`);
   }
 }

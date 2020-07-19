@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { RouterModule } from '@angular/router';
@@ -12,6 +12,7 @@ import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 
 import { AuthHttpInterceptorService } from './auth-http-interceptor.service';
 import { SignOutGuard } from './sign-out-guard.service';
@@ -71,24 +72,44 @@ import { FilterPipe } from './Pipes/filter.pipe';
     FilterPipe
   ],
   imports: [
-    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
     BrowserAnimationsModule,
     HttpClientModule,
+    FormsModule,
     ReactiveFormsModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'activities', component: ActivitiesComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { role: 'Admin' } },
-      { path: 'characters', component: CharactersComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { role: 'Admin' } },
-      { path: 'api-keys', component: ApiKeysComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { role: 'Admin' } },
-      { path: 'signout', component: HomeComponent, pathMatch: 'full', canActivate: [SignOutGuard] },
-      { path: 'oidc-callback', component: HomeComponent, pathMatch: 'full', canActivate: [OidcCallbackGuard] },
+      {path: '', component: HomeComponent, pathMatch: 'full'},
+      {
+        path: 'activities',
+        component: ActivitiesComponent,
+        pathMatch: 'full',
+        canActivate: [AuthGuard],
+        data: {role: 'Admin'}
+      },
+      {
+        path: 'characters',
+        component: CharactersComponent,
+        pathMatch: 'full',
+        canActivate: [AuthGuard],
+        data: {role: 'Admin'}
+      },
+      {
+        path: 'api-keys',
+        component: ApiKeysComponent,
+        pathMatch: 'full',
+        canActivate: [AuthGuard],
+        data: {role: 'Admin'}
+      },
+      {path: 'signout', component: HomeComponent, pathMatch: 'full', canActivate: [SignOutGuard]},
+      {path: 'oidc-callback', component: HomeComponent, pathMatch: 'full', canActivate: [OidcCallbackGuard]},
     ]),
     AlertModule.forRoot(),
     BsDropdownModule.forRoot(),
     ButtonsModule.forRoot(),
     CollapseModule.forRoot(),
     ModalModule.forRoot(),
-    ProgressbarModule.forRoot()
+    ProgressbarModule.forRoot(),
+    TypeaheadModule.forRoot()
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptorService, multi: true }

@@ -5,6 +5,7 @@ namespace Westmoor.DowntimePlanner
         public const string ReadActivities = "read:activities";
         public const string ReadCharacters = "read:characters";
         public const string ReadDowntimes = "read:downtimes";
+        public const string ReadUsers = "read:users";
         public const string WriteActivities = "write:activities";
         public const string WriteApiKeys = "write:apikeys";
         public const string WriteCharacters = "write:characters";
@@ -14,6 +15,7 @@ namespace Westmoor.DowntimePlanner
             ReadActivities,
             ReadCharacters,
             ReadDowntimes,
+            ReadUsers,
             WriteActivities,
             WriteApiKeys,
             WriteCharacters,
