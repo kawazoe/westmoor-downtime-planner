@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
@@ -15,6 +15,8 @@ import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 
 import { AuthHttpInterceptorService } from './auth-http-interceptor.service';
+import { AnalyticsHttpInterceptorService } from './analytics-http-interceptor.service';
+
 import { SignOutGuard } from './sign-out-guard.service';
 import { AuthGuard } from './auth.guard';
 import { OidcCallbackGuard } from './oidc-callback-guard.service';
@@ -45,6 +47,8 @@ import { CanPipe } from './Pipes/can.pipe';
 import { IncludesPipe } from './Pipes/includes.pipe';
 import { FilterPipe } from './Pipes/filter.pipe';
 import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
+import { ErrorHandlerService } from './error-handler.service';
+import { SignInGuard } from './sign-in-guard.service';
 
 @NgModule({
   declarations: [
@@ -117,7 +121,9 @@ import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.com
     TypeaheadModule.forRoot()
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptorService, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptorService, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AnalyticsHttpInterceptorService, multi: true },
+    { provide: ErrorHandler, useClass: ErrorHandlerService },
   ],
   bootstrap: [AppComponent]
 })

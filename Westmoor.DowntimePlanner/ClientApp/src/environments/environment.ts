@@ -9,6 +9,12 @@ export const environment = {
     client_id: 'VxaXJsnUSCHHjKVwN7jFemYVXkKP3F59',
     redirect_url: '/oidc-callback',
     audience: 'westmoor-downtime-planner.azurewebsites.net'
+  },
+  analytics: {
+    instrumentationKey: '7576ae61-9671-4bdc-ad0f-8069f5c3bc11',
+    globalCustomProperties: {
+      ENV: 'local'
+    }
   }
 };
 
