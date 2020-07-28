@@ -43,7 +43,7 @@
           </ng-container>
           <ng-template #signedOut>
             <li class="nav-item">
-              <a class="nav-link text-dark" href="#" (click)="signIn()">Sign in</a>
+              <a class="nav-link text-dark" [routerLink]="['/signin']">Sign in</a>
             </li>
           </ng-template>
         </ul>

@@ -108,6 +108,7 @@ import { SignInGuard } from './sign-in-guard.service';
         canActivate: [AuthGuard],
         data: {role: 'Admin'}
       },
+      {path: 'signin', component: HomeComponent, pathMatch: 'full', canActivate: [SignInGuard]},
       {path: 'signout', component: HomeComponent, pathMatch: 'full', canActivate: [SignOutGuard]},
       {path: 'oidc-callback', component: HomeComponent, pathMatch: 'full', canActivate: [OidcCallbackGuard]},
       {path: 'terms-of-service', component: TermsOfServiceComponent, pathMatch: 'full'}
