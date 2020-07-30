@@ -81,7 +81,7 @@ namespace Westmoor.DowntimePlanner
             {
                 foreach (var permission in Policies.All)
                 {
-                    options.AddPolicy(permission, b => b.RequireClaim("permissions", permission));
+                    options.AddPolicy(permission, b => b.RequireClaim("https://westmoor.rpg/permissions", permission));
                 }
             });
 
