@@ -204,5 +204,5 @@ export function pipe<A, B, C, D, E, F, G, H, I, R>(
  */
 export function pipe(...fns: ((i: any) => any)[]): (value: any) => any;
 export function pipe(...fns: ((i: any) => any)[]): (value: any) => any {
-  return (t: any) => fns.reduce((prev, fn) => fn(prev), t);
+  return (value: any) => fns.reduce((prev, fn) => fn(prev), value);
 }

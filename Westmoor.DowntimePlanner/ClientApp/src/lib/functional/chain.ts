@@ -204,5 +204,6 @@ export function chain<A, B, C, D, E, F, G, H, I, R>(
  */
 export function chain(...fns: ((i: any) => any)[]): (value: any) => any;
 export function chain(...fns: ((i: any) => any)[]): (value: any) => any {
-  return (t: any) => fns.reverse().reduce((prev, fn) => fn(prev), t);
+  const rfns = fns.reduce((acc, cur) => [cur, ...acc], []);
+  return (value: any) => rfns.reduce((prev, fn) => fn(prev), value);
 }
