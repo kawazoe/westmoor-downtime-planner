@@ -5,6 +5,6 @@ namespace Westmoor.DowntimePlanner.Repositories
 {
     public interface IAuth0ApiUserRepository
     {
-        Task<UserEntity[]> SearchByEmailAsync(string email);
+        Task<UserEntity[]> SearchAsync(string query);
     }
 }

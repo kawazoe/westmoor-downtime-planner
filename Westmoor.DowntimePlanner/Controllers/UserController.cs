@@ -18,8 +18,8 @@ namespace Westmoor.DowntimePlanner.Controllers
             _service = service;
         }
 
-        [HttpGet("{email}")]
-        public async Task<UserResponse[]> SearchByEmailAsync(string email) =>
-            await _service.SearchByEmailAsync(email);
+        [HttpGet("{query}")]
+        public async Task<UserResponse[]> SearchAsync(string query) =>
+            await _service.SearchAsync(query);
     }
 }

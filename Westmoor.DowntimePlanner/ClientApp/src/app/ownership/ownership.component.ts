@@ -24,7 +24,10 @@ export class OwnershipComponent {
           return of([]);
         }
 
-        return this.api.searchUsersByEmail(query);
+        return this.api.searchUsers( query.includes(':')
+          ? query
+          : `email:${query}* OR name:${query}*`
+        );
       })
     );
 

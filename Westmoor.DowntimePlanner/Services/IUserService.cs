@@ -5,6 +5,6 @@ namespace Westmoor.DowntimePlanner.Services
 {
     public interface IUserService
     {
-        Task<UserResponse[]> SearchByEmailAsync(string email);
+        Task<UserResponse[]> SearchAsync(string query);
     }
 }

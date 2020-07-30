@@ -55,20 +55,20 @@ namespace Westmoor.DowntimePlanner.Repositories
             _currentToken = new Lazy<Task<OauthTokenEntity>>(GetOauthTokenAsync);
         }
 
-        public async Task<UserEntity[]> SearchByEmailAsync(string email) =>
+        public async Task<UserEntity[]> SearchAsync(string query) =>
             await WithTokenAsync(async token =>
             {
-                var query = new Dictionary<string, string>
+                var request = new Dictionary<string, string>
                 {
                     { "fields", FieldsQuery },
-                    { "q", $"email:{email}*" },
+                    { "q", query },
                     { "per_page", "10" },
-                    { "sort", "email:1" },
+                    { "sort", "query:1" },
                     { "search_engine", "v3" }
                 };
                 var message = new HttpRequestMessage(
                     HttpMethod.Get,
-                    QueryHelpers.AddQueryString($"{_options.EndpointUrl}/api/v2/users", query)
+                    QueryHelpers.AddQueryString($"{_options.EndpointUrl}/api/v2/users", request)
                 )
                 {
                     Headers =

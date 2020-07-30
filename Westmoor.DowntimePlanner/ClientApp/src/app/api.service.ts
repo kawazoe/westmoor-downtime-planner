@@ -241,7 +241,7 @@ export class ApiService {
     return this.http.delete<void>(`${this.endpoint}/apiKey/${id}`);
   }
 
-  public searchUsersByEmail(email: string): Observable<UserResponse[]> {
-    return this.http.get<UserResponse[]>(`${this.endpoint}/user/${email}`);
+  public searchUsers(query: string): Observable<UserResponse[]> {
+    return this.http.get<UserResponse[]>(`${this.endpoint}/user/${encodeURIComponent(query)}`);
   }
 }

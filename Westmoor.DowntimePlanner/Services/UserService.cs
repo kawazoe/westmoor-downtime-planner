@@ -15,8 +15,8 @@ namespace Westmoor.DowntimePlanner.Services
             _repository = repository;
         }
 
-        public async Task<UserResponse[]> SearchByEmailAsync(string email) =>
-            (await _repository.SearchByEmailAsync(email))
+        public async Task<UserResponse[]> SearchAsync(string query) =>
+            (await _repository.SearchAsync(query))
                 .Select(ToResponse)
                 .ToArray();
 
