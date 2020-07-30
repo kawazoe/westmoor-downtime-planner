@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Type } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   ChildActivationEnd,
@@ -11,7 +11,7 @@ import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { AnalyticsService } from './analytics.service';
 import { bufferDebounce } from '../lib/rxjs/bufferDebounce';
 import { AuthService } from './auth.service';
-import { constructorName, ofType } from '../lib/rxjs/types';
+import { ofType } from '../lib/rxjs/types';
 import { first, last, pipe } from '../lib/functional/';
 import { IPageViewTelemetry } from '@microsoft/applicationinsights-web';
 import { chain } from '../lib/functional/chain';
@@ -57,7 +57,7 @@ export class AppComponent {
   }
 }
 
-function getRouteComponent(event: ChildActivationEnd): Component {
+function getRouteComponent(event: ChildActivationEnd): Type<Component> {
   const recurseSnapshot = (snapshot: ActivatedRouteSnapshot) => {
     if (!snapshot) {
       return null;
@@ -81,7 +81,14 @@ function getRouteComponent(event: ChildActivationEnd): Component {
   return recurseSnapshot(event.snapshot);
 }
 
-const routeComponentName = pipe(getRouteComponent, constructorName);
+const routeComponentName = pipe(
+  getRouteComponent,
+  c => c['decorators'] as {args: Component[]}[],
+  first,
+  d => d.args,
+  first,
+  c => c.selector
+);
 const firstNavigationStart = chain(first, ofType(NavigationStart));
 const lastChildActivationEnd = chain(last, ofType(ChildActivationEnd));
 const lastNavigationEnd = chain(last, ofType(NavigationEnd));
