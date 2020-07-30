@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,6 +39,7 @@ namespace Westmoor.DowntimePlanner
                 Configuration["CosmosConnectionString"],
                 new CosmosClientOptions
                 {
+                    ConnectionMode = ConnectionMode.Gateway,
                     SerializerOptions = new CosmosSerializationOptions
                     {
                         PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
@@ -83,6 +85,7 @@ namespace Westmoor.DowntimePlanner
                 }
             });
 
+
             services.AddScoped<IActivityRepository, ActivityRepository>();
             services.AddScoped<ICharacterRepository, CharacterRepository>();
             services.AddScoped<IDowntimeRepository, DowntimeRepository>();
@@ -94,6 +97,10 @@ namespace Westmoor.DowntimePlanner
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
+
+            services.AddApplicationInsightsTelemetry(Configuration);
+            services.AddAspNetCoreTelemetryInitializer(Configuration);
+            services.AddSingleton<ITelemetryInitializer, CosmosTelemetryInitializer>();
 
             services.AddSwaggerGen(options =>
             {
