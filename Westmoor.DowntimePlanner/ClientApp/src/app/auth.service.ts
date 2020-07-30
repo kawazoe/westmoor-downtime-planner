@@ -6,6 +6,7 @@ import { catchError, first, map, shareReplay, switchMap, tap } from 'rxjs/operat
 import { OperatorProjection } from '../lib/rxjs/types';
 
 import { environment } from '../environments/environment';
+import { AnalyticsService } from './analytics.service';
 
 export interface UserProfile {
   sub: string;
@@ -18,6 +19,7 @@ export interface UserProfile {
   picture: string;
   updated_at: string;
 
+  'https://westmoor.rpg/ownership_id': string;
   'https://westmoor.rpg/permissions': string[];
 }
 
@@ -76,20 +78,28 @@ export class AuthService {
   public signOut$ = this.auth0Client$
     .pipe(
       first(),
-      map(c => { c.logout(this.logoutOptions); })
+      map(c => {
+        this.analytics.clearUserContext();
+        c.logout(this.logoutOptions);
+      })
     );
 
   public getUser$ = this.auth0Client$
     .pipe(
       switchMap(c => from(c.getUser())),
-      tap(u => this.userSubject.next(u))
+      tap(u => {
+        this.analytics.setUserContext(u['https://westmoor.rpg/ownership_id'] || u.sub);
+        this.userSubject.next(u);
+      })
     ) as Observable<UserProfile>;
 
   private userSubject = new BehaviorSubject<UserProfile>(null);
 
   public user$ = this.userSubject.asObservable();
 
-  constructor() {
+  constructor(
+    private readonly analytics: AnalyticsService
+  ) {
     // Set up local auth streams
     this.localAuthSetup();
   }

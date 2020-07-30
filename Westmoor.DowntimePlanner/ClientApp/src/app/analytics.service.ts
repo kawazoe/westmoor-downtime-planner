@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import {
   ApplicationInsights,
-  Util,
+  DistributedTracingModes,
   IDependencyTelemetry,
   IEventTelemetry,
   IExceptionTelemetry,
-  IPageViewTelemetry
+  IPageViewTelemetry,
+  Util
 } from '@microsoft/applicationinsights-web';
 import { environment } from '../environments/environment';
 
@@ -18,10 +19,19 @@ export class AnalyticsService {
   constructor() {
     this.appInsights = new ApplicationInsights({
       config: {
-        instrumentationKey: environment.analytics.instrumentationKey
+        instrumentationKey: environment.analytics.instrumentationKey,
+        distributedTracingMode: DistributedTracingModes.W3C
       }
     });
     this.appInsights.loadAppInsights();
+  }
+
+  public setUserContext(userId: string) {
+    this.appInsights.setAuthenticatedUserContext(userId);
+  }
+
+  public clearUserContext() {
+    this.appInsights.clearAuthenticatedUserContext();
   }
 
   public trackDependencyData(dependency: Omit<IDependencyTelemetry, 'id'>) {
