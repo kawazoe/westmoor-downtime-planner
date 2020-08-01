@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Westmoor.DowntimePlanner.Entities;
@@ -27,11 +29,12 @@ namespace Westmoor.DowntimePlanner.Repositories
             _activityRepository = activityRepository;
         }
 
-        public async Task<DowntimeEntity[]> GetAllAsync()
+        public async Task<DowntimeEntity[]> GetAsync(Expression<Func<DowntimeEntity, bool>> predicate)
         {
             return await (await _container).GetItemLinqQueryable<DowntimeEntity>(
                     requestOptions: new QueryRequestOptions { PartitionKey = _entityManipulator.DefaultPartitionKey }
                 )
+                .Where(predicate)
                 .Where(_entityManipulator.GetScopeFilterPredicate())
                 .OrderByDescending(d => d.CreatedOn)
                 .ToAsyncEnumerable()

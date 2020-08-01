@@ -204,8 +204,12 @@ export class ApiService {
     return this.http.delete<void>(`${this.endpoint}/character/${id}`);
   }
 
-  public getAllDowntimes(): Observable<DowntimeResponse[]> {
-    return this.http.get<DowntimeResponse[]>(`${this.endpoint}/downtime`);
+  public getCurrentDowntimes(): Observable<DowntimeResponse[]> {
+    return this.http.get<DowntimeResponse[]>(`${this.endpoint}/downtime/current`);
+  }
+
+  public getCompletedDowntimes(): Observable<DowntimeResponse[]> {
+    return this.http.get<DowntimeResponse[]>(`${this.endpoint}/downtime/completed`);
   }
 
   public getDowntimeById(id: string): Observable<DowntimeResponse> {

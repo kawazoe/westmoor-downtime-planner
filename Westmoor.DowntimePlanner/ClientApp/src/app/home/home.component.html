@@ -59,7 +59,7 @@
     Cancel downtime...
   </button>
 
-  <table class="table table-striped mb-4" *ngIf="downtimes$ | async as downtimes">
+  <table class="table table-striped mb-4" *ngIf="currentDowntimes$ | async as downtimes">
     <thead>
     <tr>
       <th style="width: 3rem" *ngIf="user$ | can:'write:downtimes' | async"></th>
@@ -71,7 +71,7 @@
     </thead>
 
     <tbody>
-    <tr *ngFor="let downtime of downtimes | filter:isScheduled" (click)="toggleDowntime(downtime)">
+    <tr *ngFor="let downtime of downtimes" (click)="toggleDowntime(downtime)">
       <td *ngIf="user$ | can:'write:downtimes' | async">
         <div class="form-check">
           <input type="checkbox"
@@ -90,7 +90,7 @@
   </table>
 
   <h2>Completed downtimes</h2>
-  <table class="table table-striped mb-4" *ngIf="downtimes$ | async as downtimes">
+  <table class="table table-striped mb-4" *ngIf="completedDowntimes$ | async as downtimes">
     <thead>
     <tr>
       <th>Player</th>
@@ -101,7 +101,7 @@
     </thead>
 
     <tbody>
-    <tr *ngFor="let downtime of downtimes | filter:isCompleted">
+    <tr *ngFor="let downtime of downtimes">
       <td>{{downtime.character.playerFullName}}</td>
       <td>{{downtime.character.characterFullName}}</td>
       <td>{{downtime.activity.name}}</td>

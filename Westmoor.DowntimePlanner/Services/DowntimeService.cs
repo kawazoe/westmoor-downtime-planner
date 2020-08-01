@@ -16,8 +16,13 @@ namespace Westmoor.DowntimePlanner.Services
             _repository = repository;
         }
 
-        public async Task<DowntimeResponse[]> GetAllAsync() =>
-            (await _repository.GetAllAsync())
+        public async Task<DowntimeResponse[]> GetCurrentAsync() =>
+            (await _repository.GetAsync(d => d.Costs.Any(c => c.Value < c.Goal)))
+                .Select(ToResponse)
+                .ToArray();
+
+        public async Task<DowntimeResponse[]> GetCompletedAsync() =>
+            (await _repository.GetAsync(d => d.Costs.Any(c => c.Value >= c.Goal)))
                 .Select(ToResponse)
                 .ToArray();
 

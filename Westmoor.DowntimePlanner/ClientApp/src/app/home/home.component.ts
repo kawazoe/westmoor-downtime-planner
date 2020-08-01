@@ -19,25 +19,30 @@ export class HomeComponent {
   public user$ = this.auth.user$;
 
   private characters = new BehaviorSubject<CharacterResponse[]>([]);
-  private downtimes = new BehaviorSubject<DowntimeResponse[]>([]);
+  private currentDowntimes = new BehaviorSubject<DowntimeResponse[]>([]);
+  private completedDowntimes = new BehaviorSubject<DowntimeResponse[]>([]);
 
   public characters$ = this.characters.asObservable();
-  public downtimes$ = this.downtimes.asObservable();
+  public currentDowntimes$ = this.currentDowntimes.asObservable();
+  public completedDowntimes$ = this.completedDowntimes.asObservable();
 
   public selectedCharacters: CharacterResponse[] = [];
   public selectedDowntimes: DowntimeResponse[] = [];
 
   private modalRef: BsModalRef;
 
-  public isCompleted = (v: DowntimeResponse) => v.progresses.every(p => p.value >= p.goal);
-  public isScheduled = (v: DowntimeResponse) => !this.isCompleted(v);
-
   constructor(
     private auth: AuthService,
     private api: ApiService,
     private modal: BsModalService
   ) {
-    of(null).pipe(this.refreshCharacters(), this.refreshDowntimes()).subscribe();
+    of(null)
+      .pipe(
+        this.refreshCharacters(),
+        this.refreshCurrentDowntimes(),
+        this.refreshCompletedDowntimes()
+      )
+      .subscribe();
   }
 
   public toggleCharacter(character: CharacterResponse) {
@@ -68,14 +73,26 @@ export class HomeComponent {
       );
   }
 
-  private refreshDowntimes(): OperatorFunction<any, void> {
+  private refreshCurrentDowntimes(): OperatorFunction<any, void> {
     return o => o
       .pipe(
-        switchMap(() => this.api.getAllDowntimes()),
+        switchMap(() => this.api.getCurrentDowntimes()),
         take(1),
         map(ds => {
           this.selectedDowntimes = [];
-          this.downtimes.next(ds);
+          this.currentDowntimes.next(ds);
+        })
+      );
+  }
+
+  private refreshCompletedDowntimes(): OperatorFunction<any, void> {
+    return o => o
+      .pipe(
+        switchMap(() => this.api.getCompletedDowntimes()),
+        take(1),
+        map(ds => {
+          this.selectedDowntimes = [];
+          this.completedDowntimes.next(ds);
         })
       );
   }
@@ -106,7 +123,11 @@ export class HomeComponent {
       }))
       .map(r => this.api.updateCharacter(r.characterId, r));
 
-    return concat(...batch).pipe(last(), this.refreshCharacters());
+    return concat(...batch)
+      .pipe(
+        last(),
+        this.refreshCharacters()
+      );
   }
 
   private endScheduleDowntime(result: ScheduleDowntimeAction) {
@@ -119,7 +140,12 @@ export class HomeComponent {
       }))
       .map(r => this.api.createDowntime(r));
 
-    return concat(...batch).pipe(last(), this.refreshCharacters(), this.refreshDowntimes());
+    return concat(...batch)
+      .pipe(
+        last(),
+        this.refreshCharacters(),
+        this.refreshCurrentDowntimes()
+      );
   }
 
   private endAwardProgress(result: AwardProgressAction) {
@@ -184,7 +210,8 @@ export class HomeComponent {
         switchMap(() => concat(...characterBatch)),
         last(),
         this.refreshCharacters(),
-        this.refreshDowntimes()
+        this.refreshCurrentDowntimes(),
+        this.refreshCompletedDowntimes()
       );
   }
 
@@ -201,6 +228,10 @@ export class HomeComponent {
     const batch = this.selectedDowntimes
       .map(downtime => this.api.deleteDowntime(downtime.id));
 
-    return concat(...batch).pipe(last(), this.refreshDowntimes());
+    return concat(...batch)
+      .pipe(
+        last(),
+        this.refreshCompletedDowntimes()
+      );
   }
 }

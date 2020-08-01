@@ -36,8 +36,7 @@ namespace Westmoor.DowntimePlanner.Services
         {
             await _repository.UpdateAsync(id, request);
 
-            var ownedDowntimes = (await _downtimeRepository.GetAllAsync())
-                .Where(d => d.Character.Id == id);
+            var ownedDowntimes = await _downtimeRepository.GetAsync(d => d.Character.Id == id);
 
             foreach (var downtime in ownedDowntimes)
             {

@@ -19,9 +19,13 @@ namespace Westmoor.DowntimePlanner.Controllers
             _service = service;
         }
 
-        [HttpGet]
-        public async Task<DowntimeResponse[]> GetAllAsync() =>
-            await _service.GetAllAsync();
+        [HttpGet("current")]
+        public async Task<DowntimeResponse[]> GetCurrentAsync() =>
+            await _service.GetCurrentAsync();
+
+        [HttpGet("completed")]
+        public async Task<DowntimeResponse[]> GetCompletedAsync() =>
+            await _service.GetCompletedAsync();
 
         [HttpGet("{id}")]
         public async Task<DowntimeResponse> GetByIdAsync(string id) =>
