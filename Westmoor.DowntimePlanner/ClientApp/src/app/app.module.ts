@@ -43,10 +43,10 @@ import { AlertBoxComponent } from './components/alert-box/alert-box.component';
 import { OwnershipComponent } from './components/ownership/ownership.component';
 import { PickerComponent } from './components/picker/picker.component';
 import { ProgressesPresenterComponent } from './components/progresses-presenter/progresses-presenter.component';
-import { CastPipe } from './pipes_/cast.pipe';
-import { CanPipe } from './pipes_/can.pipe';
-import { IncludesPipe } from './pipes_/includes.pipe';
-import { FilterPipe } from './pipes_/filter.pipe';
+import { CastPipe } from './pipes/cast.pipe';
+import { CanPipe } from './pipes/can.pipe';
+import { IncludesPipe } from './pipes/includes.pipe';
+import { FilterPipe } from './pipes/filter.pipe';
 import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
 import { ErrorHandlerService } from './error-handler.service';
 
