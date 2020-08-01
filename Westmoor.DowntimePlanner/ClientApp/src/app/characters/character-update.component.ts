@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalUpdateComponentBase } from '../modal-edit/modal-update.component';
-import { CharacterResponse, UpdateCharacterRequest } from '../api.service';
+import { CharacterResponse, UpdateCharacterRequest } from '../services/business/api.service';
 
 @Component({
   selector: 'app-character-edit',

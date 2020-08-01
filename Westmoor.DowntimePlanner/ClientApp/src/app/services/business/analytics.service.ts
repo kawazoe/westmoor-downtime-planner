@@ -8,7 +8,7 @@ import {
   IPageViewTelemetry,
   Util
 } from '@microsoft/applicationinsights-web';
-import { environment } from '../environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'

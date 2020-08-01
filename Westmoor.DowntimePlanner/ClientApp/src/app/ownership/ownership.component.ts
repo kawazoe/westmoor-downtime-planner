@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { FormArray, FormControl } from '@angular/forms';
 import { Observable, Observer, of } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
-import { ApiService, UserResponse } from '../api.service';
+import { ApiService, UserResponse } from '../services/business/api.service';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 
 @Component({

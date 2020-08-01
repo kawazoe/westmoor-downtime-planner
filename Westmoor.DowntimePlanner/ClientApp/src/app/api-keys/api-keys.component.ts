@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ApiService, ApiKeyResponse } from '../api.service';
+import { ApiService, ApiKeyResponse } from '../services/business/api.service';
 import { BehaviorSubject, of, OperatorFunction } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';

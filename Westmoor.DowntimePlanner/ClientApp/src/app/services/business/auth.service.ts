@@ -3,9 +3,9 @@ import { ParamMap } from '@angular/router';
 import createAuth0Client from '@auth0/auth0-spa-js';
 import { BehaviorSubject, combineLatest, from, isObservable, Observable, of, throwError } from 'rxjs';
 import { catchError, first, map, shareReplay, switchMap, tap } from 'rxjs/operators';
-import { OperatorProjection } from '../lib/rxjs/types';
+import { OperatorProjection } from '../../../lib/rxjs/types';
 
-import { environment } from '../environments/environment';
+import { environment } from '../../../environments/environment';
 import { AnalyticsService } from './analytics.service';
 
 export interface UserProfile {

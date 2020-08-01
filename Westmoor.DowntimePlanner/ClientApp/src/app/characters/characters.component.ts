@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { BehaviorSubject, of, OperatorFunction } from 'rxjs';
-import { ApiService, CharacterResponse } from '../api.service';
+import { ApiService, CharacterResponse } from '../services/business/api.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { switchMap, tap } from 'rxjs/operators';
 import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';

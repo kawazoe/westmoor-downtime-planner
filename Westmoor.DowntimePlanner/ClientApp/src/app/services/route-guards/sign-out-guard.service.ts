@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
-import { AuthService } from './auth.service';
+import { AuthService } from '../business/auth.service';
 import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-export class OidcCallbackGuard implements CanActivate {
+export class SignOutGuard implements CanActivate {
   constructor(
     private auth: AuthService,
     private router: Router
@@ -14,9 +14,9 @@ export class OidcCallbackGuard implements CanActivate {
   }
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    return this.auth.handleAuthCallback(state.root.queryParamMap)
+    return this.auth.signOut$
       .pipe(
-        map(([_, targetRoute]) => targetRoute ? this.router.parseUrl(targetRoute) : true)
+        map(() => this.router.parseUrl(''))
       );
   }
 }

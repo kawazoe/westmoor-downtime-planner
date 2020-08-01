@@ -3,7 +3,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalCreateComponentBase } from '../modal-edit/modal-create.component';
 import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
-import { CreateActivityRequest } from '../api.service';
+import { CreateActivityRequest } from '../services/business/api.service';
 
 @Component({
   selector: 'app-activity-create',

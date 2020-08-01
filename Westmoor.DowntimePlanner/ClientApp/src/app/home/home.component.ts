@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../auth.service';
-import { ApiService, CharacterResponse, DowntimeResponse } from '../api.service';
+import { AuthService } from '../services/business/auth.service';
+import { ApiService, CharacterResponse, DowntimeResponse } from '../services/business/api.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { AwardDowntimeAction, AwardDowntimeComponent } from './award-downtime.component';
 import { AwardProgressAction, AwardProgressComponent } from './award-progress.component';

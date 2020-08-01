@@ -1,5 +1,5 @@
 import { ErrorHandler, Injectable } from '@angular/core';
-import { AnalyticsService } from './analytics.service';
+import { AnalyticsService } from './services/business/analytics.service';
 import { SeverityLevel } from '@microsoft/applicationinsights-common';
 
 @Injectable({

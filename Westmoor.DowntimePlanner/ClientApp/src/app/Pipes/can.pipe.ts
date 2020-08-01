@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Observable } from 'rxjs';
-import { can, UserProfile } from '../auth.service';
+import { can, UserProfile } from '../services/business/auth.service';
 
 @Pipe({
   name: 'can',

@@ -1,6 +1,6 @@
 import { Directive } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { FormGroup } from '@angular/forms';
 import { tap } from 'rxjs/operators';
 

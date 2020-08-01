@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalCreateComponentBase } from '../modal-edit/modal-create.component';
-import { CreateCharacterRequest } from '../api.service';
+import { CreateCharacterRequest } from '../services/business/api.service';
 
 @Component({
   selector: 'app-character-create',

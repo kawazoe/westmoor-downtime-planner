@@ -14,12 +14,13 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 
-import { AuthHttpInterceptorService } from './auth-http-interceptor.service';
-import { AnalyticsHttpInterceptorService } from './analytics-http-interceptor.service';
+import { AuthHttpInterceptorService } from './services/http-interceptors/auth-http-interceptor.service';
+import { AnalyticsHttpInterceptorService } from './services/http-interceptors/analytics-http-interceptor.service';
 
-import { SignOutGuard } from './sign-out-guard.service';
-import { AuthGuard } from './auth.guard';
-import { OidcCallbackGuard } from './oidc-callback-guard.service';
+import { AuthGuard } from './services/route-guards/auth.guard';
+import { OidcCallbackGuard } from './services/route-guards/oidc-callback-guard.service';
+import { SignInGuard } from './services/route-guards/sign-in-guard.service';
+import { SignOutGuard } from './services/route-guards/sign-out-guard.service';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -48,7 +49,6 @@ import { IncludesPipe } from './Pipes/includes.pipe';
 import { FilterPipe } from './Pipes/filter.pipe';
 import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
 import { ErrorHandlerService } from './error-handler.service';
-import { SignInGuard } from './sign-in-guard.service';
 
 @NgModule({
   declarations: [

@@ -7,7 +7,7 @@ import {
   ActivityParameterResponse,
   ActivityResponse,
   UpdateActivityRequest
-} from '../api.service';
+} from '../services/business/api.service';
 import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
 
 @Component({

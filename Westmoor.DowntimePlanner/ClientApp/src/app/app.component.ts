@@ -8,9 +8,9 @@ import {
   RouterEvent
 } from '@angular/router';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
-import { AnalyticsService } from './analytics.service';
+import { AnalyticsService } from './services/business/analytics.service';
 import { bufferDebounce } from '../lib/rxjs/bufferDebounce';
-import { AuthService } from './auth.service';
+import { AuthService } from './services/business/auth.service';
 import { ofType } from '../lib/rxjs/types';
 import { first, last, pipe } from '../lib/functional/';
 import { IPageViewTelemetry } from '@microsoft/applicationinsights-web';
