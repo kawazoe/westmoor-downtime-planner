@@ -4,7 +4,15 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
-import { ActivityCostKinds } from '../activity-cost-kind-picker/activity-cost-kind-picker.component';
+
+export interface AwardProgressAction {
+  costs: AwardProgressCostAction[];
+}
+
+export interface AwardProgressCostAction {
+  activityCostKind: string;
+  delta: number;
+}
 
 @Component({
   selector: 'app-award-progress',
@@ -18,7 +26,7 @@ export class AwardProgressComponent {
     costs: new FormArray([], Validators.required)
   });
   public processing = false;
-  public onAward = (form: FormGroup) => of(null);
+  public onAward = (results: AwardProgressAction) => of(null);
 
   constructor(
     public modalRef: BsModalRef,
@@ -28,7 +36,14 @@ export class AwardProgressComponent {
 
   public award() {
     this.processing = true;
-    this.onAward(this.form)
+    this.onAward({
+        costs: (this.form.controls.costs as FormArray).controls
+          .map(ctrl => ctrl as FormGroup)
+          .map(cost => ({
+            activityCostKind: cost.controls.activityCostKind.value,
+            delta: parseInt(cost.controls.delta.value, 10)
+          }))
+      })
       .pipe(
         tap(() => this.modalRef.hide(), () => { this.processing = false; })
       )

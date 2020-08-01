@@ -1,16 +1,17 @@
 import { Directive } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { FormGroup } from '@angular/forms';
 import { tap } from 'rxjs/operators';
 
 @Directive({
   selector: '[appModalCreate]'
 })
-export class ModalCreateComponentBase {
+export class ModalCreateComponentBase<TRequest> {
   public form: FormGroup;
   public processing = false;
-  public onSave = (form: FormGroup) => of(null);
+  public onSave: (request: TRequest) => Observable<void>;
+  protected serialize(form: FormGroup): TRequest { return null; }
 
   constructor(
     public modalRef: BsModalRef
@@ -19,7 +20,7 @@ export class ModalCreateComponentBase {
 
   public confirm() {
     this.processing = true;
-    this.onSave(this.form)
+    this.onSave(this.serialize(this.form))
       .pipe(
         tap(() => this.modalRef.hide(), () => { this.processing = false; })
       )

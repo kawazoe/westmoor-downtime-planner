@@ -2,14 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalUpdateComponentBase } from '../modal-edit/modal-update.component';
-import { ActivityCostResponse, ActivityParameterResponse, ActivityResponse } from '../api.service';
+import {
+  ActivityCostResponse,
+  ActivityParameterResponse,
+  ActivityResponse,
+  UpdateActivityRequest
+} from '../api.service';
 import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
 
 @Component({
   selector: 'app-activity-edit',
   templateUrl: './activity-update.component.html',
 })
-export class ActivityUpdateComponent extends ModalUpdateComponentBase<ActivityResponse> implements OnInit {
+export class ActivityUpdateComponent extends ModalUpdateComponentBase<ActivityResponse, UpdateActivityRequest> implements OnInit {
   public FormGroupType = FormGroup;
   public FormArrayType = FormArray;
 
@@ -18,6 +23,28 @@ export class ActivityUpdateComponent extends ModalUpdateComponentBase<ActivityRe
     private modal: BsModalService
   ) {
     super(modalRef);
+  }
+
+  protected serialize(form: FormGroup): UpdateActivityRequest {
+    return {
+      name: form.controls.name.value,
+      descriptionMarkdown: form.controls.descriptionMarkdown.value,
+      complicationMarkdown: form.controls.complicationMarkdown.value,
+      costs: (form.controls.costs as FormArray).controls
+        .map(ctrls => (ctrls as FormGroup).controls)
+        .map(cost => ({
+          kind: cost.kind.value,
+          jexlExpression: cost.jexlExpression.value,
+          parameters: (cost.parameters as FormArray).controls
+            .map(ctrls => (ctrls as FormGroup).controls)
+            .map(parameter => ({
+              variableName: parameter.variableName.value,
+              description: parameter.description.value
+            }))
+        })),
+      sharedWith: (form.controls.sharedWith as FormArray).controls
+        .map(ctrls => ctrls.value)
+    };
   }
 
   ngOnInit(): void {

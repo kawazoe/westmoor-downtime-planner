@@ -53,6 +53,16 @@ jexl.addTransform('dispatch', (value: any, ...targets: [any, any][]) => {
   return result;
 });
 
+export interface ScheduleDowntimeAction {
+  activityId: string;
+  costs: ScheduleDowntimeCostAction[];
+}
+
+export interface ScheduleDowntimeCostAction {
+  activityCostKind: string;
+  goal: number;
+}
+
 @Component({
   selector: 'app-schedule-downtime',
   templateUrl: './schedule-downtime.component.html',
@@ -124,7 +134,7 @@ export class ScheduleDowntimeComponent {
     );
 
   public processing = false;
-  public onSchedule = (form: FormGroup) => of(null);
+  public onSchedule = (result: ScheduleDowntimeAction) => of(null);
 
   constructor(
     public modalRef: BsModalRef,
@@ -134,7 +144,15 @@ export class ScheduleDowntimeComponent {
 
   public schedule() {
     this.processing = true;
-    this.onSchedule(this.form)
+    this.onSchedule({
+        activityId: this.form.controls.activityId.value,
+        costs: (this.form.controls.costs as FormArray).controls
+          .map(ctrl => ctrl as FormGroup)
+          .map(cost => ({
+            activityCostKind: cost.controls.activityCostKind.value,
+            goal: cost.controls.goal.value,
+          }))
+      })
       .pipe(
         tap(() => this.modalRef.hide(), () => { this.processing = false; })
       )

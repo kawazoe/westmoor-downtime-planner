@@ -2,19 +2,28 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalUpdateComponentBase } from '../modal-edit/modal-update.component';
-import { ApiKeyResponse } from '../api.service';
+import { ApiKeyResponse, UpdateApiKeyRequest } from '../api.service';
 
 @Component({
   selector: 'app-api-key-edit',
   templateUrl: './api-key-update.component.html',
 })
-export class ApiKeyUpdateComponent extends ModalUpdateComponentBase<ApiKeyResponse> implements OnInit {
+export class ApiKeyUpdateComponent extends ModalUpdateComponentBase<ApiKeyResponse, UpdateApiKeyRequest> implements OnInit {
   public FormArrayType = FormArray;
 
   constructor(
     public modalRef: BsModalRef
   ) {
     super(modalRef);
+  }
+
+  protected serialize(form: FormGroup): UpdateApiKeyRequest {
+    return {
+      owner: form.controls.owner.value,
+      roles: form.controls.isRoleAdmin.value ? ['Admin'] : [],
+      sharedWith: (form.controls.sharedWith as FormArray).controls
+        .map(ctrls => ctrls.value)
+    };
   }
 
   ngOnInit(): void {

@@ -6,7 +6,6 @@ import { switchMap, tap } from 'rxjs/operators';
 import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
 import { CharacterCreateComponent } from './character-create.component';
 import { CharacterUpdateComponent } from './character-update.component';
-import { FormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-characters',
@@ -28,26 +27,15 @@ export class CharactersComponent {
 
   public create() {
     this.modalRef = this.modal.show(CharacterCreateComponent);
-    this.modalRef.content.onSave = form => this.api
-      .createCharacter({
-        playerFullName: form.controls.playerFullName.value,
-        characterFullName: form.controls.characterFullName.value,
-        sharedWith: (form.controls.sharedWith as FormArray).controls
-          .map(ctrls => ctrls.value)
-      })
+    this.modalRef.content.onSave = request => this.api
+      .createCharacter(request)
       .pipe(this.refresh());
   }
 
   public edit(character: CharacterResponse) {
     this.modalRef = this.modal.show(CharacterUpdateComponent, { initialState: { source: character } });
-    this.modalRef.content.onSave = form => this.api
-      .updateCharacter(character.id, {
-        playerFullName: form.controls.playerFullName.value,
-        characterFullName: form.controls.characterFullName.value,
-        accruedDowntimeDays: parseInt(form.controls.accruedDowntimeDays.value, 10),
-        sharedWith: (form.controls.sharedWith as FormArray).controls
-          .map(ctrls => ctrls.value)
-      })
+    this.modalRef.content.onSave = request => this.api
+      .updateCharacter(character.id, request)
       .pipe(this.refresh());
   }
 

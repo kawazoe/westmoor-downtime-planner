@@ -6,7 +6,6 @@ import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
 import { switchMap, tap } from 'rxjs/operators';
 import { ActivityCreateComponent } from './activity-create.component';
 import { ActivityUpdateComponent } from './activity-update.component';
-import { FormArray, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-activities',
@@ -28,51 +27,15 @@ export class ActivitiesComponent {
 
   public create() {
     this.modalRef = this.modal.show(ActivityCreateComponent);
-    this.modalRef.content.onSave = form => this.api
-      .createActivity({
-        name: form.controls.name.value,
-        descriptionMarkdown: form.controls.descriptionMarkdown.value,
-        complicationMarkdown: form.controls.complicationMarkdown.value,
-        costs: (form.controls.costs as FormArray).controls
-          .map(ctrls => (ctrls as FormGroup).controls)
-          .map(cost => ({
-            kind: cost.kind.value,
-            jexlExpression: cost.jexlExpression.value,
-            parameters: (cost.parameters as FormArray).controls
-              .map(ctrls => (ctrls as FormGroup).controls)
-              .map(parameter => ({
-                variableName: parameter.variableName.value,
-                description: parameter.description.value
-              }))
-          })),
-        sharedWith: (form.controls.sharedWith as FormArray).controls
-          .map(ctrls => ctrls.value)
-      })
+    this.modalRef.content.onSave = request => this.api
+      .createActivity(request)
       .pipe(this.refresh());
   }
 
   public edit(activity: ActivityResponse) {
     this.modalRef = this.modal.show(ActivityUpdateComponent, { initialState: { source: activity } });
-    this.modalRef.content.onSave = form => this.api
-      .updateActivity(activity.id, {
-        name: form.controls.name.value,
-        descriptionMarkdown: form.controls.descriptionMarkdown.value,
-        complicationMarkdown: form.controls.complicationMarkdown.value,
-        costs: (form.controls.costs as FormArray).controls
-          .map(ctrls => (ctrls as FormGroup).controls)
-          .map(cost => ({
-            kind: cost.kind.value,
-            jexlExpression: cost.jexlExpression.value,
-            parameters: (cost.parameters as FormArray).controls
-              .map(ctrls => (ctrls as FormGroup).controls)
-              .map(parameter => ({
-                variableName: parameter.variableName.value,
-                description: parameter.description.value
-              }))
-          })),
-        sharedWith: (form.controls.sharedWith as FormArray).controls
-          .map(ctrls => ctrls.value)
-      })
+    this.modalRef.content.onSave = request => this.api
+      .updateActivity(activity.id, request)
       .pipe(this.refresh());
   }
 

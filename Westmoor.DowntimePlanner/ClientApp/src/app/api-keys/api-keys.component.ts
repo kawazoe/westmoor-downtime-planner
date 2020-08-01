@@ -6,7 +6,6 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ApiKeyCreateComponent } from './api-key-create.component';
 import { ApiKeyUpdateComponent } from './api-key-update.component';
 import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
-import { FormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-api-keys',
@@ -28,25 +27,15 @@ export class ApiKeysComponent {
 
   public create() {
     this.modalRef = this.modal.show(ApiKeyCreateComponent);
-    this.modalRef.content.onSave = form => this.api
-      .createApiKey({
-        owner: form.controls.owner.value,
-        roles: form.controls.isRoleAdmin.value ? ['Admin'] : [],
-        sharedWith: (form.controls.sharedWith as FormArray).controls
-          .map(ctrls => ctrls.value)
-      })
+    this.modalRef.content.onSave = request => this.api
+      .createApiKey(request)
       .pipe(this.refresh());
   }
 
   public edit(apiKey: ApiKeyResponse) {
     this.modalRef = this.modal.show(ApiKeyUpdateComponent, { initialState: { source: apiKey } });
-    this.modalRef.content.onSave = form => this.api
-      .updateApiKey(apiKey.key, {
-        owner: form.controls.owner.value,
-        roles: form.controls.isRoleAdmin.value ? ['Admin'] : [],
-        sharedWith: (form.controls.sharedWith as FormArray).controls
-          .map(ctrls => ctrls.value)
-      })
+    this.modalRef.content.onSave = request => this.api
+      .updateApiKey(apiKey.key, request)
       .pipe(this.refresh());
   }
 

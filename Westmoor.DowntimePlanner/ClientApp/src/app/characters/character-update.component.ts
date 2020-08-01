@@ -2,19 +2,29 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalUpdateComponentBase } from '../modal-edit/modal-update.component';
-import { CharacterResponse } from '../api.service';
+import { CharacterResponse, UpdateCharacterRequest } from '../api.service';
 
 @Component({
   selector: 'app-character-edit',
   templateUrl: './character-update.component.html',
 })
-export class CharacterUpdateComponent extends ModalUpdateComponentBase<CharacterResponse> implements OnInit {
+export class CharacterUpdateComponent extends ModalUpdateComponentBase<CharacterResponse, UpdateCharacterRequest> implements OnInit {
   public FormArrayType = FormArray;
 
   constructor(
     public modalRef: BsModalRef
   ) {
     super(modalRef);
+  }
+
+  protected serialize(form: FormGroup): UpdateCharacterRequest {
+    return {
+      playerFullName: form.controls.playerFullName.value,
+      characterFullName: form.controls.characterFullName.value,
+      accruedDowntimeDays: parseInt(form.controls.accruedDowntimeDays.value, 10),
+      sharedWith: (form.controls.sharedWith as FormArray).controls
+        .map(ctrls => ctrls.value)
+    };
   }
 
   ngOnInit(): void {

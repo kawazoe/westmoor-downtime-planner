@@ -53,7 +53,7 @@
   </button>
   <button type="button"
           class="btn btn-danger mb-1"
-          (click)="cancelDowntimes()"
+          (click)="beginCancelDowntimes()"
           [disabled]="!selectedDowntimes.length"
           *ngIf="user$ | can:'write:downtimes' | async">
     Cancel downtime...

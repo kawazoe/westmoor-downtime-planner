@@ -3,12 +3,13 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalCreateComponentBase } from '../modal-edit/modal-create.component';
 import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
+import { CreateActivityRequest } from '../api.service';
 
 @Component({
   selector: 'app-activity-create',
   templateUrl: './activity-create.component.html',
 })
-export class ActivityCreateComponent extends ModalCreateComponentBase implements OnInit {
+export class ActivityCreateComponent extends ModalCreateComponentBase<CreateActivityRequest> implements OnInit {
   public FormGroupType = FormGroup;
   public FormArrayType = FormArray;
 
@@ -17,6 +18,28 @@ export class ActivityCreateComponent extends ModalCreateComponentBase implements
     private modal: BsModalService
   ) {
     super(modalRef);
+  }
+
+  protected serialize(form: FormGroup): CreateActivityRequest {
+    return {
+      name: form.controls.name.value,
+      descriptionMarkdown: form.controls.descriptionMarkdown.value,
+      complicationMarkdown: form.controls.complicationMarkdown.value,
+      costs: (form.controls.costs as FormArray).controls
+        .map(ctrls => (ctrls as FormGroup).controls)
+        .map(cost => ({
+          kind: cost.kind.value,
+          jexlExpression: cost.jexlExpression.value,
+          parameters: (cost.parameters as FormArray).controls
+            .map(ctrls => (ctrls as FormGroup).controls)
+            .map(parameter => ({
+              variableName: parameter.variableName.value,
+              description: parameter.description.value
+            }))
+        })),
+      sharedWith: (form.controls.sharedWith as FormArray).controls
+        .map(ctrls => ctrls.value)
+    };
   }
 
   ngOnInit(): void {
