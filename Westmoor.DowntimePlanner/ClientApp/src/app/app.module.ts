@@ -23,7 +23,7 @@ import { SignInGuard } from './services/route-guards/sign-in-guard.service';
 import { SignOutGuard } from './services/route-guards/sign-out-guard.service';
 
 import { AppComponent } from './app.component';
-import { NavMenuComponent } from './nav-menu/nav-menu.component';
+import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { AwardDowntimeComponent } from './home/award-downtime.component';
 import { AwardProgressComponent } from './home/award-progress.component';
@@ -37,12 +37,12 @@ import { CharacterUpdateComponent } from './characters/character-update.componen
 import { ApiKeysComponent } from './api-keys/api-keys.component';
 import { ApiKeyCreateComponent } from './api-keys/api-key-create.component';
 import { ApiKeyUpdateComponent } from './api-keys/api-key-update.component';
-import { ModalHeaderComponent } from './modal-edit/modal-header.component';
-import { ModalDeleteComponent } from './modal-edit/modal-delete.component';
-import { AlertBoxComponent } from './alert-box/alert-box.component';
-import { OwnershipComponent } from './ownership/ownership.component';
-import { ActivityCostKindPickerComponent } from './activity-cost-kind-picker/activity-cost-kind-picker.component';
-import { ProgressesPresenterComponent } from './progresses-presenter/progresses-presenter.component';
+import { ModalHeaderComponent } from './components/modal-edit/modal-header.component';
+import { ModalDeleteComponent } from './components/modal-edit/modal-delete.component';
+import { AlertBoxComponent } from './components/alert-box/alert-box.component';
+import { OwnershipComponent } from './components/ownership/ownership.component';
+import { PickerComponent } from './components/picker/picker.component';
+import { ProgressesPresenterComponent } from './components/progresses-presenter/progresses-presenter.component';
 import { CastPipe } from './Pipes/cast.pipe';
 import { CanPipe } from './Pipes/can.pipe';
 import { IncludesPipe } from './Pipes/includes.pipe';
@@ -71,7 +71,7 @@ import { ErrorHandlerService } from './error-handler.service';
     ModalDeleteComponent,
     AlertBoxComponent,
     OwnershipComponent,
-    ActivityCostKindPickerComponent,
+    PickerComponent,
     ProgressesPresenterComponent,
     CastPipe,
     CanPipe,

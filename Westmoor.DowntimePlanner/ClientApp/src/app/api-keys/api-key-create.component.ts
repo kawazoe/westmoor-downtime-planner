@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ModalCreateComponentBase } from '../modal-edit/modal-create.component';
+import { ModalCreateComponentBase } from '../components/modal-edit/modal-create.component';
 import { CreateApiKeyRequest } from '../services/business/api.service';
 
 @Component({

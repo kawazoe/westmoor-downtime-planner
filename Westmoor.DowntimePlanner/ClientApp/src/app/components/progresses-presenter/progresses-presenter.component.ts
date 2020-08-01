@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { DowntimeCostResponse } from '../services/business/api.service';
+import { DowntimeCostResponse } from '../../services/business/api.service';
 
 @Component({
   selector: 'app-progresses-presenter',

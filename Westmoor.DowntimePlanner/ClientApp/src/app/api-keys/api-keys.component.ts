@@ -5,7 +5,7 @@ import { switchMap, tap } from 'rxjs/operators';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ApiKeyCreateComponent } from './api-key-create.component';
 import { ApiKeyUpdateComponent } from './api-key-update.component';
-import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
+import { ModalDeleteComponent } from '../components/modal-edit/modal-delete.component';
 
 @Component({
   selector: 'app-api-keys',

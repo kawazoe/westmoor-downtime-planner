@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ModalCreateComponentBase } from '../modal-edit/modal-create.component';
-import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
-import { CreateActivityRequest } from '../services/business/api.service';
+import { ModalCreateComponentBase } from '../components/modal-edit/modal-create.component';
+import { ModalDeleteComponent } from '../components/modal-edit/modal-delete.component';
+import { ActivityCostKinds, CreateActivityRequest } from '../services/business/api.service';
 
 @Component({
   selector: 'app-activity-create',
@@ -12,6 +12,7 @@ import { CreateActivityRequest } from '../services/business/api.service';
 export class ActivityCreateComponent extends ModalCreateComponentBase<CreateActivityRequest> implements OnInit {
   public FormGroupType = FormGroup;
   public FormArrayType = FormArray;
+  public ActivityCostKinds = ActivityCostKinds;
 
   constructor(
     public modalRef: BsModalRef,

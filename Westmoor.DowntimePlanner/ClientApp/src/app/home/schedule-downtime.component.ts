@@ -3,7 +3,12 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { defer, forkJoin, from, merge, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { ActivityCostResponse, ActivityResponse, ApiService } from '../services/business/api.service';
+import {
+  ActivityCostKinds,
+  ActivityCostResponse,
+  ActivityResponse,
+  ApiService
+} from '../services/business/api.service';
 
 import * as jexl from 'jexl';
 
@@ -59,7 +64,7 @@ export interface ScheduleDowntimeAction {
 }
 
 export interface ScheduleDowntimeCostAction {
-  activityCostKind: string;
+  activityCostKind: ActivityCostKinds;
   goal: number;
 }
 

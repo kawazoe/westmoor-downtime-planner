@@ -3,14 +3,15 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { of } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
+import { ModalDeleteComponent } from '../components/modal-edit/modal-delete.component';
+import { ActivityCostKinds } from '../services/business/api.service';
 
 export interface AwardProgressAction {
   costs: AwardProgressCostAction[];
 }
 
 export interface AwardProgressCostAction {
-  activityCostKind: string;
+  activityCostKind: ActivityCostKinds;
   delta: number;
 }
 
@@ -21,6 +22,7 @@ export interface AwardProgressCostAction {
 export class AwardProgressComponent {
   public FormArrayType = FormArray;
   public FormGroupType = FormGroup;
+  public ActivityCostKinds = ActivityCostKinds;
 
   public form = new FormGroup({
     costs: new FormArray([], Validators.required)

@@ -7,7 +7,7 @@ import { AwardProgressAction, AwardProgressComponent } from './award-progress.co
 import { ScheduleDowntimeAction, ScheduleDowntimeComponent } from './schedule-downtime.component';
 import { BehaviorSubject, concat, of, OperatorFunction } from 'rxjs';
 import { last, map, switchMap, take } from 'rxjs/operators';
-import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
+import { ModalDeleteComponent } from '../components/modal-edit/modal-delete.component';
 import { groupBy } from '../../lib/functional';
 
 @Component({

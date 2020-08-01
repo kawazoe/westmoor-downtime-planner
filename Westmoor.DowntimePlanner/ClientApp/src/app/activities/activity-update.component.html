@@ -28,11 +28,12 @@
 
           <div class="form-group">
             <label [for]="'kindInput_' + costIndex">Kind</label>
-            <app-activity-cost-kind-picker class="d-block"
-                                           [id]="'kindInput_' + costIndex"
-                                           [value]="costGroup.controls.kind.value"
-                                           (change)="costGroup.controls.kind.setValue($event)">
-            </app-activity-cost-kind-picker>
+            <app-picker class="d-block"
+                        [id]="'kindInput_' + costIndex"
+                        [value]="costGroup.controls.kind.value"
+                        [choices]="ActivityCostKinds"
+                        (change)="costGroup.controls.kind.setValue($event)">
+            </app-picker>
           </div>
           <div class="form-group">
             <label [for]="'jexlExpressionInput_' + costIndex">Expression</label>

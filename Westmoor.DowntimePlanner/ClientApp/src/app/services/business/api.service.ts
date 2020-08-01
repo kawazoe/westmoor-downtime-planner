@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export const ActivityCostKinds = ['days', 'gold'] as const;
+export type ActivityCostKinds = typeof ActivityCostKinds[number];
+
 export interface ActivityResponse {
   id: string;
   name: string;
@@ -31,7 +34,7 @@ export interface CreateActivityRequest {
 }
 
 export interface CreateActivityCostRequest {
-  kind: string;
+  kind: ActivityCostKinds;
   jexlExpression: string;
   parameters: CreateActivityParameterRequest[];
 }
@@ -50,7 +53,7 @@ export interface UpdateActivityRequest {
 }
 
 export interface UpdateActivityCostRequest {
-  kind: string;
+  kind: ActivityCostKinds;
   jexlExpression: string;
   parameters: UpdateActivityParameterRequest[];
 }
@@ -90,7 +93,7 @@ export interface DowntimeResponse {
 }
 
 export interface DowntimeCostResponse {
-  activityCostKind: string;
+  activityCostKind: ActivityCostKinds;
   value: number;
   goal: number;
 }
@@ -103,7 +106,7 @@ export interface CreateDowntimeRequest {
 }
 
 export interface CreateDowntimeCostRequest {
-  activityCostKind: string;
+  activityCostKind: ActivityCostKinds;
   goal: number;
 }
 
@@ -113,7 +116,7 @@ export interface UpdateDowntimeRequest {
 }
 
 export interface UpdateDowntimeCostRequest {
-  activityCostKind: string;
+  activityCostKind: ActivityCostKinds;
   value: number;
   goal: number;
 }

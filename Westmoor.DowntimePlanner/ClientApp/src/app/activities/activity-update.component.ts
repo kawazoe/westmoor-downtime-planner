@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ModalUpdateComponentBase } from '../modal-edit/modal-update.component';
+import { ModalUpdateComponentBase } from '../components/modal-edit/modal-update.component';
 import {
+  ActivityCostKinds,
   ActivityCostResponse,
   ActivityParameterResponse,
   ActivityResponse,
   UpdateActivityRequest
 } from '../services/business/api.service';
-import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
+import { ModalDeleteComponent } from '../components/modal-edit/modal-delete.component';
 
 @Component({
   selector: 'app-activity-edit',
@@ -17,6 +18,7 @@ import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
 export class ActivityUpdateComponent extends ModalUpdateComponentBase<ActivityResponse, UpdateActivityRequest> implements OnInit {
   public FormGroupType = FormGroup;
   public FormArrayType = FormArray;
+  public ActivityCostKinds = ActivityCostKinds;
 
   constructor(
     public modalRef: BsModalRef,

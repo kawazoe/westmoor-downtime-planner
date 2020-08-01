@@ -3,7 +3,7 @@ import { BehaviorSubject, of, OperatorFunction } from 'rxjs';
 import { ApiService, CharacterResponse } from '../services/business/api.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { switchMap, tap } from 'rxjs/operators';
-import { ModalDeleteComponent } from '../modal-edit/modal-delete.component';
+import { ModalDeleteComponent } from '../components/modal-edit/modal-delete.component';
 import { CharacterCreateComponent } from './character-create.component';
 import { CharacterUpdateComponent } from './character-update.component';
 

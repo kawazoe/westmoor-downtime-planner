@@ -11,10 +11,11 @@
 
           <div class="form-group">
             <label [for]="'activityCostKindInput_' + costIndex">Kind</label>
-            <app-activity-cost-kind-picker class="d-block"
-                                           [id]="'activityCostKindInput_' + costIndex"
-                                           (change)="costGroup.controls.activityCostKind.setValue($event)">
-            </app-activity-cost-kind-picker>
+            <app-picker class="d-block"
+                        [id]="'activityCostKindInput_' + costIndex"
+                        [choices]="ActivityCostKinds"
+                        (change)="costGroup.controls.activityCostKind.setValue($event)">
+            </app-picker>
           </div>
           <div class="form-group">
             <label [for]="'deltaInput_' + costIndex">Delta</label>
