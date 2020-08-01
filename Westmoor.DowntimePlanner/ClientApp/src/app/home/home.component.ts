@@ -3,13 +3,13 @@ import { AuthService } from '../services/business/auth.service';
 import {
   ApiService,
   AwardCharacterRequest,
-  CharacterResponse,
+  CharacterResponse, CreateDowntimeRequest,
   DowntimeResponse
 } from '../services/business/api.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { AwardCharacterComponent } from './award-character.component';
 import { AwardProgressAction, AwardProgressComponent } from './award-progress.component';
-import { ScheduleDowntimeAction, ScheduleDowntimeComponent } from './schedule-downtime.component';
+import { ScheduleDowntimeComponent } from './schedule-downtime.component';
 import { BehaviorSubject, concat, of, OperatorFunction } from 'rxjs';
 import { last, map, switchMap, take } from 'rxjs/operators';
 import { ModalDeleteComponent } from '../components/modal-edit/modal-delete.component';
@@ -128,15 +128,9 @@ export class HomeComponent {
       );
   }
 
-  private endScheduleDowntime(result: ScheduleDowntimeAction) {
+  private endScheduleDowntime(result: Omit<CreateDowntimeRequest, 'characterId'>) {
     const batch = this.selectedCharacters
-      .map(character => ({
-        characterId: character.id,
-        activityId: result.activityId,
-        costs: result.costs,
-        sharedWith: []
-      }))
-      .map(r => this.api.createDowntime(r));
+      .map(c => this.api.createDowntime({ ...result, characterId: c.id }));
 
     return concat(...batch)
       .pipe(

@@ -4,10 +4,9 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { defer, forkJoin, from, merge, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {
-  ActivityCostKinds,
   ActivityCostResponse,
   ActivityResponse,
-  ApiService
+  ApiService, CreateDowntimeRequest
 } from '../services/business/api.service';
 
 import * as jexl from 'jexl';
@@ -57,16 +56,6 @@ jexl.addTransform('dispatch', (value: any, ...targets: [any, any][]) => {
 
   return result;
 });
-
-export interface ScheduleDowntimeAction {
-  activityId: string;
-  costs: ScheduleDowntimeCostAction[];
-}
-
-export interface ScheduleDowntimeCostAction {
-  activityCostKind: ActivityCostKinds;
-  goal: number;
-}
 
 @Component({
   selector: 'app-schedule-downtime',
@@ -139,7 +128,7 @@ export class ScheduleDowntimeComponent {
     );
 
   public processing = false;
-  public onSchedule = (result: ScheduleDowntimeAction) => of(null);
+  public onSchedule = (result: Omit<CreateDowntimeRequest, 'characterId'>) => of(null);
 
   constructor(
     public modalRef: BsModalRef,
@@ -156,7 +145,8 @@ export class ScheduleDowntimeComponent {
           .map(cost => ({
             activityCostKind: cost.controls.activityCostKind.value,
             goal: cost.controls.goal.value,
-          }))
+          })),
+        sharedWith: []
       })
       .pipe(
         tap(() => this.modalRef.hide(), () => { this.processing = false; })
