@@ -41,6 +41,11 @@ namespace Westmoor.DowntimePlanner.Controllers
         public async Task UpdateAsync(string id, UpdateDowntimeRequest request) =>
             await _service.UpdateAsync(id, request);
 
+        [HttpPut("{id}/advance")]
+        [Authorize(Policy = Policies.WriteDowntimes)]
+        public async Task AdvanceAsync(string id, AdvanceDowntimeRequest request) =>
+            await _service.AdvanceAsync(id, request);
+
         [HttpDelete("{id}")]
         [Authorize(Policy = Policies.WriteDowntimes)]
         public async Task DeleteAsync(string id) =>

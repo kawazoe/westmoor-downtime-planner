@@ -46,7 +46,7 @@
   <h2>Scheduled downtimes</h2>
   <button type="button"
           class="btn btn-secondary mb-1 mr-2"
-          (click)="beginAwardProgress()"
+          (click)="beginAdvanceDowntime()"
           [disabled]="!selectedDowntimes.length"
           *ngIf="user$ | can:'write:downtimes' | async">
     Award progress...

@@ -26,7 +26,7 @@ import { AppComponent } from './app.component';
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { AwardCharacterComponent } from './home/award-character.component';
-import { AwardProgressComponent } from './home/award-progress.component';
+import { AdvanceDowntimeComponent } from './home/advance-downtime.component';
 import { ScheduleDowntimeComponent } from './home/schedule-downtime.component';
 import { ActivitiesComponent } from './activities/activities.component';
 import { ActivityCreateComponent } from './activities/activity-create.component';
@@ -56,7 +56,7 @@ import { ErrorHandlerService } from './error-handler.service';
     NavMenuComponent,
     HomeComponent,
     AwardCharacterComponent,
-    AwardProgressComponent,
+    AdvanceDowntimeComponent,
     ScheduleDowntimeComponent,
     ActivitiesComponent,
     ActivityCreateComponent,

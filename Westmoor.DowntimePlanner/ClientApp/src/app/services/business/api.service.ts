@@ -125,6 +125,15 @@ export interface UpdateDowntimeCostRequest {
   goal: number;
 }
 
+export interface AdvanceDowntimeRequest {
+  costs: AdvanceDowntimeCostRequest[];
+}
+
+export interface AdvanceDowntimeCostRequest {
+  activityCostKind: ActivityCostKinds;
+  delta: number;
+}
+
 export interface ApiKeyResponse {
   key: string;
   owner: string;
@@ -230,6 +239,10 @@ export class ApiService {
 
   public updateDowntime(id: string, request: UpdateDowntimeRequest): Observable<void> {
     return this.http.put<void>(`${this.endpoint}/downtime/${id}`, request);
+  }
+
+  public advanceDowntime(id: string, request: AdvanceDowntimeRequest): Observable<void> {
+    return this.http.put<void>(`${this.endpoint}/downtime/${id}/advance`, request);
   }
 
   public deleteDowntime(id: string): Observable<void> {

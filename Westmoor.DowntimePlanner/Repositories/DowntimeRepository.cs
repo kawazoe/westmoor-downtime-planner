@@ -105,6 +105,40 @@ namespace Westmoor.DowntimePlanner.Repositories
             );
         }
 
+        public async Task AdvanceAsync(string id, AdvanceDowntimeRequest request)
+        {
+            var entity = await GetByIdAsync(id);
+
+            var costs = entity.Costs
+                .Select(cost => (
+                    source: cost,
+                    req: request.Costs
+                        .FirstOrDefault(c => c.ActivityCostKind == cost.ActivityCostKind)
+                ))
+                .Select(cost => new DowntimeCostEntity
+                {
+                    ActivityCostKind = cost.source.ActivityCostKind,
+                    Value = cost.req != null
+                        ? cost.source.Value + cost.req.Delta
+                        : cost.source.Value,
+                    Goal = cost.source.Goal
+                })
+                .ToArray();
+
+            var updatedEntity = new DowntimeEntity
+            {
+                Character = entity.Character,
+                Activity = entity.Activity,
+                Costs = costs,
+                SharedWith = entity.SharedWith
+            };
+
+            await (await _container).ReplaceItemAsync(
+                _entityManipulator.UpdateMetadata(updatedEntity, entity),
+                id
+            );
+        }
+
         public async Task DeleteAsync(string id)
         {
             await (await _container).DeleteItemAsync<DowntimeEntity>(id, _entityManipulator.DefaultPartitionKey);

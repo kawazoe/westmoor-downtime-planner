@@ -4,22 +4,13 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ModalDeleteComponent } from '../components/modal-edit/modal-delete.component';
-import { ActivityCostKinds } from '../services/business/api.service';
-
-export interface AwardProgressAction {
-  costs: AwardProgressCostAction[];
-}
-
-export interface AwardProgressCostAction {
-  activityCostKind: ActivityCostKinds;
-  delta: number;
-}
+import { ActivityCostKinds, AdvanceDowntimeRequest } from '../services/business/api.service';
 
 @Component({
-  selector: 'app-award-progress',
-  templateUrl: './award-progress.component.html',
+  selector: 'app-advance-downtime',
+  templateUrl: './advance-downtime.component.html',
 })
-export class AwardProgressComponent {
+export class AdvanceDowntimeComponent {
   public FormArrayType = FormArray;
   public FormGroupType = FormGroup;
   public ActivityCostKinds = ActivityCostKinds;
@@ -28,7 +19,7 @@ export class AwardProgressComponent {
     costs: new FormArray([], Validators.required)
   });
   public processing = false;
-  public onAward = (results: AwardProgressAction) => of(null);
+  public onAward = (result: AdvanceDowntimeRequest) => of(null);
 
   constructor(
     public modalRef: BsModalRef,

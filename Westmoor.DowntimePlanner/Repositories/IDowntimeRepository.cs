@@ -12,6 +12,7 @@ namespace Westmoor.DowntimePlanner.Repositories
         Task<DowntimeEntity> GetByIdAsync(string id);
         Task CreateAsync(CreateDowntimeRequest request);
         Task UpdateAsync(string id, UpdateDowntimeRequest request);
+        Task AdvanceAsync(string id, AdvanceDowntimeRequest request);
         Task DeleteAsync(string id);
     }
 }

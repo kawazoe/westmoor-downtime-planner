@@ -1,19 +1,21 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../services/business/auth.service';
 import {
+  AdvanceDowntimeRequest,
   ApiService,
   AwardCharacterRequest,
-  CharacterResponse, CreateDowntimeRequest,
+  CharacterResponse,
+  CreateDowntimeRequest, DowntimeCostResponse,
   DowntimeResponse
 } from '../services/business/api.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { AwardCharacterComponent } from './award-character.component';
-import { AwardProgressAction, AwardProgressComponent } from './award-progress.component';
+import { AdvanceDowntimeComponent } from './advance-downtime.component';
 import { ScheduleDowntimeComponent } from './schedule-downtime.component';
 import { BehaviorSubject, concat, of, OperatorFunction } from 'rxjs';
 import { last, map, switchMap, take } from 'rxjs/operators';
 import { ModalDeleteComponent } from '../components/modal-edit/modal-delete.component';
-import { groupBy } from '../../lib/functional';
+import { groupBy, uniq } from '../../lib/functional';
 
 @Component({
   selector: 'app-home',
@@ -112,14 +114,14 @@ export class HomeComponent {
     this.modalRef.content.onSchedule = r => this.endScheduleDowntime(r);
   }
 
-  public beginAwardProgress() {
-    this.modalRef = this.modal.show(AwardProgressComponent);
-    this.modalRef.content.onAward = r => this.endAwardProgress(r);
+  public beginAdvanceDowntime() {
+    this.modalRef = this.modal.show(AdvanceDowntimeComponent);
+    this.modalRef.content.onAward = r => this.endAdvanceDowntime(r);
   }
 
-  private endAwardCharacter(result: AwardCharacterRequest) {
+  private endAwardCharacter(request: AwardCharacterRequest) {
     const batch = this.selectedCharacters
-      .map(c => this.api.awardCharacter(c.id, result));
+      .map(c => this.api.awardCharacter(c.id, request));
 
     return concat(...batch)
       .pipe(
@@ -128,9 +130,9 @@ export class HomeComponent {
       );
   }
 
-  private endScheduleDowntime(result: Omit<CreateDowntimeRequest, 'characterId'>) {
+  private endScheduleDowntime(request: Omit<CreateDowntimeRequest, 'characterId'>) {
     const batch = this.selectedCharacters
-      .map(c => this.api.createDowntime({ ...result, characterId: c.id }));
+      .map(c => this.api.createDowntime({ ...request, characterId: c.id }));
 
     return concat(...batch)
       .pipe(
@@ -140,61 +142,42 @@ export class HomeComponent {
       );
   }
 
-  private endAwardProgress(result: AwardProgressAction) {
-    const batch = this.selectedDowntimes
-      .map(downtime => {
-        const downtimeId = downtime.id;
-        const character = downtime.character;
-        const progresses = result.costs
-          .map(cost => {
-            const original = downtime.progresses
-              .find(c => c.activityCostKind === cost.activityCostKind);
+  private endAdvanceDowntime(request: AdvanceDowntimeRequest) {
+    const downtimeBatch = this.selectedDowntimes
+      .map(d => this.api.advanceDowntime(d.id, request));
 
-            return {
-              activityCostKind: cost.activityCostKind,
-              delta: cost.delta,
-              value: original.value + cost.delta,
-              goal: original.goal
-            };
-          });
+    const deltasByKindByCharacter = groupBy(this.selectedDowntimes, d => d.character.id)
+      .map(g => {
+        const progresses = g.values
+          .reduce((acc, cur) => [...acc, ...cur.progresses], [] as DowntimeCostResponse[]);
 
-        const costs = downtime.progresses
-          .map(original => progresses
-            .find(p => p.activityCostKind === original.activityCostKind)
-            || original
-          );
+        return ({
+          characterId: g.key,
+          activityCostKinds: groupBy(progresses, p => p.activityCostKind)
+            .map(progress => {
+              const advanceRequest = request.costs
+                .find(c => c.activityCostKind === progress.key);
 
-        return {
-          downtimeId: downtimeId,
-          character: character,
-          costs: costs,
-          sharedWith: downtime.sharedWith
-        };
-      });
-
-    const downtimeBatch = batch.map(r => this.api.updateDowntime(r.downtimeId, r));
-
-    const characterBatch = groupBy(batch, d => d.character.id)
-      .map(group => {
-        const costDays = group.values
-          .map(d => d.costs.find(c => c.activityCostKind === 'days'))
-          .map(c => c && c['delta'] || 0)
-          .reduce((acc, cur) => acc + cur, 0);
-
-        return this.api.getCharacterById(group.key)
-          .pipe(
-            switchMap(character => {
-              const accruedDowntimeDays = character.accruedDowntimeDays - costDays;
-
-              return this.api.updateCharacter(character.id, {
-                playerFullName: character.playerFullName,
-                characterFullName: character.characterFullName,
-                accruedDowntimeDays: accruedDowntimeDays,
-                sharedWith: character.sharedWith
-              });
+              return advanceRequest
+                ? ({
+                  activityCostKind: progress.key,
+                  delta: advanceRequest.delta * progress.values.length
+                })
+                : null;
             })
-          );
+            .filter(req => req && req.delta)
+        });
       });
+
+    const characterBatch = deltasByKindByCharacter
+      .map(character => ({
+        characterId: character.characterId,
+        // Limit requests to days as it is the only supported kind by the character api.
+        request: {
+          delta: character.activityCostKinds.find(p => p.activityCostKind === 'days').delta
+        }
+      }))
+      .map(character => this.api.awardCharacter(character.characterId, character.request));
 
     return concat(...downtimeBatch)
       .pipe(
