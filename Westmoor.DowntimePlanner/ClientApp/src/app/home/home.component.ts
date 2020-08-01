@@ -1,8 +1,13 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../services/business/auth.service';
-import { ApiService, CharacterResponse, DowntimeResponse } from '../services/business/api.service';
+import {
+  ApiService,
+  AwardCharacterRequest,
+  CharacterResponse,
+  DowntimeResponse
+} from '../services/business/api.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { AwardDowntimeAction, AwardDowntimeComponent } from './award-downtime.component';
+import { AwardCharacterComponent } from './award-character.component';
 import { AwardProgressAction, AwardProgressComponent } from './award-progress.component';
 import { ScheduleDowntimeAction, ScheduleDowntimeComponent } from './schedule-downtime.component';
 import { BehaviorSubject, concat, of, OperatorFunction } from 'rxjs';
@@ -97,9 +102,9 @@ export class HomeComponent {
       );
   }
 
-  public beginAwardDowntime() {
-    this.modalRef = this.modal.show(AwardDowntimeComponent);
-    this.modalRef.content.onAward = r => this.endAwardDowntime(r);
+  public beginAwardCharacter() {
+    this.modalRef = this.modal.show(AwardCharacterComponent);
+    this.modalRef.content.onAward = r => this.endAwardCharacter(r);
   }
 
   public beginScheduleDowntime() {
@@ -112,16 +117,9 @@ export class HomeComponent {
     this.modalRef.content.onAward = r => this.endAwardProgress(r);
   }
 
-  private endAwardDowntime(result: AwardDowntimeAction) {
+  private endAwardCharacter(result: AwardCharacterRequest) {
     const batch = this.selectedCharacters
-      .map(character => ({
-        characterId: character.id,
-        playerFullName: character.playerFullName,
-        characterFullName: character.characterFullName,
-        accruedDowntimeDays: character.accruedDowntimeDays + result.downtimeDays,
-        sharedWith: character.sharedWith
-      }))
-      .map(r => this.api.updateCharacter(r.characterId, r));
+      .map(c => this.api.awardCharacter(c.id, result));
 
     return concat(...batch)
       .pipe(

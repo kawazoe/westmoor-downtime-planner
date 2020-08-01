@@ -4,7 +4,7 @@
   <h2>Current downtime</h2>
   <button type="button"
           class="btn btn-secondary mb-1 mr-2"
-          (click)="beginAwardDowntime()"
+          (click)="beginAwardCharacter()"
           [disabled]="!selectedCharacters.length"
           *ngIf="user$ | can:'write:characters' | async">
     Award downtime...

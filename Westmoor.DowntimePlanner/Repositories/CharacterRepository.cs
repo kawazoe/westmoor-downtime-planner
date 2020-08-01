@@ -73,6 +73,24 @@ namespace Westmoor.DowntimePlanner.Repositories
             );
         }
 
+        public async Task AwardAsync(string id, AwardDowntimeRequest request)
+        {
+            var entity = await GetByIdAsync(id);
+
+            var updatedEntity = new CharacterEntity
+            {
+                PlayerFullName = entity.PlayerFullName,
+                CharacterFullName = entity.CharacterFullName,
+                AccruedDowntimeDays = entity.AccruedDowntimeDays + request.Delta,
+                SharedWith = entity.SharedWith
+            };
+
+            await (await _container).ReplaceItemAsync(
+                _entityManipulator.UpdateMetadata(updatedEntity, entity),
+                id
+            );
+        }
+
         public async Task DeleteAsync(string id)
         {
             await (await _container).DeleteItemAsync<CharacterEntity>(id, _entityManipulator.DefaultPartitionKey);

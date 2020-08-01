@@ -84,6 +84,10 @@ export interface UpdateCharacterRequest {
   sharedWith: string[];
 }
 
+export interface AwardCharacterRequest {
+  delta: number;
+}
+
 export interface DowntimeResponse {
   id: string;
   character: CharacterResponse;
@@ -198,6 +202,10 @@ export class ApiService {
 
   public updateCharacter(id: string, request: UpdateCharacterRequest): Observable<void> {
     return this.http.put<void>(`${this.endpoint}/character/${id}`, request);
+  }
+
+  public awardCharacter(id: string, request: AwardCharacterRequest): Observable<void> {
+    return this.http.put<void>(`${this.endpoint}/character/${id}/award`, request);
   }
 
   public deleteCharacter(id: string): Observable<void> {

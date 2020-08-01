@@ -25,7 +25,7 @@ import { SignOutGuard } from './services/route-guards/sign-out-guard.service';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './components/nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
-import { AwardDowntimeComponent } from './home/award-downtime.component';
+import { AwardCharacterComponent } from './home/award-character.component';
 import { AwardProgressComponent } from './home/award-progress.component';
 import { ScheduleDowntimeComponent } from './home/schedule-downtime.component';
 import { ActivitiesComponent } from './activities/activities.component';
@@ -55,7 +55,7 @@ import { ErrorHandlerService } from './error-handler.service';
     AppComponent,
     NavMenuComponent,
     HomeComponent,
-    AwardDowntimeComponent,
+    AwardCharacterComponent,
     AwardProgressComponent,
     ScheduleDowntimeComponent,
     ActivitiesComponent,
