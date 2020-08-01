@@ -139,6 +139,86 @@ namespace Westmoor.DowntimePlanner.Repositories
             );
         }
 
+        public async Task AdvanceBatchAsync(AdvanceDowntimeBatchRequest request)
+        {
+            var downtimes = await request.Ids
+                .ToAsyncEnumerable()
+                .SelectAwait(async id => await GetByIdAsync(id))
+                .ToArrayAsync();
+
+            foreach (var entity in downtimes)
+            {
+                var costs = entity.Costs
+                    .Select(cost => (
+                        source: cost,
+                        req: request.Request.Costs
+                            .FirstOrDefault(c => c.ActivityCostKind == cost.ActivityCostKind)
+                    ))
+                    .Select(cost => new DowntimeCostEntity
+                    {
+                        ActivityCostKind = cost.source.ActivityCostKind,
+                        Value = cost.req != null
+                            ? cost.source.Value + cost.req.Delta
+                            : cost.source.Value,
+                        Goal = cost.source.Goal
+                    })
+                    .ToArray();
+
+                var updatedEntity = new DowntimeEntity
+                {
+                    Character = entity.Character,
+                    Activity = entity.Activity,
+                    Costs = costs,
+                    SharedWith = entity.SharedWith
+                };
+
+                await (await _container).ReplaceItemAsync(
+                    _entityManipulator.UpdateMetadata(updatedEntity, entity),
+                    entity.Id
+                );
+            }
+
+            var deltasByKindByCharacter = downtimes
+                .GroupBy(d => d.Character.Id)
+                .Select(g => (
+                    characterId: g.Key,
+                    kinds: g
+                        .SelectMany(p => p.Costs)
+                        .GroupBy(c => c.ActivityCostKind)
+                        .Select(cost =>
+                        {
+                            var delta = request.Request.Costs
+                                .FirstOrDefault(c => c.ActivityCostKind == cost.Key)
+                                ?.Delta
+                                ?? 0;
+
+                            return (
+                                activityCostKind: cost.Key,
+                                delta: delta * cost.Count()
+                            );
+                        })
+                        .Where(req => req != default)
+                ));
+
+            var daysDeltaByCharacter = deltasByKindByCharacter
+                .Select(character => (
+                    character.characterId,
+                    // Limit requests to days as it is the only supported kind by the character api.
+                    request: new AwardCharacterRequest
+                    {
+                        Delta = character.kinds
+                            .FirstOrDefault(c => c.activityCostKind == "days")
+                            .delta
+                    }
+                ))
+                .Where(req => req.request.Delta != 0);
+
+            foreach (var (characterId, characterRequest) in daysDeltaByCharacter)
+            {
+                await _characterRepository.AwardAsync(characterId, characterRequest);
+            }
+        }
+
         public async Task DeleteAsync(string id)
         {
             await (await _container).DeleteItemAsync<DowntimeEntity>(id, _entityManipulator.DefaultPartitionKey);

@@ -57,7 +57,7 @@ namespace Westmoor.DowntimePlanner.Services
             }
         }
 
-        public async Task AwardAsync(string id, AwardDowntimeRequest request) =>
+        public async Task AwardAsync(string id, AwardCharacterRequest request) =>
             await _repository.AwardAsync(id, request);
 
         public async Task DeleteAsync(string id) =>

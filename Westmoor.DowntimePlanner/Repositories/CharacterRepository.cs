@@ -73,7 +73,7 @@ namespace Westmoor.DowntimePlanner.Repositories
             );
         }
 
-        public async Task AwardAsync(string id, AwardDowntimeRequest request)
+        public async Task AwardAsync(string id, AwardCharacterRequest request)
         {
             var entity = await GetByIdAsync(id);
 

@@ -39,7 +39,7 @@ namespace Westmoor.DowntimePlanner.Controllers
 
         [HttpPut("{id}/award")]
         [Authorize(Policy = Policies.WriteCharacters)]
-        public async Task AwardAsync(string id, AwardDowntimeRequest request) =>
+        public async Task AwardAsync(string id, AwardCharacterRequest request) =>
             await _service.AwardAsync(id, request);
 
         [HttpDelete("{id}")]

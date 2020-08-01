@@ -1,6 +1,6 @@
 namespace Westmoor.DowntimePlanner.Requests
 {
-    public class AwardDowntimeRequest
+    public class AwardCharacterRequest
     {
         public int Delta { get; set; }
     }

@@ -4,7 +4,11 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ModalDeleteComponent } from '../components/modal-edit/modal-delete.component';
-import { ActivityCostKinds, AdvanceDowntimeRequest } from '../services/business/api.service';
+import {
+  ActivityCostKinds,
+  AdvanceDowntimeBatchRequest,
+  DowntimeResponse
+} from '../services/business/api.service';
 
 @Component({
   selector: 'app-advance-downtime',
@@ -15,11 +19,12 @@ export class AdvanceDowntimeComponent {
   public FormGroupType = FormGroup;
   public ActivityCostKinds = ActivityCostKinds;
 
+  public downtimes: DowntimeResponse[];
   public form = new FormGroup({
     costs: new FormArray([], Validators.required)
   });
   public processing = false;
-  public onAward = (result: AdvanceDowntimeRequest) => of(null);
+  public onAward = (result: AdvanceDowntimeBatchRequest) => of(null);
 
   constructor(
     public modalRef: BsModalRef,
@@ -30,12 +35,15 @@ export class AdvanceDowntimeComponent {
   public award() {
     this.processing = true;
     this.onAward({
-        costs: (this.form.controls.costs as FormArray).controls
-          .map(ctrl => ctrl as FormGroup)
-          .map(cost => ({
-            activityCostKind: cost.controls.activityCostKind.value,
-            delta: parseInt(cost.controls.delta.value, 10)
-          }))
+        ids: this.downtimes.map(d => d.id),
+        request: {
+          costs: (this.form.controls.costs as FormArray).controls
+            .map(ctrl => ctrl as FormGroup)
+            .map(cost => ({
+              activityCostKind: cost.controls.activityCostKind.value,
+              delta: parseInt(cost.controls.delta.value, 10)
+            }))
+        }
       })
       .pipe(
         tap(() => this.modalRef.hide(), () => { this.processing = false; })

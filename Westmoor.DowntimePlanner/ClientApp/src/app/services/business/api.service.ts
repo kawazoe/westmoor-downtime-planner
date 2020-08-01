@@ -88,6 +88,11 @@ export interface AwardCharacterRequest {
   delta: number;
 }
 
+export interface AwardCharacterBatchRequest {
+  ids: string[];
+  request: AwardCharacterRequest;
+}
+
 export interface DowntimeResponse {
   id: string;
   character: CharacterResponse;
@@ -107,6 +112,10 @@ export interface CreateDowntimeRequest {
   activityId: string;
   costs: CreateDowntimeCostRequest[];
   sharedWith: string[];
+}
+
+export class CreateDowntimeBatchRequest {
+  requests: CreateDowntimeRequest[];
 }
 
 export interface CreateDowntimeCostRequest {
@@ -132,6 +141,11 @@ export interface AdvanceDowntimeRequest {
 export interface AdvanceDowntimeCostRequest {
   activityCostKind: ActivityCostKinds;
   delta: number;
+}
+
+export class AdvanceDowntimeBatchRequest {
+  ids: string[];
+  request: AdvanceDowntimeRequest;
 }
 
 export interface ApiKeyResponse {
@@ -217,6 +231,10 @@ export class ApiService {
     return this.http.put<void>(`${this.endpoint}/character/${id}/award`, request);
   }
 
+  public awardCharacterBatch(request: AwardCharacterBatchRequest): Observable<void> {
+    return this.http.put<void>(`${this.endpoint}/batch/character/award`, request);
+  }
+
   public deleteCharacter(id: string): Observable<void> {
     return this.http.delete<void>(`${this.endpoint}/character/${id}`);
   }
@@ -237,12 +255,20 @@ export class ApiService {
     return this.http.post<void>(`${this.endpoint}/downtime`, request);
   }
 
+  public createDowntimeBatch(request: CreateDowntimeBatchRequest): Observable<void> {
+    return this.http.post<void>(`${this.endpoint}/batch/downtime`, request);
+  }
+
   public updateDowntime(id: string, request: UpdateDowntimeRequest): Observable<void> {
     return this.http.put<void>(`${this.endpoint}/downtime/${id}`, request);
   }
 
   public advanceDowntime(id: string, request: AdvanceDowntimeRequest): Observable<void> {
     return this.http.put<void>(`${this.endpoint}/downtime/${id}/advance`, request);
+  }
+
+  public advanceDowntimeBatch(request: AdvanceDowntimeBatchRequest): Observable<void> {
+    return this.http.put<void>(`${this.endpoint}/batch/downtime/advance`, request);
   }
 
   public deleteDowntime(id: string): Observable<void> {

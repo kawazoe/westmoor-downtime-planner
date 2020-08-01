@@ -38,6 +38,9 @@ namespace Westmoor.DowntimePlanner.Services
         public async Task AdvanceAsync(string id, AdvanceDowntimeRequest request) =>
             await _repository.AdvanceAsync(id, request);
 
+        public async Task AdvanceBatchAsync(AdvanceDowntimeBatchRequest request) =>
+            await _repository.AdvanceBatchAsync(request);
+
         public async Task DeleteAsync(string id) =>
             await _repository.DeleteAsync(id);
 

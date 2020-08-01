@@ -10,7 +10,7 @@ namespace Westmoor.DowntimePlanner.Services
         Task<CharacterResponse> GetByIdAsync(string id);
         Task CreateAsync(CreateCharacterRequest request);
         Task UpdateAsync(string id, UpdateCharacterRequest request);
-        Task AwardAsync(string id, AwardDowntimeRequest request);
+        Task AwardAsync(string id, AwardCharacterRequest request);
         Task DeleteAsync(string id);
     }
 }

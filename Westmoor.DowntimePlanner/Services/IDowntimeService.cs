@@ -12,6 +12,7 @@ namespace Westmoor.DowntimePlanner.Services
         Task CreateAsync(CreateDowntimeRequest request);
         Task UpdateAsync(string id, UpdateDowntimeRequest request);
         Task AdvanceAsync(string id, AdvanceDowntimeRequest request);
+        Task AdvanceBatchAsync(AdvanceDowntimeBatchRequest request);
         Task DeleteAsync(string id);
     }
 }

@@ -6,7 +6,7 @@ import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {
   ActivityCostResponse,
   ActivityResponse,
-  ApiService, CreateDowntimeRequest
+  ApiService, CharacterResponse, CreateDowntimeBatchRequest, CreateDowntimeRequest
 } from '../services/business/api.service';
 
 import * as jexl from 'jexl';
@@ -64,6 +64,7 @@ jexl.addTransform('dispatch', (value: any, ...targets: [any, any][]) => {
 export class ScheduleDowntimeComponent {
   public FormArrayType = FormArray;
 
+  public characters: CharacterResponse[];
   public activities$ = this.api.getAllActivities();
   public selectedActivity: ActivityResponse;
 
@@ -128,7 +129,7 @@ export class ScheduleDowntimeComponent {
     );
 
   public processing = false;
-  public onSchedule = (result: Omit<CreateDowntimeRequest, 'characterId'>) => of(null);
+  public onSchedule = (result: CreateDowntimeBatchRequest) => of(null);
 
   constructor(
     public modalRef: BsModalRef,
@@ -138,16 +139,19 @@ export class ScheduleDowntimeComponent {
 
   public schedule() {
     this.processing = true;
-    this.onSchedule({
-        activityId: this.form.controls.activityId.value,
-        costs: (this.form.controls.costs as FormArray).controls
-          .map(ctrl => ctrl as FormGroup)
-          .map(cost => ({
-            activityCostKind: cost.controls.activityCostKind.value,
-            goal: cost.controls.goal.value,
-          })),
-        sharedWith: []
-      })
+    const requests = this.characters.map(character => ({
+      characterId: character.id,
+      activityId: this.form.controls.activityId.value,
+      costs: (this.form.controls.costs as FormArray).controls
+        .map(ctrl => ctrl as FormGroup)
+        .map(cost => ({
+          activityCostKind: cost.controls.activityCostKind.value,
+          goal: cost.controls.goal.value,
+        })),
+      sharedWith: []
+    }));
+
+    this.onSchedule({ requests })
       .pipe(
         tap(() => this.modalRef.hide(), () => { this.processing = false; })
       )
