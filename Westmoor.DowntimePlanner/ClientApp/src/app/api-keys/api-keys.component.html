@@ -1,5 +1,10 @@
 <h1>Api Keys</h1>
-<button type="button" class="btn btn-success mb-2" (click)="create()">Create...</button>
+<button type="button"
+        class="btn btn-success mb-2"
+        (click)="create()"
+        *ngIf="user$ | can:'write:apikeys' | async">
+  Create...
+</button>
 <table class="table table-striped">
   <thead>
     <tr>
@@ -15,8 +20,18 @@
       <td>{{apiKey.owner}}</td>
       <td>{{apiKey.roles | json}}</td>
       <td>
-        <button type="button" class="btn btn-info mr-1" (click)="edit(apiKey)">Edit...</button>
-        <button type="button" class="btn btn-danger" (click)="revoke(apiKey)">Revoke...</button>
+        <button type="button"
+                class="btn btn-info mr-1"
+                (click)="edit(apiKey)"
+                *ngIf="user$ | can:'write:apikeys' | async">
+          Edit...
+        </button>
+        <button type="button"
+                class="btn btn-danger"
+                (click)="revoke(apiKey)"
+                *ngIf="user$ | can:'write:apikeys' | async">
+          Revoke...
+        </button>
       </td>
     </tr>
   </tbody>

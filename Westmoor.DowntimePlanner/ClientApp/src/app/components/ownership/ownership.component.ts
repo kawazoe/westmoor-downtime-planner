@@ -4,6 +4,7 @@ import { Observable, Observer, of } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { ApiService, UserResponse } from '../../services/business/api.service';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
+import { AuthService } from '../../services/business/auth.service';
 
 @Component({
   selector: 'app-ownership',
@@ -13,8 +14,10 @@ import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 export class OwnershipComponent {
   @Input() public sharedWith: FormArray;
 
+  public user$ = this.auth.user$;
+
   public search: string;
-  usersByEmail$ = new Observable((o: Observer<string>) => {
+  public usersByEmail$ = new Observable((o: Observer<string>) => {
       o.next(this.search);
     })
     .pipe(
@@ -32,6 +35,7 @@ export class OwnershipComponent {
     );
 
   constructor(
+    private auth: AuthService,
     private api: ApiService
   ) {
   }

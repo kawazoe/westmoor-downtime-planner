@@ -6,6 +6,7 @@ import { ModalDeleteComponent } from '../components/modal-edit/modal-delete.comp
 import { switchMap, tap } from 'rxjs/operators';
 import { ActivityCreateComponent } from './activity-create.component';
 import { ActivityUpdateComponent } from './activity-update.component';
+import { AuthService } from '../services/business/auth.service';
 
 @Component({
   selector: 'app-activities',
@@ -16,9 +17,11 @@ export class ActivitiesComponent {
 
   private modalRef: BsModalRef;
 
+  public user$ = this.auth.user$;
   public activities$ = this.activities.asObservable();
 
   constructor(
+    private auth: AuthService,
     private api: ApiService,
     private modal: BsModalService
   ) {

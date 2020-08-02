@@ -6,6 +6,7 @@ import { switchMap, tap } from 'rxjs/operators';
 import { ModalDeleteComponent } from '../components/modal-edit/modal-delete.component';
 import { CharacterCreateComponent } from './character-create.component';
 import { CharacterUpdateComponent } from './character-update.component';
+import { AuthService } from '../services/business/auth.service';
 
 @Component({
   selector: 'app-characters',
@@ -16,9 +17,11 @@ export class CharactersComponent {
 
   private modalRef: BsModalRef;
 
+  public user$ = this.auth.user$;
   public characters$ = this.characters.asObservable();
 
   constructor(
+    private auth: AuthService,
     private api: ApiService,
     private modal: BsModalService
   ) {

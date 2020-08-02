@@ -21,8 +21,8 @@ import { ModalDeleteComponent } from '../components/modal-edit/modal-delete.comp
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
-  public userFullName$ = this.auth.user$.pipe(map(u => u?.name));
   public user$ = this.auth.user$;
+  public userFullName$ = this.auth.user$.pipe(map(u => u?.name));
 
   private characters = new BehaviorSubject<CharacterResponse[]>([]);
   private currentDowntimes = new BehaviorSubject<DowntimeResponse[]>([]);

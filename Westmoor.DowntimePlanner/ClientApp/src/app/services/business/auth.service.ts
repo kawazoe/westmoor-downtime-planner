@@ -23,7 +23,19 @@ export interface UserProfile {
   'https://westmoor.rpg/permissions': string[];
 }
 
-export function can(permission: string): OperatorProjection<UserProfile, boolean> {
+export const Permissions = [
+  'read:activities',
+  'read:characters',
+  'read:downtimes',
+  'read:users',
+  'write:activities',
+  'write:characters',
+  'write:downtimes',
+  'write:apikeys',
+] as const;
+export type Permissions = typeof Permissions[number];
+
+export function can(permission: Permissions): OperatorProjection<UserProfile, boolean> {
   const selector = user => user && user['https://westmoor.rpg/permissions']?.includes(permission);
 
   function _can(user: UserProfile): boolean;

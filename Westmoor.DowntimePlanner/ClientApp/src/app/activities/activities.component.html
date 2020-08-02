@@ -1,5 +1,10 @@
 <h1>Activities</h1>
-<button type="button" class="btn btn-success mb-2" (click)="create()">Create...</button>
+<button type="button"
+        class="btn btn-success mb-2"
+        (click)="create()"
+        *ngIf="user$ | can:'write:activities' | async">
+  Create...
+</button>
 <table class="table table-striped">
   <thead>
   <tr>
@@ -18,8 +23,18 @@
     <td>{{activity.complicationMarkdown}}</td>
     <td>{{activity.costs.length}}</td>
     <td>
-      <button type="button" class="btn btn-info mr-1" (click)="edit(activity)">Edit...</button>
-      <button type="button" class="btn btn-danger" (click)="delete(activity)">Delete...</button>
+      <button type="button"
+              class="btn btn-info mr-1"
+              (click)="edit(activity)"
+              *ngIf="user$ | can:'write:activities' | async">
+        Edit...
+      </button>
+      <button type="button"
+              class="btn btn-danger"
+              (click)="delete(activity)"
+              *ngIf="user$ | can:'write:activities' | async">
+        Delete...
+      </button>
     </td>
   </tr>
   </tbody>

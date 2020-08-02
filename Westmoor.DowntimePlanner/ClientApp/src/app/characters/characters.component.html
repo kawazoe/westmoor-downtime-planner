@@ -1,5 +1,10 @@
 <h1>Characters</h1>
-<button type="button" class="btn btn-success mb-2" (click)="create()">Create...</button>
+<button type="button"
+        class="btn btn-success mb-2"
+        (click)="create()"
+        *ngIf="user$ | can:'write:characters' | async">
+  Create...
+</button>
 <table class="table table-striped">
   <thead>
   <tr>
@@ -16,8 +21,18 @@
     <td>{{character.characterFullName}}</td>
     <td>{{character.accruedDowntimeDays}} days</td>
     <td>
-      <button type="button" class="btn btn-info mr-1" (click)="edit(character)">Edit...</button>
-      <button type="button" class="btn btn-danger" (click)="delete(character)">Delete...</button>
+      <button type="button"
+              class="btn btn-info mr-1"
+              (click)="edit(character)"
+              *ngIf="user$ | can:'write:characters' | async">
+        Edit...
+      </button>
+      <button type="button"
+              class="btn btn-danger"
+              (click)="delete(character)"
+              *ngIf="user$ | can:'write:characters' | async">
+        Delete...
+      </button>
     </td>
   </tr>
   </tbody>

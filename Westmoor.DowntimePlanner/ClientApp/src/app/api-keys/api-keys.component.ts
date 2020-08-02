@@ -6,6 +6,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ApiKeyCreateComponent } from './api-key-create.component';
 import { ApiKeyUpdateComponent } from './api-key-update.component';
 import { ModalDeleteComponent } from '../components/modal-edit/modal-delete.component';
+import { AuthService } from '../services/business/auth.service';
 
 @Component({
   selector: 'app-api-keys',
@@ -16,9 +17,11 @@ export class ApiKeysComponent {
 
   private modalRef: BsModalRef;
 
+  public user$ = this.auth.user$;
   public apiKeys$ = this.apiKeys.asObservable();
 
   constructor(
+    private auth: AuthService,
     private api: ApiService,
     private modal: BsModalService
   ) {
