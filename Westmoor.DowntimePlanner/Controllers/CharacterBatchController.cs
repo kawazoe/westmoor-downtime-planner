@@ -7,7 +7,7 @@ using Westmoor.DowntimePlanner.Services;
 namespace Westmoor.DowntimePlanner.Controllers
 {
     [ApiController]
-    [Route("api/v1/batch/[controller]")]
+    [Route("api/v1/batch/character")]
     [Authorize(Policy = Policies.ReadCharacters)]
     public class CharacterBatchController : ControllerBase
     {

@@ -7,7 +7,7 @@ using Westmoor.DowntimePlanner.Services;
 namespace Westmoor.DowntimePlanner.Controllers
 {
     [ApiController]
-    [Route("api/v1/batch/[controller]")]
+    [Route("api/v1/batch/downtime")]
     [Authorize(Policy = Policies.ReadDowntimes)]
     public class DowntimeBatchController : ControllerBase
     {
@@ -18,9 +18,9 @@ namespace Westmoor.DowntimePlanner.Controllers
             _service = service;
         }
 
-        [HttpPut("award")]
+        [HttpPost]
         [Authorize(Policy = Policies.WriteCharacters)]
-        public async Task AwardAsync(CreateDowntimeBatchRequest request)
+        public async Task CreateAsync(CreateDowntimeBatchRequest request)
         {
             foreach (var req in request.Requests)
             {
