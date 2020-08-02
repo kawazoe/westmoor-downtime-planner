@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.ApplicationInsights.Channel;
+using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -56,9 +57,12 @@ namespace Westmoor.DowntimePlanner
 
         public void Initialize(ITelemetry telemetry)
         {
-            foreach (var kvp in _options.GlobalProperties)
+            if (telemetry is ISupportProperties supportProperties)
             {
-                telemetry.Context.GlobalProperties.Add(kvp);
+                foreach (var (key, value) in _options.GlobalProperties)
+                {
+                    supportProperties.Properties[key] = value;
+                }
             }
 
             var identityName = _httpContextAccessor.HttpContext?.User.Identity.Name;

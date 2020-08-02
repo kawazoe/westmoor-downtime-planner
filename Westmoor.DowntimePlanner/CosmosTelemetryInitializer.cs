@@ -34,7 +34,7 @@ namespace Westmoor.DowntimePlanner
 
             var charge = charges.Single();
 
-            dependency.Metrics.Add("Azure.DocumentDB|Request Charge", double.Parse(charge));
+            dependency.Metrics["Azure.DocumentDB|Request Charge"] = double.Parse(charge);
         }
     }
 }
