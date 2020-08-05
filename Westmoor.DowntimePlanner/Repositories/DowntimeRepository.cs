@@ -206,7 +206,7 @@ namespace Westmoor.DowntimePlanner.Repositories
                     // Limit requests to days as it is the only supported kind by the character api.
                     request: new AwardCharacterRequest
                     {
-                        Delta = character.kinds
+                        Delta = - character.kinds
                             .FirstOrDefault(c => c.activityCostKind == "days")
                             .delta
                     }
