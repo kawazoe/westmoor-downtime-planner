@@ -9,7 +9,7 @@ import { tap } from 'rxjs/operators';
 })
 export class ModalDeleteComponent {
   public type: string;
-  public id: string;
+  public id: string | string[];
   public processing = false;
   public onConfirm = () => of(null);
 

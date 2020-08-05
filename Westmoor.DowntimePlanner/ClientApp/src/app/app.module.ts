@@ -16,6 +16,7 @@ import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 
 import { AuthHttpInterceptorService } from './services/http-interceptors/auth-http-interceptor.service';
 import { AnalyticsHttpInterceptorService } from './services/http-interceptors/analytics-http-interceptor.service';
+import { ErrorHandlerService } from './error-handler.service';
 
 import { AuthGuard } from './services/route-guards/auth.guard';
 import { OidcCallbackGuard } from './services/route-guards/oidc-callback-guard.service';
@@ -43,12 +44,13 @@ import { AlertBoxComponent } from './components/alert-box/alert-box.component';
 import { OwnershipComponent } from './components/ownership/ownership.component';
 import { PickerComponent } from './components/picker/picker.component';
 import { ProgressesPresenterComponent } from './components/progresses-presenter/progresses-presenter.component';
+import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
 import { CastPipe } from './pipes/cast.pipe';
 import { CanPipe } from './pipes/can.pipe';
+import { InPipe } from './pipes/in.pipe';
 import { IncludesPipe } from './pipes/includes.pipe';
 import { FilterPipe } from './pipes/filter.pipe';
-import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
-import { ErrorHandlerService } from './error-handler.service';
+import { TypeofPipe } from './pipes/typeof.pipe';
 
 @NgModule({
   declarations: [
@@ -73,11 +75,13 @@ import { ErrorHandlerService } from './error-handler.service';
     OwnershipComponent,
     PickerComponent,
     ProgressesPresenterComponent,
+    TermsOfServiceComponent,
     CastPipe,
     CanPipe,
+    InPipe,
     IncludesPipe,
     FilterPipe,
-    TermsOfServiceComponent
+    TypeofPipe
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),

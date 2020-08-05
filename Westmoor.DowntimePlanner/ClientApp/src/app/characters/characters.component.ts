@@ -43,7 +43,8 @@ export class CharactersComponent {
   }
 
   public delete(character: CharacterResponse) {
-    this.modalRef = this.modal.show(ModalDeleteComponent, { initialState: { type: 'character', id: character.id } });
+    const id = `${character.characterFullName} (${character.playerFullName})`;
+    this.modalRef = this.modal.show(ModalDeleteComponent, { initialState: { type: 'character', id } });
     this.modalRef.content.onConfirm = () => this.api
       .deleteCharacter(character.id)
       .pipe(this.refresh());

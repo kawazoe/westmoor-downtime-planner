@@ -143,11 +143,10 @@ export class HomeComponent {
   }
 
   public beginCancelDowntimes() {
-    const id = this.selectedDowntimes.length > 1
-      ? 'multiple'
-      : this.selectedDowntimes[0].id;
+    const ids = this.selectedDowntimes
+      .map(d => `${d.character.characterFullName} (${d.character.playerFullName}) - ${d.activity.name}`);
 
-    this.modalRef = this.modal.show(ModalDeleteComponent, { initialState: { type: 'downtime', id } });
+    this.modalRef = this.modal.show(ModalDeleteComponent, { initialState: { type: 'downtime', id: ids } });
     this.modalRef.content.onConfirm = () => this.endCancelDowntimes();
   }
 
