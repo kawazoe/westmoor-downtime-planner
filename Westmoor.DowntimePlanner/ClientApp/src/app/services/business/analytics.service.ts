@@ -6,7 +6,9 @@ import {
   IEventTelemetry,
   IExceptionTelemetry,
   IPageViewTelemetry,
-  Util
+  ITraceTelemetry,
+  Util,
+  SeverityLevel
 } from '@microsoft/applicationinsights-web';
 import { environment } from '../../../environments/environment';
 
@@ -71,6 +73,40 @@ export class AnalyticsService {
       id: Util.newId(),
       properties: {
         ...exception.properties,
+        ...environment.analytics.globalCustomProperties
+      }
+    });
+  }
+
+  public trackTrace(trace: ITraceTelemetry) {
+    function getLogger() {
+      switch (trace.severityLevel) {
+        case SeverityLevel.Verbose:
+          return 'log';
+        case SeverityLevel.Information:
+          return 'info';
+        case SeverityLevel.Warning:
+          return 'warn';
+        case SeverityLevel.Error:
+        case SeverityLevel.Critical:
+          return 'error';
+        default:
+          return 'log';
+      }
+    }
+
+    const logger = console[getLogger()];
+
+    if (trace.properties) {
+      logger('[AnalyticsService]', trace.message, trace.properties);
+    } else {
+      logger('[AnalyticsService]', trace.message);
+    }
+
+    this.appInsights.trackTrace({
+      ...trace,
+      properties: {
+        ...trace.properties,
         ...environment.analytics.globalCustomProperties
       }
     });
