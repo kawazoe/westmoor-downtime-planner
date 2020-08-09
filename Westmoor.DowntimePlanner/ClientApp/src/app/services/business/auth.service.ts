@@ -3,8 +3,8 @@ import { ParamMap } from '@angular/router';
 import createAuth0Client from '@auth0/auth0-spa-js';
 import { BehaviorSubject, combineLatest, from, isObservable, Observable, of, throwError } from 'rxjs';
 import { catchError, first, map, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { capitalize } from '../../../lib/string';
 import { OperatorProjection } from '../../../lib/rxjs/types';
-
 import { environment } from '../../../environments/environment';
 import { AnalyticsService } from './analytics.service';
 
@@ -34,6 +34,13 @@ export const Permissions = [
   'write:apikeys',
 ] as const;
 export type Permissions = typeof Permissions[number];
+
+export function toHtmlId(permission: Permissions) {
+  return 'is' + permission
+    .split(':')
+    .map(v => capitalize(v))
+    .join('_');
+}
 
 export function can(permission: Permissions): OperatorProjection<UserProfile, boolean> {
   const selector = user => user && user['https://westmoor.rpg/permissions']?.includes(permission);
@@ -134,7 +141,6 @@ export class AuthService {
 
   public handleAuthCallback(query: ParamMap) {
     // Call when app reloads after user logs in with Auth0
-    const params = window.location.search;
     if (query.has('code') && query.has('state')) {
       return this.handleRedirectCallback$
         .pipe(

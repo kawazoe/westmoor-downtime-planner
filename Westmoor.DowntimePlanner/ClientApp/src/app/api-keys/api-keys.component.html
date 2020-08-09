@@ -10,7 +10,7 @@
     <tr>
       <th scope="col">Key</th>
       <th scope="col">Owner</th>
-      <th scope="col">Roles</th>
+      <th scope="col">Permissions</th>
       <th scope="col">Actions</th>
     </tr>
   </thead>
@@ -18,7 +18,7 @@
     <tr *ngFor="let apiKey of apiKeys">
       <td>{{apiKey.key}}</td>
       <td>{{apiKey.owner}}</td>
-      <td>{{apiKey.roles | json}}</td>
+      <td>{{apiKey.permissions | json}}</td>
       <td>
         <button type="button"
                 class="btn btn-info mr-1"

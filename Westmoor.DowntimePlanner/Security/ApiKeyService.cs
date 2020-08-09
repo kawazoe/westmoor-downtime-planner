@@ -39,7 +39,7 @@ namespace Westmoor.DowntimePlanner.Security
                 {
                     Key = entity.Id,
                     Owner = entity.Owner,
-                    Roles = entity.Roles,
+                    Permissions = entity.Permissions,
                     SharedWith = entity.SharedWith,
                     CreatedOn = entity.CreatedOn
                 };

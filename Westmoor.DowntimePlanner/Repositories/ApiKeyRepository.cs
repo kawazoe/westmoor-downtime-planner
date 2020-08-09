@@ -46,7 +46,7 @@ namespace Westmoor.DowntimePlanner.Repositories
             var entity = new ApiKeyEntity
             {
                 Owner = request.Owner,
-                Roles = request.Roles
+                Permissions = request.Permissions
             };
 
             await (await _container).CreateItemAsync(_entityManipulator.CreateMetadata(entity));
@@ -59,7 +59,7 @@ namespace Westmoor.DowntimePlanner.Repositories
             var updatedEntity = new ApiKeyEntity
             {
                 Owner = request.Owner ?? entity.Owner,
-                Roles = request.Roles ?? entity.Roles,
+                Permissions = request.Permissions ?? entity.Permissions,
                 SharedWith = request.SharedWith
             };
 

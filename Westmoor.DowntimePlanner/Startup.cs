@@ -85,7 +85,6 @@ namespace Westmoor.DowntimePlanner
                 }
             });
 
-
             services.AddScoped<IActivityRepository, ActivityRepository>();
             services.AddScoped<ICharacterRepository, CharacterRepository>();
             services.AddScoped<IDowntimeRepository, DowntimeRepository>();

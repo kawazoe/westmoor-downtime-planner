@@ -7,10 +7,12 @@
       <input type="text" class="form-control" id="ownerInput" formControlName="owner" required>
     </div>
 
-    <h3>Roles</h3>
-    <div class="form-group form-check">
-      <input type="checkbox" class="form-check-input" id="isRoleAdmin" formControlName="isRoleAdmin">
-      <label class="form-check-label" for="isRoleAdmin">Admin</label>
+    <h3>Permissions</h3>
+    <div class="d-flex flex-wrap" formGroupName="permissions">
+      <div class="form-group form-check mr-3" *ngFor="let permission of Permissions">
+        <input type="checkbox" class="form-check-input" [id]="permission.htmlEncoded" [formControlName]="permission.htmlEncoded">
+        <label class="form-check-label" [for]="permission.htmlEncoded">{{permission.scope}}</label>
+      </div>
     </div>
 
     <h3>Sharing</h3>

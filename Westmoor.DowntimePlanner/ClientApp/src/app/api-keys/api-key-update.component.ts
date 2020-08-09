@@ -3,6 +3,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalUpdateComponentBase } from '../components/modal-edit/modal-update.component';
 import { ApiKeyResponse, UpdateApiKeyRequest } from '../services/business/api.service';
+import { Permissions, toHtmlId } from '../services/business/auth.service';
 
 @Component({
   selector: 'app-api-key-edit',
@@ -10,6 +11,8 @@ import { ApiKeyResponse, UpdateApiKeyRequest } from '../services/business/api.se
 })
 export class ApiKeyUpdateComponent extends ModalUpdateComponentBase<ApiKeyResponse, UpdateApiKeyRequest> implements OnInit {
   public FormArrayType = FormArray;
+  public Permissions = Permissions
+    .map(p => ({ scope: p, htmlEncoded: toHtmlId(p) }));
 
   constructor(
     public modalRef: BsModalRef
@@ -20,7 +23,10 @@ export class ApiKeyUpdateComponent extends ModalUpdateComponentBase<ApiKeyRespon
   protected serialize(form: FormGroup): UpdateApiKeyRequest {
     return {
       owner: form.controls.owner.value,
-      roles: form.controls.isRoleAdmin.value ? ['Admin'] : [],
+      permissions: Object.entries((form.controls.permissions as FormGroup).controls)
+        .filter(([_, control]) => control.value)
+        .map(([key, _]) => this.Permissions.find(p => p.htmlEncoded === key)?.scope)
+        .filter(s => !!s),
       sharedWith: (form.controls.sharedWith as FormArray).controls
         .map(ctrls => ctrls.value)
     };
@@ -29,7 +35,9 @@ export class ApiKeyUpdateComponent extends ModalUpdateComponentBase<ApiKeyRespon
   ngOnInit(): void {
     this.form = new FormGroup({
       owner: new FormControl(this.source.owner, Validators.required),
-      isRoleAdmin: new FormControl(this.source.roles.includes('Admin')),
+      permissions: new FormGroup(Object.fromEntries(this.Permissions
+        .map(p => [p.htmlEncoded, new FormControl(this.source.permissions.includes(p.scope))])
+      )),
       sharedWith: new FormArray(this.source.sharedWith.map(id => new FormControl(id)), Validators.required)
     });
   }

@@ -3,6 +3,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalCreateComponentBase } from '../components/modal-edit/modal-create.component';
 import { CreateApiKeyRequest } from '../services/business/api.service';
+import { Permissions, toHtmlId } from '../services/business/auth.service';
 
 @Component({
   selector: 'app-api-key-create',
@@ -10,6 +11,8 @@ import { CreateApiKeyRequest } from '../services/business/api.service';
 })
 export class ApiKeyCreateComponent extends ModalCreateComponentBase<CreateApiKeyRequest> implements OnInit {
   public FormArrayType = FormArray;
+  public Permissions = Permissions
+    .map(p => ({ scope: p, htmlEncoded: toHtmlId(p) }));
 
   constructor(
     public modalRef: BsModalRef
@@ -20,7 +23,10 @@ export class ApiKeyCreateComponent extends ModalCreateComponentBase<CreateApiKey
   protected serialize(form: FormGroup): CreateApiKeyRequest {
     return {
       owner: form.controls.owner.value,
-      roles: form.controls.isRoleAdmin.value ? ['Admin'] : [],
+      permissions: Object.entries((form.controls.permissions as FormGroup).controls)
+        .filter(([_, control]) => control.value)
+        .map(([key, _]) => this.Permissions.find(p => p.htmlEncoded === key)?.scope)
+        .filter(s => !!s),
       sharedWith: (form.controls.sharedWith as FormArray).controls
         .map(ctrls => ctrls.value)
     };
@@ -29,7 +35,9 @@ export class ApiKeyCreateComponent extends ModalCreateComponentBase<CreateApiKey
   ngOnInit(): void {
     this.form = new FormGroup({
       owner: new FormControl('', Validators.required),
-      isRoleAdmin: new FormControl(false),
+      permissions: new FormGroup(Object.fromEntries(this.Permissions
+        .map(p => [p.htmlEncoded, new FormControl(false)])
+      )),
       sharedWith: new FormArray([])
     });
   }

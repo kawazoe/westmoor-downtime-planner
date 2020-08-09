@@ -151,20 +151,20 @@ export class AdvanceDowntimeBatchRequest {
 export interface ApiKeyResponse {
   key: string;
   owner: string;
-  roles: string[];
+  permissions: string[];
   createdOn: string;
   sharedWith: string[];
 }
 
 export interface CreateApiKeyRequest {
   owner: string;
-  roles: string[];
+  permissions: string[];
   sharedWith: string[];
 }
 
 export interface UpdateApiKeyRequest {
   owner: string;
-  roles: string[];
+  permissions: string[];
   sharedWith: string[];
 }
 

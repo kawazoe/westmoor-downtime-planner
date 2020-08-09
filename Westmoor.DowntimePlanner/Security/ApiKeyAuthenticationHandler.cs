@@ -57,7 +57,7 @@ namespace Westmoor.DowntimePlanner.Security
                 new Claim(ClaimTypes.Name, existingApiKey.Owner)
             };
 
-            claims.AddRange(existingApiKey.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
+            claims.AddRange(existingApiKey.Permissions.Select(p => new Claim("https://westmoor.rpg/permissions", p)));
 
             var identity = new ClaimsIdentity(claims, Options.AuthenticationType);
             var identities = new List<ClaimsIdentity> { identity };
