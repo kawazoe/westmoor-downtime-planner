@@ -32,7 +32,7 @@ export class CharacterUpdateComponent extends ModalUpdateComponentBase<Character
       playerFullName: new FormControl(this.source.playerFullName, Validators.required),
       characterFullName: new FormControl(this.source.characterFullName, Validators.required),
       accruedDowntimeDays: new FormControl(this.source.accruedDowntimeDays, [Validators.required, Validators.min(0)]),
-      sharedWith: new FormArray(this.source.sharedWith.map(id => new FormControl(id)), Validators.required)
+      sharedWith: new FormArray(this.source.sharedWith.map(u => new FormControl(u.ownershipId)), Validators.required)
     });
   }
 }

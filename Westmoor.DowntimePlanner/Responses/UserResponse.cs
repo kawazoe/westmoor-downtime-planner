@@ -4,6 +4,7 @@ namespace Westmoor.DowntimePlanner.Responses
     {
         public string UserId { get; set; }
         public string Email { get; set; }
+        public string Username { get; set; }
         public string Picture { get; set; }
         public string Name { get; set; }
         public UserMetadataResponse UserMetadata { get; set; }

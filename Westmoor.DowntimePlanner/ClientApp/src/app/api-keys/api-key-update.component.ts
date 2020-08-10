@@ -38,7 +38,7 @@ export class ApiKeyUpdateComponent extends ModalUpdateComponentBase<ApiKeyRespon
       permissions: new FormGroup(Object.fromEntries(this.Permissions
         .map(p => [p.htmlEncoded, new FormControl(this.source.permissions.includes(p.scope))])
       )),
-      sharedWith: new FormArray(this.source.sharedWith.map(id => new FormControl(id)), Validators.required)
+      sharedWith: new FormArray(this.source.sharedWith.map(u => new FormControl(u.ownershipId)), Validators.required)
     });
   }
 }

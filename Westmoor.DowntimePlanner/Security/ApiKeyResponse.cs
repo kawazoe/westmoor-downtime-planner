@@ -1,4 +1,5 @@
 using System;
+using Westmoor.DowntimePlanner.Responses;
 
 namespace Westmoor.DowntimePlanner.Security
 {
@@ -7,7 +8,7 @@ namespace Westmoor.DowntimePlanner.Security
         public string Key { get; set; }
         public string Owner { get; set; }
         public string[] Permissions { get; set; }
-        public string[] SharedWith { get; set; }
+        public SharedWithResponse[] SharedWith { get; set; }
         public DateTimeOffset CreatedOn { get; set; }
     }
 }

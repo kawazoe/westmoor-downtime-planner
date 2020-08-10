@@ -1,8 +1,8 @@
 <div class="form-group" *ngIf="user$ | can:'read:users' | async">
   <ng-template #userResult let-item="item">
-    <div class="typeahead-item">
+    <div class="typeahead-item profile">
       <img class="rounded-circle" [src]="item.picture || '/assets/default-profile.svg'">
-      <span class="ml-4">{{item.name}} - {{item.email}}</span>
+      <span class="ml-2">{{item.name}} - {{item.email || item.username}}</span>
     </div>
   </ng-template>
 
@@ -17,20 +17,11 @@
          typeaheadOptionField="email"
          placeholder="Add by name or email...">
 </div>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th style="width: 100%">User</th>
-      <th></th>
-    </tr>
-  </thead>
 
-  <tbody>
-    <tr *ngFor="let control of sharedWith.controls">
-      <td>{{control.value}}</td>
-      <td>
-        <button type="button" class="btn btn-danger" (click)="delete(control.value)">Delete...</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<ng-container *ngFor="let control of formArray.controls">
+  <div class="profile" *ngIf="(sharedWith | filter:getOwnershipId(control.value))[0] as user">
+    <img class="rounded-circle" [src]="user.picture || '/assets/default-profile.svg'">
+    <span class="mx-2">{{user.name}} - {{user.email || user.username}}</span>
+    <button type="button" class="btn btn-danger" (click)="delete(control.value)">Delete...</button>
+  </div>
+</ng-container>

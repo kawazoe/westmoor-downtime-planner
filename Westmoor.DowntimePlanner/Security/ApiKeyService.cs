@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Westmoor.DowntimePlanner.Entities;
 using Westmoor.DowntimePlanner.Repositories;
 using Westmoor.DowntimePlanner.Requests;
+using Westmoor.DowntimePlanner.Responses;
 
 namespace Westmoor.DowntimePlanner.Security
 {
@@ -40,7 +41,16 @@ namespace Westmoor.DowntimePlanner.Security
                     Key = entity.Id,
                     Owner = entity.Owner,
                     Permissions = entity.Permissions,
-                    SharedWith = entity.SharedWith,
+                    SharedWith = entity.SharedWith
+                        .Select(s => new SharedWithResponse
+                        {
+                            OwnershipId = s.OwnershipId,
+                            Picture = s.Picture,
+                            Username = s.Username,
+                            Email = s.Email,
+                            Name = s.Name
+                        })
+                        .ToArray(),
                     CreatedOn = entity.CreatedOn
                 };
     }

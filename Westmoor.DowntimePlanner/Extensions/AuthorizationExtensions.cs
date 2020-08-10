@@ -23,7 +23,7 @@ namespace Westmoor.DowntimePlanner.Extensions
                 .Prepend(ownershipId)
                 .ToArray();
 
-            return e => e.SharedWith.Any(id => identities.Contains(id));
+            return e => e.SharedWith.Any(id => identities.Contains(id.OwnershipId));
         }
     }
 }

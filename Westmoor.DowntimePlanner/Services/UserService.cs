@@ -20,10 +20,21 @@ namespace Westmoor.DowntimePlanner.Services
                 .Select(ToResponse)
                 .ToArray();
 
+        public async Task<UserResponse> GetByIdAsync(string id)
+        {
+            var user = (await _repository.SearchAsync($"user_metadata.ownership_id:\"{id}\""))
+                .FirstOrDefault();
+
+            return user == null
+                ? null
+                : ToResponse(user);
+        }
+
         private UserResponse ToResponse(UserEntity entity) => new UserResponse
         {
             UserId = entity.UserId,
             Email = entity.Email,
+            Username = entity.Username,
             Picture = entity.Picture,
             Name = entity.Name,
             UserMetadata = new UserMetadataResponse

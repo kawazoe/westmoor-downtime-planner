@@ -69,13 +69,10 @@ namespace Westmoor.DowntimePlanner.Repositories
                 Character = character,
                 Activity = activity,
                 Costs = costs,
-                SharedWith = request.SharedWith
-                    .Concat(character.SharedWith)
-                    .Concat(activity.SharedWith)
-                    .ToArray()
+                SharedWith = character.SharedWith.Concat(activity.SharedWith).ToArray()
             };
 
-            await (await _container).CreateItemAsync(_entityManipulator.CreateMetadata(entity));
+            await (await _container).CreateItemAsync(await _entityManipulator.CreateMetadataAsync(entity, request.SharedWith));
         }
 
         public async Task UpdateAsync(string id, UpdateDowntimeRequest request)
@@ -95,12 +92,11 @@ namespace Westmoor.DowntimePlanner.Repositories
             {
                 Character = entity.Character,
                 Activity = entity.Activity,
-                Costs = costs,
-                SharedWith = request.SharedWith
+                Costs = costs
             };
 
             await (await _container).ReplaceItemAsync(
-                _entityManipulator.UpdateMetadata(updatedEntity, entity),
+                await _entityManipulator.UpdateMetadataAsync(updatedEntity, entity, request.SharedWith),
                 id
             );
         }
@@ -129,12 +125,11 @@ namespace Westmoor.DowntimePlanner.Repositories
             {
                 Character = entity.Character,
                 Activity = entity.Activity,
-                Costs = costs,
-                SharedWith = entity.SharedWith
+                Costs = costs
             };
 
             await (await _container).ReplaceItemAsync(
-                _entityManipulator.UpdateMetadata(updatedEntity, entity),
+                await _entityManipulator.UpdateMetadataAsync(updatedEntity, entity, null),
                 id
             );
         }
@@ -168,12 +163,11 @@ namespace Westmoor.DowntimePlanner.Repositories
                 {
                     Character = entity.Character,
                     Activity = entity.Activity,
-                    Costs = costs,
-                    SharedWith = entity.SharedWith
+                    Costs = costs
                 };
 
                 await (await _container).ReplaceItemAsync(
-                    _entityManipulator.UpdateMetadata(updatedEntity, entity),
+                    await _entityManipulator.UpdateMetadataAsync(updatedEntity, entity, null),
                     entity.Id
                 );
             }

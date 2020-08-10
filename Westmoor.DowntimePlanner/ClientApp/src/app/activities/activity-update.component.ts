@@ -55,7 +55,7 @@ export class ActivityUpdateComponent extends ModalUpdateComponentBase<ActivityRe
       descriptionMarkdown: new FormControl(this.source.descriptionMarkdown),
       complicationMarkdown: new FormControl(this.source.complicationMarkdown),
       costs: new FormArray([]),
-      sharedWith: new FormArray(this.source.sharedWith.map(id => new FormControl(id)), Validators.required)
+      sharedWith: new FormArray(this.source.sharedWith.map(u => new FormControl(u.ownershipId)), Validators.required)
     });
 
     for (const cost of this.source.costs) {

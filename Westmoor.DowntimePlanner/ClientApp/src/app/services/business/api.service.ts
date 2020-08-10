@@ -5,13 +5,21 @@ import { Observable } from 'rxjs';
 export const ActivityCostKinds = ['days', 'gold'] as const;
 export type ActivityCostKinds = typeof ActivityCostKinds[number];
 
+export interface SharedWithResponse {
+  ownershipId: string;
+  picture: string;
+  username: string;
+  email: string;
+  name: string;
+}
+
 export interface ActivityResponse {
   id: string;
   name: string;
   descriptionMarkdown: string;
   complicationMarkdown: string;
   costs: ActivityCostResponse[];
-  sharedWith: string[];
+  sharedWith: SharedWithResponse[];
 }
 
 export interface ActivityCostResponse {
@@ -68,7 +76,7 @@ export interface CharacterResponse {
   playerFullName: string;
   characterFullName: string;
   accruedDowntimeDays: number;
-  sharedWith: string[];
+  sharedWith: SharedWithResponse[];
 }
 
 export interface CreateCharacterRequest {
@@ -98,7 +106,7 @@ export interface DowntimeResponse {
   character: CharacterResponse;
   activity: ActivityResponse;
   progresses: DowntimeCostResponse[];
-  sharedWith: string[];
+  sharedWith: SharedWithResponse[];
 }
 
 export interface DowntimeCostResponse {
@@ -153,7 +161,7 @@ export interface ApiKeyResponse {
   owner: string;
   permissions: string[];
   createdOn: string;
-  sharedWith: string[];
+  sharedWith: SharedWithResponse[];
 }
 
 export interface CreateApiKeyRequest {
@@ -171,6 +179,7 @@ export interface UpdateApiKeyRequest {
 export interface UserResponse {
   userId: string;
   email: string;
+  username: string;
   picture: string;
   name: string;
   userMetadata: UserMetadataResponse;

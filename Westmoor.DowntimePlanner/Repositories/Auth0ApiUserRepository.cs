@@ -26,6 +26,7 @@ namespace Westmoor.DowntimePlanner.Repositories
         {
             "user_id",
             "email",
+            "username",
             "picture",
             "name",
             "user_metadata.ownership_id",

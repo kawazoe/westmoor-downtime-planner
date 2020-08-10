@@ -19,7 +19,7 @@
     </div>
 
     <h3>Sharing</h3>
-    <app-ownership [sharedWith]="form.controls.sharedWith | cast:FormArrayType"></app-ownership>
+    <app-ownership [formArray]="form.controls.sharedWith | cast:FormArrayType" [sharedWith]="source.sharedWith"></app-ownership>
   </div>
   <div class="modal-footer">
     <button type="submit" class="btn btn-primary" [disabled]="!form.valid || processing">Save</button>

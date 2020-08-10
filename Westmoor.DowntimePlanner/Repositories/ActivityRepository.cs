@@ -72,7 +72,7 @@ namespace Westmoor.DowntimePlanner.Repositories
                 Costs = costs
             };
 
-            await (await _container).CreateItemAsync(_entityManipulator.CreateMetadata(entity));
+            await (await _container).CreateItemAsync(await _entityManipulator.CreateMetadataAsync(entity, request.SharedWith));
         }
 
         public async Task UpdateAsync(string id, UpdateActivityRequest request)
@@ -104,12 +104,11 @@ namespace Westmoor.DowntimePlanner.Repositories
                 Name = request.Name,
                 DescriptionMarkdown = request.DescriptionMarkdown,
                 ComplicationMarkdown = request.ComplicationMarkdown,
-                Costs = costs,
-                SharedWith = request.SharedWith
+                Costs = costs
             };
 
             await (await _container).ReplaceItemAsync(
-                _entityManipulator.UpdateMetadata(updatedEntity, entity),
+                await _entityManipulator.UpdateMetadataAsync(updatedEntity, entity, request.SharedWith),
                 id
             );
         }

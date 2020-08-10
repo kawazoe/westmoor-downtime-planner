@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { FormArray, FormControl } from '@angular/forms';
 import { Observable, Observer, of } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
-import { ApiService, UserResponse } from '../../services/business/api.service';
+import { ApiService, SharedWithResponse, UserResponse } from '../../services/business/api.service';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 import { AuthService } from '../../services/business/auth.service';
 
@@ -12,7 +12,8 @@ import { AuthService } from '../../services/business/auth.service';
   styleUrls: ['./ownership.component.css']
 })
 export class OwnershipComponent {
-  @Input() public sharedWith: FormArray;
+  @Input() public formArray: FormArray;
+  @Input() public sharedWith: SharedWithResponse[];
 
   public user$ = this.auth.user$;
 
@@ -50,22 +51,36 @@ export class OwnershipComponent {
       return;
     }
 
-    const index = this.sharedWith.controls.findIndex(c => c.value === ownershipId);
+    const index = this.formArray.controls.findIndex(c => c.value === ownershipId);
 
     if (index !== -1) {
       return;
     }
 
-    this.sharedWith.push(new FormControl(ownershipId));
+    this.sharedWith = [
+      ...this.sharedWith,
+      {
+        ownershipId,
+        picture: user.picture,
+        email: user.email,
+        username: user.username,
+        name: user.name
+      }
+    ];
+    this.formArray.push(new FormControl(ownershipId));
   }
 
   public delete(id: string) {
-    const index = this.sharedWith.controls.findIndex(c => c.value === id);
+    const index = this.formArray.controls.findIndex(c => c.value === id);
 
     if (index === -1) {
       return;
     }
 
-    this.sharedWith.removeAt(index);
+    this.formArray.removeAt(index);
+  }
+
+  getOwnershipId(ownershipId: string) {
+    return (sharedWith: SharedWithResponse) => sharedWith.ownershipId === ownershipId;
   }
 }

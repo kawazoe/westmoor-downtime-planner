@@ -52,7 +52,7 @@ namespace Westmoor.DowntimePlanner.Repositories
                 AccruedDowntimeDays = 0
             };
 
-            await (await _container).CreateItemAsync(_entityManipulator.CreateMetadata(entity));
+            await (await _container).CreateItemAsync(await _entityManipulator.CreateMetadataAsync(entity, request.SharedWith));
         }
 
         public async Task UpdateAsync(string id, UpdateCharacterRequest request)
@@ -63,12 +63,11 @@ namespace Westmoor.DowntimePlanner.Repositories
             {
                 PlayerFullName = request.PlayerFullName,
                 CharacterFullName = request.CharacterFullName,
-                AccruedDowntimeDays = request.AccruedDowntimeDays,
-                SharedWith = request.SharedWith
+                AccruedDowntimeDays = request.AccruedDowntimeDays
             };
 
             await (await _container).ReplaceItemAsync(
-                _entityManipulator.UpdateMetadata(updatedEntity, entity),
+                await _entityManipulator.UpdateMetadataAsync(updatedEntity, entity, request.SharedWith),
                 id
             );
         }
@@ -81,12 +80,11 @@ namespace Westmoor.DowntimePlanner.Repositories
             {
                 PlayerFullName = entity.PlayerFullName,
                 CharacterFullName = entity.CharacterFullName,
-                AccruedDowntimeDays = entity.AccruedDowntimeDays + request.Delta,
-                SharedWith = entity.SharedWith
+                AccruedDowntimeDays = entity.AccruedDowntimeDays + request.Delta
             };
 
             await (await _container).ReplaceItemAsync(
-                _entityManipulator.UpdateMetadata(updatedEntity, entity),
+                await _entityManipulator.UpdateMetadataAsync(updatedEntity, entity, null),
                 id
             );
         }

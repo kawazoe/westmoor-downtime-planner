@@ -85,6 +85,15 @@ namespace Westmoor.DowntimePlanner.Services
                     })
                     .ToArray(),
                 SharedWith = entity.SharedWith
+                    .Select(s => new SharedWithResponse
+                    {
+                        OwnershipId = s.OwnershipId,
+                        Picture = s.Picture,
+                        Username = s.Username,
+                        Email = s.Email,
+                        Name = s.Name
+                    })
+                    .ToArray()
             };
     }
 }

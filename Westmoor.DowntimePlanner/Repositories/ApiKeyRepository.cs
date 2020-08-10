@@ -49,7 +49,7 @@ namespace Westmoor.DowntimePlanner.Repositories
                 Permissions = request.Permissions
             };
 
-            await (await _container).CreateItemAsync(_entityManipulator.CreateMetadata(entity));
+            await (await _container).CreateItemAsync(await _entityManipulator.CreateMetadataAsync(entity, request.SharedWith));
         }
 
         public async Task UpdateAsync(string key, UpdateApiKeyRequest request)
@@ -59,12 +59,11 @@ namespace Westmoor.DowntimePlanner.Repositories
             var updatedEntity = new ApiKeyEntity
             {
                 Owner = request.Owner ?? entity.Owner,
-                Permissions = request.Permissions ?? entity.Permissions,
-                SharedWith = request.SharedWith
+                Permissions = request.Permissions ?? entity.Permissions
             };
 
             await (await _container).ReplaceItemAsync(
-                _entityManipulator.UpdateMetadata(updatedEntity, entity),
+                await _entityManipulator.UpdateMetadataAsync(updatedEntity, entity, request.SharedWith),
                 key
             );
         }

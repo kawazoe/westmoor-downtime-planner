@@ -1,4 +1,16 @@
-.typeahead-item img {
+.profile {
+  display: flex;
+  align-items: center;
+}
+
+.profile img {
   width: 3rem;
   height: 3rem;
+}
+
+.profile span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
 }
