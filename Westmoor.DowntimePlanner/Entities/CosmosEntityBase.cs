@@ -2,7 +2,7 @@ using System;
 
 namespace Westmoor.DowntimePlanner.Entities
 {
-    public class CosmosEntity
+    public abstract class CosmosEntityBase
     {
         public string Id { get; set; }
         public string Idp { get; set; }
@@ -10,7 +10,7 @@ namespace Westmoor.DowntimePlanner.Entities
         public virtual string TypeName => GetType().Name;
         public virtual int TypeVersion => 1;
 
-        public SharedWithEntity[] SharedWith = new SharedWithEntity[0];
+        public SharedWithEntity[] SharedWith { get; set; } = new SharedWithEntity[0];
 
         public DateTimeOffset CreatedOn { get; set; }
         public string CreatedBy { get; set; }

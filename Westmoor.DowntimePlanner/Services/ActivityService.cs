@@ -1,9 +1,7 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Westmoor.DowntimePlanner.Entities;
 using Westmoor.DowntimePlanner.Repositories;
 using Westmoor.DowntimePlanner.Requests;
-using Westmoor.DowntimePlanner.Responses;
 
 namespace Westmoor.DowntimePlanner.Services
 {
@@ -16,13 +14,11 @@ namespace Westmoor.DowntimePlanner.Services
             _repository = repository;
         }
 
-        public async Task<ActivityResponse[]> GetAllAsync() =>
-            (await _repository.GetAllAsync())
-                .Select(ToResponse)
-                .ToArray();
+        public async Task<ActivityEntity[]> GetAllAsync() =>
+            await _repository.GetAllAsync();
 
-        public async Task<ActivityResponse> GetByIdAsync(string id) =>
-            ToResponse(await _repository.GetByIdAsync(id));
+        public async Task<ActivityEntity> GetByIdAsync(string id) =>
+            await _repository.GetByIdAsync(id);
 
         public async Task CreateAsync(CreateActivityRequest request) =>
             await _repository.CreateAsync(request);
@@ -32,38 +28,5 @@ namespace Westmoor.DowntimePlanner.Services
 
         public async Task DeleteAsync(string id) =>
             await _repository.DeleteAsync(id);
-
-        private ActivityResponse ToResponse(ActivityEntity entity) =>
-            new ActivityResponse
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                DescriptionMarkdown = entity.DescriptionMarkdown,
-                ComplicationMarkdown = entity.ComplicationMarkdown,
-                Costs = entity.Costs
-                    .Select(c => new ActivityCostResponse
-                    {
-                        Kind = c.Kind,
-                        JexlExpression = c.JexlExpression,
-                        Parameters = c.Parameters
-                            .Select(p => new ActivityParameterResponse
-                            {
-                                VariableName = p.VariableName,
-                                Description = p.Description
-                            })
-                            .ToArray()
-                    })
-                    .ToArray(),
-                SharedWith = entity.SharedWith
-                    .Select(s => new SharedWithResponse
-                    {
-                        OwnershipId = s.OwnershipId,
-                        Picture = s.Picture,
-                        Username = s.Username,
-                        Email = s.Email,
-                        Name = s.Name
-                    })
-                    .ToArray()
-            };
     }
 }

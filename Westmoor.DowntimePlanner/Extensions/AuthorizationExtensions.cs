@@ -10,7 +10,7 @@ namespace Westmoor.DowntimePlanner.Extensions
     {
         private const string ClaimsNamespace = "https://westmoor.rpg/";
 
-        public static Expression<Func<T, bool>> GetMyContentPredicate<T>(this ClaimsPrincipal user) where T : CosmosEntity
+        public static Expression<Func<T, bool>> GetMyContentPredicate<T>(this ClaimsPrincipal user) where T : CosmosEntityBase
         {
             var ownershipId = user.Claims
                 .First(c => c.Type == $"{ClaimsNamespace}ownership_id")

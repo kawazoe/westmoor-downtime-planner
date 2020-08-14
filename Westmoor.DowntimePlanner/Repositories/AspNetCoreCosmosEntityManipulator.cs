@@ -12,7 +12,7 @@ using Westmoor.DowntimePlanner.Services;
 namespace Westmoor.DowntimePlanner.Repositories
 {
     public class AspNetCoreCosmosEntityManipulator<TEntity> : ICosmosEntityManipulator<TEntity>
-        where TEntity : CosmosEntity
+        where TEntity : CosmosEntityBase
     {
         private readonly IClock _clock;
         private readonly IUuidFactory _uuidFactory;

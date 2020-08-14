@@ -1,6 +1,6 @@
 namespace Westmoor.DowntimePlanner.Entities
 {
-    public class ActivityEntity : CosmosEntity
+    public class ActivityEntity : CosmosEntityBase
     {
         public string Name { get; set; }
         public string DescriptionMarkdown { get; set; }

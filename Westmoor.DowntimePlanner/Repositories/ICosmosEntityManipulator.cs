@@ -7,7 +7,7 @@ using Westmoor.DowntimePlanner.Entities;
 namespace Westmoor.DowntimePlanner.Repositories
 {
     public interface ICosmosEntityManipulator<TEntity>
-        where TEntity : CosmosEntity
+        where TEntity : CosmosEntityBase
     {
         string DefaultPartitionKeyValue { get; }
         PartitionKey DefaultPartitionKey { get; }

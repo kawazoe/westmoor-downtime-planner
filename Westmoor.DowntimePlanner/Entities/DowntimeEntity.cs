@@ -1,6 +1,6 @@
 namespace Westmoor.DowntimePlanner.Entities
 {
-    public class DowntimeEntity : CosmosEntity
+    public class DowntimeEntity : CosmosEntityBase
     {
         public CharacterEntity Character { get; set; }
         public ActivityEntity Activity { get; set; }

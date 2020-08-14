@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Westmoor.DowntimePlanner.Entities;
 using Westmoor.DowntimePlanner.Requests;
 using Westmoor.DowntimePlanner.Security;
 
@@ -19,12 +20,12 @@ namespace Westmoor.DowntimePlanner.Controllers
         }
 
         [HttpGet]
-        public async Task<ApiKeyResponse[]> GetAllAsync() =>
+        public async Task<ApiKeyEntity[]> GetAllAsync() =>
             await _service.GetAllAsync();
 
         [HttpGet("{key}")]
         [AllowAnonymous]
-        public async Task<ApiKeyResponse> GetByKeyAsync(string key) =>
+        public async Task<ApiKeyEntity> GetByKeyAsync(string key) =>
             await _service.GetByKeyAsync(key);
 
         [HttpPost]

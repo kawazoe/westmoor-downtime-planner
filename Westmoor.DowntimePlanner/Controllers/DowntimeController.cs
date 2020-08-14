@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Westmoor.DowntimePlanner.Entities;
 using Westmoor.DowntimePlanner.Requests;
-using Westmoor.DowntimePlanner.Responses;
 using Westmoor.DowntimePlanner.Services;
 
 namespace Westmoor.DowntimePlanner.Controllers
@@ -20,15 +20,15 @@ namespace Westmoor.DowntimePlanner.Controllers
         }
 
         [HttpGet("current")]
-        public async Task<DowntimeResponse[]> GetCurrentAsync() =>
+        public async Task<DowntimeEntity[]> GetCurrentAsync() =>
             await _service.GetCurrentAsync();
 
         [HttpGet("completed")]
-        public async Task<DowntimeResponse[]> GetCompletedAsync() =>
+        public async Task<DowntimeEntity[]> GetCompletedAsync() =>
             await _service.GetCompletedAsync();
 
         [HttpGet("{id}")]
-        public async Task<DowntimeResponse> GetByIdAsync(string id) =>
+        public async Task<DowntimeEntity> GetByIdAsync(string id) =>
             await _service.GetByIdAsync(id);
 
         [HttpPost]
