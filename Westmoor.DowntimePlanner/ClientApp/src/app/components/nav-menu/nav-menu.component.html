@@ -25,6 +25,9 @@
           <li class="nav-item" [routerLinkActive]="['link-active']" *ngIf="user$ | can:'read:activities' | async">
             <a class="nav-link text-dark" [routerLink]="['/activities']">Activities</a>
           </li>
+          <li class="nav-item" [routerLinkActive]="['link-active']" *ngIf="user$ | can:'read:campaigns' | async">
+            <a class="nav-link text-dark" [routerLink]="['/campaigns']">Campaigns</a>
+          </li>
           <li class="nav-item" [routerLinkActive]="['link-active']" *ngIf="user$ | can:'write:apikeys' | async">
             <a class="nav-link text-dark" [routerLink]="['/api-keys']">Api Keys</a>
           </li>

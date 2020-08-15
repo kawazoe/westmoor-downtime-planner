@@ -1,0 +1,35 @@
+<h1>Campaigns</h1>
+<button type="button"
+        class="btn btn-success mb-2"
+        (click)="create()"
+        *ngIf="user$ | can:'write:campaigns' | async">
+  Create...
+</button>
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th scope="col">Id</th>
+    <th scope="col">Name</th>
+  </tr>
+  </thead>
+  <tbody *ngIf="campaigns$ | async as campaigns">
+  <tr *ngFor="let campaign of campaigns">
+    <td>{{campaign.id}}</td>
+    <td>{{campaign.name}}</td>
+    <td>
+      <button type="button"
+              class="btn btn-info mr-1"
+              (click)="edit(campaign)"
+              *ngIf="user$ | can:'write:campaigns' | async">
+        Edit...
+      </button>
+      <button type="button"
+              class="btn btn-danger"
+              (click)="delete(campaign)"
+              *ngIf="user$ | can:'write:campaigns' | async">
+        Delete...
+      </button>
+    </td>
+  </tr>
+  </tbody>
+</table>

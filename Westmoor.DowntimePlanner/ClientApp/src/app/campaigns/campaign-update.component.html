@@ -1,0 +1,16 @@
+<app-modal-header title="Edit activity..." (close)="modalRef.hide()"></app-modal-header>
+<form [formGroup]="form" (ngSubmit)="confirm()">
+  <div class="modal-body">
+    <h3>General</h3>
+    <div class="form-group">
+      <label for="nameInput">Name</label>
+      <input type="text" class="form-control" id="nameInput" formControlName="name" required>
+    </div>
+
+    <h3>Sharing</h3>
+    <app-ownership [formArray]="form.controls.sharedWith | cast:FormArrayType" [sharedWith]="source.sharedWith"></app-ownership>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary" [disabled]="!form.valid || processing">Save</button>
+  </div>
+</form>

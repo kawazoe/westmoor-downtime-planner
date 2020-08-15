@@ -52,6 +52,9 @@ import { IncludesPipe } from './pipes/includes.pipe';
 import { FilterPipe } from './pipes/filter.pipe';
 import { TypeofPipe } from './pipes/typeof.pipe';
 import { TenantHttpInterceptorService } from './services/http-interceptors/tenant-http-interceptor.service';
+import { CampaignsComponent } from './campaigns/campaigns.component';
+import { CampaignCreateComponent } from './campaigns/campaign-create.component';
+import { CampaignUpdateComponent } from './campaigns/campaign-update.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +64,9 @@ import { TenantHttpInterceptorService } from './services/http-interceptors/tenan
     AwardCharacterComponent,
     AdvanceDowntimeComponent,
     ScheduleDowntimeComponent,
+    CampaignsComponent,
+    CampaignCreateComponent,
+    CampaignUpdateComponent,
     ActivitiesComponent,
     ActivityCreateComponent,
     ActivityUpdateComponent,
@@ -96,22 +102,25 @@ import { TenantHttpInterceptorService } from './services/http-interceptors/tenan
         path: 'activities',
         component: ActivitiesComponent,
         pathMatch: 'full',
-        canActivate: [AuthGuard],
-        data: {role: 'Admin'}
+        canActivate: [AuthGuard]
       },
       {
         path: 'characters',
         component: CharactersComponent,
         pathMatch: 'full',
-        canActivate: [AuthGuard],
-        data: {role: 'Admin'}
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'campaigns',
+        component: CampaignsComponent,
+        pathMatch: 'full',
+        canActivate: [AuthGuard]
       },
       {
         path: 'api-keys',
         component: ApiKeysComponent,
         pathMatch: 'full',
-        canActivate: [AuthGuard],
-        data: {role: 'Admin'}
+        canActivate: [AuthGuard]
       },
       {path: 'signin', component: HomeComponent, pathMatch: 'full', canActivate: [SignInGuard]},
       {path: 'signout', component: HomeComponent, pathMatch: 'full', canActivate: [SignOutGuard]},

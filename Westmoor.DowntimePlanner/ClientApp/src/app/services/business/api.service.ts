@@ -13,6 +13,22 @@ export interface SharedWithResponse {
   name: string;
 }
 
+export interface CampaignResponse {
+  id: string;
+  name: string;
+  sharedWith: SharedWithResponse[];
+}
+
+export interface CreateCampaignRequest {
+  name: string;
+  sharedWith: string[];
+}
+
+export interface UpdateCampaignRequest {
+  name: string;
+  sharedWith: string[];
+}
+
 export interface ActivityResponse {
   id: string;
   name: string;
@@ -199,6 +215,26 @@ export class ApiService {
   constructor(
     private http: HttpClient
   ) { }
+
+  public getAllCampaigns(): Observable<CampaignResponse[]> {
+    return this.http.get<CampaignResponse[]>(`${this.endpoint}/campaign`);
+  }
+
+  public getCampaignById(id: string): Observable<CampaignResponse> {
+    return this.http.get<CampaignResponse>(`${this.endpoint}/campaign/${id}`);
+  }
+
+  public createCampaign(request: CreateCampaignRequest): Observable<void> {
+    return this.http.post<void>(`${this.endpoint}/campaign`, request);
+  }
+
+  public updateCampaign(id: string, request: UpdateCampaignRequest): Observable<void> {
+    return this.http.put<void>(`${this.endpoint}/campaign/${id}`, request);
+  }
+
+  public deleteCampaign(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.endpoint}/campaign/${id}`);
+  }
 
   public getAllActivities(): Observable<ActivityResponse[]> {
     return this.http.get<ActivityResponse[]>(`${this.endpoint}/activity`);

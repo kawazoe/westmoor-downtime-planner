@@ -105,10 +105,12 @@ namespace Westmoor.DowntimePlanner
             });
             services.AddScoped<ITenantAccessor, HttpContextTenantAccessor>();
 
+            services.AddScoped<ICampaignRepository, CampaignRepository>();
             services.AddScoped<IActivityRepository, ActivityRepository>();
             services.AddScoped<ICharacterRepository, CharacterRepository>();
             services.AddScoped<IDowntimeRepository, DowntimeRepository>();
 
+            services.AddScoped<ICampaignService, CampaignService>();
             services.AddScoped<IActivityService, ActivityService>();
             services.AddScoped<ICharacterService, CharacterService>();
             services.AddScoped<IDowntimeService, DowntimeService>();
