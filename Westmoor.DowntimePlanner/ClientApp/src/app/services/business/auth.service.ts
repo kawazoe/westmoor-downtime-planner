@@ -7,6 +7,7 @@ import { capitalize } from '../../../lib/string';
 import { OperatorProjection } from '../../../lib/rxjs/types';
 import { environment } from '../../../environments/environment';
 import { AnalyticsService } from './analytics.service';
+import { TenantService } from './tenant.service';
 
 export interface UserProfile {
   sub: string;
@@ -20,6 +21,7 @@ export interface UserProfile {
   updated_at: string;
 
   'https://westmoor.rpg/ownership_id': string;
+  'https://westmoor.rpg/campaigns': string[];
   'https://westmoor.rpg/permissions': string[];
 }
 
@@ -98,6 +100,8 @@ export class AuthService {
     .pipe(
       first(),
       map(c => {
+        this.tenant.current.next(null);
+        this.userSubject.next(null);
         this.analytics.clearUserContext();
         c.logout(this.logoutOptions);
       })
@@ -106,9 +110,12 @@ export class AuthService {
   public getUser$ = this.auth0Client$
     .pipe(
       switchMap(c => from(c.getUser())),
-      tap(u => {
-        this.analytics.setUserContext(u['https://westmoor.rpg/ownership_id'] || u.sub);
-        this.userSubject.next(u);
+      tap(user => {
+        const tenant = user['https://westmoor.rpg/campaigns'][0];
+        const identity = user['https://westmoor.rpg/ownership_id'] || user.sub;
+        this.analytics.setUserContext(identity, tenant);
+        this.tenant.current.next(tenant);
+        this.userSubject.next(user);
       })
     ) as Observable<UserProfile>;
 
@@ -117,7 +124,8 @@ export class AuthService {
   public user$ = this.userSubject.asObservable();
 
   constructor(
-    private readonly analytics: AnalyticsService
+    private readonly analytics: AnalyticsService,
+    private readonly tenant: TenantService
   ) {
     // Set up local auth streams
     this.localAuthSetup();

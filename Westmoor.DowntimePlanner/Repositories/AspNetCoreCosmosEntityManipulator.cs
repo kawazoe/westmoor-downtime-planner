@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Cosmos;
 using Westmoor.DowntimePlanner.Entities;
-using Westmoor.DowntimePlanner.Extensions;
+using Westmoor.DowntimePlanner.Security;
 using Westmoor.DowntimePlanner.Services;
 
 namespace Westmoor.DowntimePlanner.Repositories
@@ -16,19 +15,22 @@ namespace Westmoor.DowntimePlanner.Repositories
     {
         private readonly IClock _clock;
         private readonly IUuidFactory _uuidFactory;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IIdentityAccessor _identityAccessor;
+        private readonly ITenantAccessor _tenantAccessor;
         private readonly IUserService _userService;
 
         public AspNetCoreCosmosEntityManipulator(
             IClock clock,
             IUuidFactory uuidFactory,
-            IHttpContextAccessor httpContextAccessor,
+            IIdentityAccessor identityAccessor,
+            ITenantAccessor tenantAccessor,
             IUserService userService
         )
         {
             _clock = clock;
             _uuidFactory = uuidFactory;
-            _httpContextAccessor = httpContextAccessor;
+            _identityAccessor = identityAccessor;
+            _tenantAccessor = tenantAccessor;
             _userService = userService;
         }
 
@@ -37,12 +39,19 @@ namespace Westmoor.DowntimePlanner.Repositories
 
         public Expression<Func<TEntity, bool>> GetScopeFilterPredicate()
         {
-            return _httpContextAccessor.HttpContext.User.GetMyContentPredicate<TEntity>();
+            var ownershipId = _identityAccessor.Identity;
+            var campaignIds = _tenantAccessor.AccessibleTenants;
+
+            var identities = campaignIds
+                .Prepend(ownershipId)
+                .ToArray();
+
+            return e => e.SharedWith.Any(id => identities.Contains(id.OwnershipId));
         }
 
         public async Task<TEntity> CreateMetadataAsync(TEntity entity, string[] sharedWith)
         {
-            var identity = _httpContextAccessor.HttpContext.User.Identity.Name;
+            var identity = _identityAccessor.Identity;
             var ownershipIds = sharedWith.Prepend(identity);
             var entitySharedWith = entity.SharedWith ?? new SharedWithEntity[0];
 
@@ -70,7 +79,7 @@ namespace Westmoor.DowntimePlanner.Repositories
             updatedEntity.CreatedOn = entity.CreatedOn;
             updatedEntity.CreatedBy = entity.CreatedBy;
             updatedEntity.ModifiedOn = _clock.UtcNow;
-            updatedEntity.ModifiedBy = _httpContextAccessor.HttpContext.User.Identity.Name;
+            updatedEntity.ModifiedBy = _identityAccessor.Identity;
 
             return updatedEntity;
         }
@@ -102,9 +111,9 @@ namespace Westmoor.DowntimePlanner.Repositories
                 ? null
                 : new SharedWithEntity
                 {
+                    Kind = SharedWithKind.User,
                     OwnershipId = ownershipId,
                     Picture = user.Picture,
-                    Username = user.Username,
                     Email = user.Email,
                     Name = user.Name
                 };

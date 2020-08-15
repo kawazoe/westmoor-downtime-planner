@@ -75,15 +75,35 @@ namespace Westmoor.DowntimePlanner
                     options.Authority = Configuration.GetSection("Auth0").GetValue<string>("EndpointUrl");
 
                     options.TokenValidationParameters.NameClaimType = "https://westmoor.rpg/ownership_id";
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnTokenValidated = SecureHeadersIdentityFactory.CreateValidator(new[]
+                        {
+                            ("X-Tenant-Id", "https://westmoor.rpg/campaigns", "https://westmoor.rpg/tenant")
+                        })
+                    };
                 })
                 .AddApiKeySupport();
             services.AddAuthorization(options =>
             {
                 foreach (var permission in Policies.All)
                 {
-                    options.AddPolicy(permission, b => b.RequireClaim("https://westmoor.rpg/permissions", permission));
+                    options.AddPolicy(permission, b => b
+                        .RequireAuthenticatedUser()
+                        .RequireClaim("https://westmoor.rpg/tenant")
+                        .RequireClaim("https://westmoor.rpg/permissions", permission)
+                    );
                 }
             });
+
+            services.AddScoped<IIdentityAccessor, HttpContextIdentityAccessor>();
+            services.Configure<HttpContextTenantAccessor.Options>(options =>
+            {
+                options.AccessibleTenantsClaimType = "https://westmoor.rpg/campaigns";
+                options.TenantClaimType = "https://westmoor.rpg/tenant";
+            });
+            services.AddScoped<ITenantAccessor, HttpContextTenantAccessor>();
 
             services.AddScoped<IActivityRepository, ActivityRepository>();
             services.AddScoped<ICharacterRepository, CharacterRepository>();

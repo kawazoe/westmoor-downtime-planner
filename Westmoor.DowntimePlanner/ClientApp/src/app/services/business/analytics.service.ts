@@ -28,8 +28,8 @@ export class AnalyticsService {
     this.appInsights.loadAppInsights();
   }
 
-  public setUserContext(userId: string) {
-    this.appInsights.setAuthenticatedUserContext(userId);
+  public setUserContext(userId: string, accountId: string) {
+    this.appInsights.setAuthenticatedUserContext(userId, accountId);
   }
 
   public clearUserContext() {

@@ -51,6 +51,7 @@ import { InPipe } from './pipes/in.pipe';
 import { IncludesPipe } from './pipes/includes.pipe';
 import { FilterPipe } from './pipes/filter.pipe';
 import { TypeofPipe } from './pipes/typeof.pipe';
+import { TenantHttpInterceptorService } from './services/http-interceptors/tenant-http-interceptor.service';
 
 @NgModule({
   declarations: [
@@ -126,6 +127,7 @@ import { TypeofPipe } from './pipes/typeof.pipe';
     TypeaheadModule.forRoot()
   ],
   providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: TenantHttpInterceptorService, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthHttpInterceptorService, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AnalyticsHttpInterceptorService, multi: true },
     { provide: ErrorHandler, useClass: ErrorHandlerService },
