@@ -1,4 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
+using System;
 using System.Threading.Tasks;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,6 +9,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Westmoor.DowntimePlanner.Repositories;
 using Westmoor.DowntimePlanner.Security;
@@ -31,9 +32,6 @@ namespace Westmoor.DowntimePlanner
             services.AddSingleton<IClock, SystemClock>();
             services.AddSingleton<IUuidFactory, GuidUuidFactory>();
             services.AddHttpContextAccessor();
-
-            services.AddHttpClient();
-            services.AddScoped<JwtSecurityTokenHandler>();
 
             services.AddSingleton(p => new CosmosClient(
                 Configuration["CosmosConnectionString"],
@@ -59,11 +57,16 @@ namespace Westmoor.DowntimePlanner
                 await container.ReadContainerAsync();
                 return container;
             });
-
             services.AddScoped(typeof(ICosmosEntityManipulator<>), typeof(AspNetCoreCosmosEntityManipulator<>));
 
-            services.Configure<Auth0ApiUserRepository.Options>(Configuration.GetSection("auth0"));
-            services.AddScoped<IAuth0ApiUserRepository, Auth0ApiUserRepository>();
+            services.Configure<OAuthTokenStore.Options>(Configuration.GetSection("auth0"));
+            services.AddHttpClient<IAuth0ApiUserRepository, Auth0ApiUserRepository>((s, c) =>
+                {
+                    c.BaseAddress = new Uri(
+                        s.GetRequiredService<IOptions<OAuthTokenStore.Options>>().Value.EndpointUrl
+                    );
+                })
+                .AddOAuthTokens();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
             services.AddScoped<IApiKeyService, ApiKeyService>();

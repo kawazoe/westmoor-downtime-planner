@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Westmoor.DowntimePlanner.Requests;
 using Westmoor.DowntimePlanner.Responses;
 
 namespace Westmoor.DowntimePlanner.Services
@@ -7,5 +8,8 @@ namespace Westmoor.DowntimePlanner.Services
     {
         Task<UserResponse[]> SearchAsync(string query);
         Task<UserResponse> GetByIdAsync(string id);
+        Task<string[]> GetCampaignsAsync(string id);
+        Task AddCampaignAsync(string id, AddCampaignRequest request);
+        Task RemoveCampaignAsync(string id, string campaignId);
     }
 }

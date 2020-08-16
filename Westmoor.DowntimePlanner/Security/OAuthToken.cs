@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace Westmoor.DowntimePlanner.Entities
+namespace Westmoor.DowntimePlanner.Security
 {
-    public class OauthTokenEntity
+    public class OAuthToken
     {
         [JsonPropertyName("access_token")]
         public string AccessToken { get; set; }
