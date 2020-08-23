@@ -5,6 +5,6 @@ namespace Westmoor.DowntimePlanner.Requests
         public string CharacterId { get; set; }
         public string ActivityId { get; set; }
         public CreateDowntimeCostRequest[] Costs { get; set; }
-        public string[] SharedWith { get; set; }
+        public CreateSharedWithRequest[] SharedWith { get; set; }
     }
 }

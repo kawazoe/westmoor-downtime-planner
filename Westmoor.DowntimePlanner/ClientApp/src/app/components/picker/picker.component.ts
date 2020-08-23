@@ -6,6 +6,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class PickerComponent<T> {
   @Input() public choices: T[];
+  @Input() public labelSelector: (val: T) => string = v => `${v}`;
+
   @Input() public value: T;
   @Output() public change = new EventEmitter<T>();
 

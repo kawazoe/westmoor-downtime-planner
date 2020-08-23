@@ -22,14 +22,25 @@ export class CampaignUpdateComponent extends ModalUpdateComponentBase<CampaignRe
     return {
       name: form.controls.name.value,
       sharedWith: (form.controls.sharedWith as FormArray).controls
-        .map(ctrls => ctrls.value)
+        .map(ctrl => ctrl as FormGroup)
+        .map(c => ({
+          kind: c.controls.kind.value,
+          ownershipId: c.controls.ownershipId.value
+        }))
     };
   }
 
   ngOnInit(): void {
     this.form = new FormGroup({
       name: new FormControl(this.source.name, Validators.required),
-      sharedWith: new FormArray(this.source.sharedWith.map(u => new FormControl(u.ownershipId)), Validators.required)
+      sharedWith: new FormArray(
+        this.source.sharedWith
+          .map(u => new FormGroup({
+            kind: new FormControl(u.kind),
+            ownershipId: new FormControl(u.ownershipId)
+          })),
+        Validators.required
+      )
     });
   }
 }

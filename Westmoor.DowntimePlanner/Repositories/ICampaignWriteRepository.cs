@@ -1,15 +1,12 @@
 using System.Threading.Tasks;
-using Westmoor.DowntimePlanner.Entities;
 using Westmoor.DowntimePlanner.Requests;
 
 namespace Westmoor.DowntimePlanner.Repositories
 {
-    public interface ICampaignRepository
+    public interface ICampaignWriteRepository
     {
-        Task<CampaignEntity[]> GetAllAsync();
-        Task<CampaignEntity> GetByIdAsync(string id);
         Task CreateAsync(CreateCampaignRequest request);
         Task UpdateAsync(string id, UpdateCampaignRequest request);
-        Task DeleteAsync(string id);
+        Task DeleteAsync(string idp, string id);
     }
 }

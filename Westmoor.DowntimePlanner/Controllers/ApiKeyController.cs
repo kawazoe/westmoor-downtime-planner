@@ -36,8 +36,8 @@ namespace Westmoor.DowntimePlanner.Controllers
         public async Task UpdateAsync(string key, UpdateApiKeyRequest request) =>
             await _service.UpdateAsync(key, request);
 
-        [HttpDelete("{key}")]
-        public async Task RevokeAsync(string key) =>
-            await _service.RevokeAsync(key);
+        [HttpDelete("{idp}/{key}")]
+        public async Task RevokeAsync(string idp, string key) =>
+            await _service.RevokeAsync(idp, key);
     }
 }

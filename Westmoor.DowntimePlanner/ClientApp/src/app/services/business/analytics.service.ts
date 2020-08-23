@@ -28,8 +28,9 @@ export class AnalyticsService {
     this.appInsights.loadAppInsights();
   }
 
-  public setUserContext(userId: string, accountId: string) {
-    this.appInsights.setAuthenticatedUserContext(userId, accountId);
+  public setUserContext(userId: string, tenantIds: string[]) {
+    // Best effort. Application Insights doesn't support multiple tenants active at the same time.
+    this.appInsights.setAuthenticatedUserContext(userId, tenantIds[0]);
   }
 
   public clearUserContext() {

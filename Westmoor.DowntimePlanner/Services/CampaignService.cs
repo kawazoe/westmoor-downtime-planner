@@ -7,26 +7,31 @@ namespace Westmoor.DowntimePlanner.Services
 {
     public class CampaignService : ICampaignService
     {
-        private readonly ICampaignRepository _repository;
+        private readonly ICampaignReadRepository _readRepository;
+        private readonly ICampaignWriteRepository _writeRepository;
 
-        public CampaignService(ICampaignRepository repository)
+        public CampaignService(
+            ICampaignReadRepository readRepository,
+            ICampaignWriteRepository writeRepository
+        )
         {
-            _repository = repository;
+            _readRepository = readRepository;
+            _writeRepository = writeRepository;
         }
 
         public async Task<CampaignEntity[]> GetAllAsync() =>
-            await _repository.GetAllAsync();
+            await _readRepository.GetAllAsync();
 
         public async Task<CampaignEntity> GetByIdAsync(string id) =>
-            await _repository.GetByIdAsync(id);
+            await _readRepository.GetByIdAsync(id);
 
         public async Task CreateAsync(CreateCampaignRequest request) =>
-            await _repository.CreateAsync(request);
+            await _writeRepository.CreateAsync(request);
 
         public async Task UpdateAsync(string id, UpdateCampaignRequest request) =>
-            await _repository.UpdateAsync(id, request);
+            await _writeRepository.UpdateAsync(id, request);
 
-        public async Task DeleteAsync(string id) =>
-            await _repository.DeleteAsync(id);
+        public async Task DeleteAsync(string idp, string id) =>
+            await _writeRepository.DeleteAsync(idp, id);
     }
 }

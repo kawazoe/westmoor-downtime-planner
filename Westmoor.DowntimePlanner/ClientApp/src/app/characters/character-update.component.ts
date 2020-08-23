@@ -23,7 +23,11 @@ export class CharacterUpdateComponent extends ModalUpdateComponentBase<Character
       characterFullName: form.controls.characterFullName.value,
       accruedDowntimeDays: parseInt(form.controls.accruedDowntimeDays.value, 10),
       sharedWith: (form.controls.sharedWith as FormArray).controls
-        .map(ctrls => ctrls.value)
+        .map(ctrl => ctrl as FormGroup)
+        .map(c => ({
+          kind: c.controls.kind.value,
+          ownershipId: c.controls.ownershipId.value
+        }))
     };
   }
 
@@ -32,7 +36,14 @@ export class CharacterUpdateComponent extends ModalUpdateComponentBase<Character
       playerFullName: new FormControl(this.source.playerFullName, Validators.required),
       characterFullName: new FormControl(this.source.characterFullName, Validators.required),
       accruedDowntimeDays: new FormControl(this.source.accruedDowntimeDays, [Validators.required, Validators.min(0)]),
-      sharedWith: new FormArray(this.source.sharedWith.map(u => new FormControl(u.ownershipId)), Validators.required)
+      sharedWith: new FormArray(
+        this.source.sharedWith
+          .map(u => new FormGroup({
+            kind: new FormControl(u.kind),
+            ownershipId: new FormControl(u.ownershipId)
+          })),
+        Validators.required
+      )
     });
   }
 }

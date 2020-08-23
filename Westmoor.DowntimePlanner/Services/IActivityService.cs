@@ -10,6 +10,6 @@ namespace Westmoor.DowntimePlanner.Services
         Task<ActivityEntity> GetByIdAsync(string id);
         Task CreateAsync(CreateActivityRequest request);
         Task UpdateAsync(string id, UpdateActivityRequest request);
-        Task DeleteAsync(string id);
+        Task DeleteAsync(string idp, string id);
     }
 }

@@ -15,6 +15,8 @@ import { ofType } from '../lib/rxjs/types';
 import { first, last, pipe } from '../lib/functional/';
 import { IPageViewTelemetry } from '@microsoft/applicationinsights-web';
 import { chain } from '../lib/functional/chain';
+import { TenantService } from './services/business/tenant.service';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -22,22 +24,45 @@ import { chain } from '../lib/functional/chain';
 })
 export class AppComponent {
   constructor(
-    router: Router,
-    analytics: AnalyticsService,
-    auth: AuthService
+    private readonly router: Router,
+    private readonly analytics: AnalyticsService,
+    private readonly auth: AuthService,
+    private readonly tenant: TenantService
   ) {
-    router.events
+    this.initAnalyticsContext();
+    this.initRouterAnalytics();
+  }
+
+  private initAnalyticsContext() {
+    combineLatest([
+        this.auth.user$,
+        this.tenant.actives$
+      ])
+      .pipe(
+        tap(([user, tenantIds]) => {
+          if (!user) {
+            this.analytics.clearUserContext();
+          } else {
+            this.analytics.setUserContext(user['https://westmoor.rpg/ownership_id'], tenantIds);
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  private initRouterAnalytics() {
+    this.router.events
       .pipe(
         map(e => {
           if (e instanceof NavigationStart) {
-            (e as any).sourceUrl = router.url;
+            (e as any).sourceUrl = this.router.url;
           }
 
           return e;
         }),
         bufferDebounce(e => e instanceof NavigationEnd, 1500),
         filter(events => events && !!events.length),
-        switchMap(events => map(isAuthenticated => [events, isAuthenticated])(take(1)(auth.isAuthenticated$))),
+        switchMap(events => map(isAuthenticated => [events, isAuthenticated])(take(1)(this.auth.isAuthenticated$))),
         map(([events, isAuthenticated]: [RouterEvent[], boolean]) => {
           const navigationStart = firstNavigationStart(events);
           const activationEnd = lastChildActivationEnd(events);
@@ -51,7 +76,7 @@ export class AppComponent {
             isLoggedIn: isAuthenticated
           }) as IPageViewTelemetry;
         }),
-        tap(e => analytics.trackPageView(e))
+        tap(e => this.analytics.trackPageView(e))
       )
       .subscribe();
   }

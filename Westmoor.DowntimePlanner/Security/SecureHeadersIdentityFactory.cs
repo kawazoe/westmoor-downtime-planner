@@ -16,16 +16,18 @@ namespace Westmoor.DowntimePlanner.Security
             return ctx =>
             {
                 var validatedClaims = mappings
-                    .Select(mapping => (
-                        mapping.sourceClaimType,
-                        mapping.targetClaimType,
-                        headerValue: ctx.Request.Headers
-                            .FirstOrDefault(h =>
-                                h.Key.Equals(mapping.headerKey, StringComparison.OrdinalIgnoreCase)
-                            )
-                            .Value
-                            .First()
-                    ))
+                    .SelectMany(mapping => ctx.Request.Headers
+                        .Where(h => h.Key.Equals(mapping.headerKey, StringComparison.OrdinalIgnoreCase))
+                        .SelectMany(header => header.Value
+                            // Since ASP.NET Core does not split custom headers on comas, we must do it by hand
+                            .SelectMany(headerValue => headerValue.Split(','))
+                            .Select(headerValue => (
+                                mapping.sourceClaimType,
+                                mapping.targetClaimType,
+                                headerValue
+                            ))
+                        )
+                    )
                     .Where(mapping => ctx.Principal.Claims
                         .Any(c =>
                             c.Type == mapping.sourceClaimType &&

@@ -1,10 +1,13 @@
 <div class="btn-group" dropdown>
   <button type="button" dropdownToggle class="btn btn-secondary dropdown-toggle">
-    {{value || 'Select...'}}
+    {{(value | call:labelSelector) || 'Select...'}}
     <span class="caret"></span>
   </button>
   <ul *dropdownMenu class="dropdown-menu" role="menu">
-    <li role="menuitem"><a class="dropdown-item" [routerLink]="" (click)="select('days')">Days</a></li>
-    <li role="menuitem"><a class="dropdown-item" [routerLink]="" (click)="select('gold')">Gold</a></li>
+    <li role="menuitem" *ngFor="let choice of choices">
+      <a class="dropdown-item" [routerLink]="" (click)="select(choice)">
+        {{choice | call:labelSelector}}
+      </a>
+    </li>
   </ul>
 </div>

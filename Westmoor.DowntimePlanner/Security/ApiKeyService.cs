@@ -7,26 +7,31 @@ namespace Westmoor.DowntimePlanner.Security
 {
     public class ApiKeyService : IApiKeyService
     {
-        private readonly IApiKeyRepository _repository;
+        private readonly IApiKeyReadRepository _readRepository;
+        private readonly IApiKeyWriteRepository _writeRepository;
 
-        public ApiKeyService(IApiKeyRepository repository)
+        public ApiKeyService(
+            IApiKeyReadRepository readRepository,
+            IApiKeyWriteRepository writeRepository
+        )
         {
-            _repository = repository;
+            _readRepository = readRepository;
+            _writeRepository = writeRepository;
         }
 
         public async Task<ApiKeyEntity[]> GetAllAsync() =>
-            await _repository.GetAllAsync();
+            await _readRepository.GetAllAsync();
 
         public async Task<ApiKeyEntity> GetByKeyAsync(string key) =>
-            await _repository.GetByKeyAsync(key);
+            await _readRepository.GetByKeyAsync(key);
 
         public async Task CreateAsync(CreateApiKeyRequest request) =>
-            await _repository.CreateAsync(request);
+            await _writeRepository.CreateAsync(request);
 
         public async Task UpdateAsync(string key, UpdateApiKeyRequest request) =>
-            await _repository.UpdateAsync(key, request);
+            await _writeRepository.UpdateAsync(key, request);
 
-        public async Task RevokeAsync(string key) =>
-            await _repository.DeleteAsync(key);
+        public async Task RevokeAsync(string idp, string key) =>
+            await _writeRepository.DeleteAsync(idp, key);
     }
 }

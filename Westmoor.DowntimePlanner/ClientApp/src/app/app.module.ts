@@ -45,6 +45,7 @@ import { OwnershipComponent } from './components/ownership/ownership.component';
 import { PickerComponent } from './components/picker/picker.component';
 import { ProgressesPresenterComponent } from './components/progresses-presenter/progresses-presenter.component';
 import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
+import { CallPipe } from './pipes/call.pipe';
 import { CastPipe } from './pipes/cast.pipe';
 import { CanPipe } from './pipes/can.pipe';
 import { InPipe } from './pipes/in.pipe';
@@ -83,6 +84,7 @@ import { CampaignUpdateComponent } from './campaigns/campaign-update.component';
     PickerComponent,
     ProgressesPresenterComponent,
     TermsOfServiceComponent,
+    CallPipe,
     CastPipe,
     CanPipe,
     InPipe,

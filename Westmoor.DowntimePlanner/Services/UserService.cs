@@ -10,31 +10,36 @@ namespace Westmoor.DowntimePlanner.Services
 {
     public class UserService : IUserService
     {
-        private readonly IAuth0ApiUserRepository _repository;
+        private readonly IAuth0ApiUserReadRepository _readRepository;
+        private readonly IAuth0ApiUserWriteRepository _writeRepository;
 
-        public UserService(IAuth0ApiUserRepository repository)
+        public UserService(
+            IAuth0ApiUserReadRepository readRepository,
+            IAuth0ApiUserWriteRepository writeRepository
+        )
         {
-            _repository = repository;
+            _readRepository = readRepository;
+            _writeRepository = writeRepository;
         }
 
         public async Task<UserResponse[]> SearchAsync(string query) =>
-            (await _repository.SearchAsync(query))
+            (await _readRepository.SearchAsync(query))
                 .Select(ToResponse)
                 .ToArray();
 
         public async Task<UserResponse> GetByIdAsync(string id) =>
-            (await _repository.SearchAsync($"user_metadata.ownership_id:\"{id}\""))
+            (await _readRepository.SearchAsync($"user_metadata.ownership_id:\"{id}\""))
                 .FirstOrDefault()
                 .MapOrDefault(ToResponse);
 
         public async Task<string[]> GetCampaignsAsync(string id) =>
-            await _repository.GetTenantsAsync(id);
+            await _readRepository.GetTenantsAsync(id);
 
         public async Task AddCampaignAsync(string id, AddCampaignRequest request) =>
-            await _repository.AddTenantAsync(id, request.CampaignId);
+            await _writeRepository.AddTenantAsync(id, request.CampaignId);
 
         public async Task RemoveCampaignAsync(string id, string campaignId) =>
-            await _repository.RemoveTenantAsync(id, campaignId);
+            await _writeRepository.RemoveTenantAsync(id, campaignId);
 
         private static UserResponse ToResponse(UserEntity entity) => new UserResponse
         {

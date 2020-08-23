@@ -45,7 +45,11 @@ export class ActivityUpdateComponent extends ModalUpdateComponentBase<ActivityRe
             }))
         })),
       sharedWith: (form.controls.sharedWith as FormArray).controls
-        .map(ctrls => ctrls.value)
+        .map(ctrl => ctrl as FormGroup)
+        .map(c => ({
+          kind: c.controls.kind.value,
+          ownershipId: c.controls.ownershipId.value
+        }))
     };
   }
 
@@ -55,7 +59,14 @@ export class ActivityUpdateComponent extends ModalUpdateComponentBase<ActivityRe
       descriptionMarkdown: new FormControl(this.source.descriptionMarkdown),
       complicationMarkdown: new FormControl(this.source.complicationMarkdown),
       costs: new FormArray([]),
-      sharedWith: new FormArray(this.source.sharedWith.map(u => new FormControl(u.ownershipId)), Validators.required)
+      sharedWith: new FormArray(
+        this.source.sharedWith
+          .map(u => new FormGroup({
+            kind: new FormControl(u.kind),
+            ownershipId: new FormControl(u.ownershipId)
+          })),
+        Validators.required
+      )
     });
 
     for (const cost of this.source.costs) {

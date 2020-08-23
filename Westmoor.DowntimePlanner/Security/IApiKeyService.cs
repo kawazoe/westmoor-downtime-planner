@@ -10,6 +10,6 @@ namespace Westmoor.DowntimePlanner.Security
         Task<ApiKeyEntity> GetByKeyAsync(string key);
         Task CreateAsync(CreateApiKeyRequest request);
         Task UpdateAsync(string key, UpdateApiKeyRequest request);
-        Task RevokeAsync(string key);
+        Task RevokeAsync(string idp, string key);
     }
 }

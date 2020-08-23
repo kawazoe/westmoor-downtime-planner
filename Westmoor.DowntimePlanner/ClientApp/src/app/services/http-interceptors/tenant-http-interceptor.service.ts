@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TenantService } from '../business/tenant.service';
-import { switchMap, take } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 function whitelist(url: string) {
   return url.startsWith('/api');
@@ -22,11 +22,10 @@ export class TenantHttpInterceptorService implements HttpInterceptor {
       return next.handle(req);
     }
 
-    return this.tenant.current
+    return this.tenant.actives$
       .pipe(
-        take(1),
-        switchMap(tenant => next.handle(tenant
-          ? req.clone({ headers: req.headers.set('X-Tenant-Id', tenant) })
+        switchMap(tenants => next.handle(tenants
+          ? req.clone({ headers: req.headers.set('X-Tenant-Id', tenants) })
           : req
         )
       )

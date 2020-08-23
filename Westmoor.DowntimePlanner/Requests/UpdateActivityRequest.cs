@@ -6,6 +6,6 @@ namespace Westmoor.DowntimePlanner.Requests
         public string DescriptionMarkdown { get; set; }
         public string ComplicationMarkdown { get; set; }
         public UpdateActivityCostRequest[] Costs { get; set; }
-        public string[] SharedWith { get; set; }
+        public UpdateSharedWithRequest[] SharedWith { get; set; }
     }
 }

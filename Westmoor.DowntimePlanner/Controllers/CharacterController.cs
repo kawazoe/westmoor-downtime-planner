@@ -42,9 +42,9 @@ namespace Westmoor.DowntimePlanner.Controllers
         public async Task AwardAsync(string id, AwardCharacterRequest request) =>
             await _service.AwardAsync(id, request);
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{idp}/{id}")]
         [Authorize(Policy = Policies.WriteCharacters)]
-        public async Task DeleteAsync(string id) =>
-            await _service.DeleteAsync(id);
+        public async Task DeleteAsync(string idp, string id) =>
+            await _service.DeleteAsync(idp, id);
     }
 }

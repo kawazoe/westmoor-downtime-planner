@@ -57,10 +57,19 @@ namespace Westmoor.DowntimePlanner
                 await container.ReadContainerAsync();
                 return container;
             });
-            services.AddScoped(typeof(ICosmosEntityManipulator<>), typeof(AspNetCoreCosmosEntityManipulator<>));
+            services.AddScoped(typeof(IShareWithFactory), typeof(ShareWithFactory));
+            services.AddScoped(typeof(ICosmosEntityFilter<>), typeof(AspNetCoreCosmosEntityFilter<>));
+            services.AddScoped(typeof(ICosmosEntityMutator<>), typeof(AspNetCoreCosmosEntityMutator<>));
 
             services.Configure<OAuthTokenStore.Options>(Configuration.GetSection("auth0"));
-            services.AddHttpClient<IAuth0ApiUserRepository, Auth0ApiUserRepository>((s, c) =>
+            services.AddHttpClient<IAuth0ApiUserReadRepository, Auth0ApiUserReadRepository>((s, c) =>
+                {
+                    c.BaseAddress = new Uri(
+                        s.GetRequiredService<IOptions<OAuthTokenStore.Options>>().Value.EndpointUrl
+                    );
+                })
+                .AddOAuthTokens();
+            services.AddHttpClient<IAuth0ApiUserWriteRepository, Auth0ApiUserWriteRepository>((s, c) =>
                 {
                     c.BaseAddress = new Uri(
                         s.GetRequiredService<IOptions<OAuthTokenStore.Options>>().Value.EndpointUrl
@@ -68,7 +77,8 @@ namespace Westmoor.DowntimePlanner
                 })
                 .AddOAuthTokens();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
+            services.AddScoped<IApiKeyReadRepository, ApiKeyReadRepository>();
+            services.AddScoped<IApiKeyWriteRepository, ApiKeyWriteRepository>();
             services.AddScoped<IApiKeyService, ApiKeyService>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -94,7 +104,6 @@ namespace Westmoor.DowntimePlanner
                 {
                     options.AddPolicy(permission, b => b
                         .RequireAuthenticatedUser()
-                        .RequireClaim("https://westmoor.rpg/tenant")
                         .RequireClaim("https://westmoor.rpg/permissions", permission)
                     );
                 }
@@ -108,10 +117,14 @@ namespace Westmoor.DowntimePlanner
             });
             services.AddScoped<ITenantAccessor, HttpContextTenantAccessor>();
 
-            services.AddScoped<ICampaignRepository, CampaignRepository>();
-            services.AddScoped<IActivityRepository, ActivityRepository>();
-            services.AddScoped<ICharacterRepository, CharacterRepository>();
-            services.AddScoped<IDowntimeRepository, DowntimeRepository>();
+            services.AddScoped<ICampaignReadRepository, CampaignReadRepository>();
+            services.AddScoped<ICampaignWriteRepository, CampaignWriteRepository>();
+            services.AddScoped<IActivityReadRepository, ActivityReadRepository>();
+            services.AddScoped<IActivityWriteRepository, ActivityWriteRepository>();
+            services.AddScoped<ICharacterReadRepository, CharacterReadRepository>();
+            services.AddScoped<ICharacterWriteRepository, CharacterWriteRepository>();
+            services.AddScoped<IDowntimeReadRepository, DowntimeReadRepository>();
+            services.AddScoped<IDowntimeWriteRepository, DowntimeWriteRepository>();
 
             services.AddScoped<ICampaignService, CampaignService>();
             services.AddScoped<IActivityService, ActivityService>();

@@ -2,10 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export const SharedWithKinds = ['user', 'tenant'] as const;
+export type SharedWithKinds = typeof SharedWithKinds[number];
+
 export const ActivityCostKinds = ['days', 'gold'] as const;
 export type ActivityCostKinds = typeof ActivityCostKinds[number];
 
 export interface SharedWithResponse {
+  kind: SharedWithKinds;
   ownershipId: string;
   picture: string;
   username: string;
@@ -13,7 +17,18 @@ export interface SharedWithResponse {
   name: string;
 }
 
+export interface CreateSharedWithRequest {
+  kind: SharedWithKinds;
+  ownershipId: string;
+}
+
+export interface UpdateSharedWithRequest {
+  kind: SharedWithKinds;
+  ownershipId: string;
+}
+
 export interface CampaignResponse {
+  idp: string;
   id: string;
   name: string;
   sharedWith: SharedWithResponse[];
@@ -21,15 +36,16 @@ export interface CampaignResponse {
 
 export interface CreateCampaignRequest {
   name: string;
-  sharedWith: string[];
+  sharedWith: CreateSharedWithRequest[];
 }
 
 export interface UpdateCampaignRequest {
   name: string;
-  sharedWith: string[];
+  sharedWith: UpdateSharedWithRequest[];
 }
 
 export interface ActivityResponse {
+  idp: string;
   id: string;
   name: string;
   descriptionMarkdown: string;
@@ -54,7 +70,7 @@ export interface CreateActivityRequest {
   descriptionMarkdown: string;
   complicationMarkdown: string;
   costs: CreateActivityCostRequest[];
-  sharedWith: string[];
+  sharedWith: CreateSharedWithRequest[];
 }
 
 export interface CreateActivityCostRequest {
@@ -73,7 +89,7 @@ export interface UpdateActivityRequest {
   descriptionMarkdown: string;
   complicationMarkdown: string;
   costs: UpdateActivityCostRequest[];
-  sharedWith: string[];
+  sharedWith: UpdateSharedWithRequest[];
 }
 
 export interface UpdateActivityCostRequest {
@@ -88,6 +104,7 @@ export interface UpdateActivityParameterRequest {
 }
 
 export interface CharacterResponse {
+  idp: string;
   id: string;
   playerFullName: string;
   characterFullName: string;
@@ -98,14 +115,14 @@ export interface CharacterResponse {
 export interface CreateCharacterRequest {
   playerFullName: string;
   characterFullName: string;
-  sharedWith: string[];
+  sharedWith: CreateSharedWithRequest[];
 }
 
 export interface UpdateCharacterRequest {
   playerFullName: string;
   characterFullName: string;
   accruedDowntimeDays: number;
-  sharedWith: string[];
+  sharedWith: UpdateSharedWithRequest[];
 }
 
 export interface AwardCharacterRequest {
@@ -118,6 +135,7 @@ export interface AwardCharacterBatchRequest {
 }
 
 export interface DowntimeResponse {
+  idp: string;
   id: string;
   character: CharacterResponse;
   activity: ActivityResponse;
@@ -135,7 +153,7 @@ export interface CreateDowntimeRequest {
   characterId: string;
   activityId: string;
   costs: CreateDowntimeCostRequest[];
-  sharedWith: string[];
+  sharedWith: CreateSharedWithRequest[];
 }
 
 export class CreateDowntimeBatchRequest {
@@ -149,7 +167,7 @@ export interface CreateDowntimeCostRequest {
 
 export interface UpdateDowntimeRequest {
   costs: UpdateDowntimeCostRequest[];
-  sharedWith: string[];
+  sharedWith: UpdateSharedWithRequest[];
 }
 
 export interface UpdateDowntimeCostRequest {
@@ -173,6 +191,7 @@ export class AdvanceDowntimeBatchRequest {
 }
 
 export interface ApiKeyResponse {
+  idp: string;
   key: string;
   owner: string;
   permissions: string[];
@@ -183,13 +202,13 @@ export interface ApiKeyResponse {
 export interface CreateApiKeyRequest {
   owner: string;
   permissions: string[];
-  sharedWith: string[];
+  sharedWith: CreateSharedWithRequest[];
 }
 
 export interface UpdateApiKeyRequest {
   owner: string;
   permissions: string[];
-  sharedWith: string[];
+  sharedWith: UpdateSharedWithRequest[];
 }
 
 export interface UserResponse {
@@ -220,6 +239,10 @@ export class ApiService {
     return this.http.get<CampaignResponse[]>(`${this.endpoint}/campaign`);
   }
 
+  public searchCampaigns(query: string): Observable<CampaignResponse[]> {
+    return this.http.get<CampaignResponse[]>(`${this.endpoint}/campaign?q=${encodeURIComponent(query)}`);
+  }
+
   public getCampaignById(id: string): Observable<CampaignResponse> {
     return this.http.get<CampaignResponse>(`${this.endpoint}/campaign/${id}`);
   }
@@ -232,8 +255,8 @@ export class ApiService {
     return this.http.put<void>(`${this.endpoint}/campaign/${id}`, request);
   }
 
-  public deleteCampaign(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.endpoint}/campaign/${id}`);
+  public deleteCampaign(idp: string, id: string): Observable<void> {
+    return this.http.delete<void>(`${this.endpoint}/campaign/${idp}/${id}`);
   }
 
   public getAllActivities(): Observable<ActivityResponse[]> {
@@ -252,8 +275,8 @@ export class ApiService {
     return this.http.put<void>(`${this.endpoint}/activity/${id}`, request);
   }
 
-  public deleteActivity(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.endpoint}/activity/${id}`);
+  public deleteActivity(idp: string, id: string): Observable<void> {
+    return this.http.delete<void>(`${this.endpoint}/activity/${idp}/${id}`);
   }
 
   public getAllCharacters(): Observable<CharacterResponse[]> {
@@ -280,8 +303,8 @@ export class ApiService {
     return this.http.put<void>(`${this.endpoint}/batch/character/award`, request);
   }
 
-  public deleteCharacter(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.endpoint}/character/${id}`);
+  public deleteCharacter(idp: string, id: string): Observable<void> {
+    return this.http.delete<void>(`${this.endpoint}/character/${idp}/${id}`);
   }
 
   public getCurrentDowntimes(): Observable<DowntimeResponse[]> {
@@ -316,8 +339,8 @@ export class ApiService {
     return this.http.put<void>(`${this.endpoint}/batch/downtime/advance`, request);
   }
 
-  public deleteDowntime(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.endpoint}/downtime/${id}`);
+  public deleteDowntime(idp: string, id: string): Observable<void> {
+    return this.http.delete<void>(`${this.endpoint}/downtime/${idp}/${id}`);
   }
 
   public getAllApiKeys(): Observable<ApiKeyResponse[]> {
@@ -336,11 +359,11 @@ export class ApiService {
     return this.http.put<void>(`${this.endpoint}/apiKey/${id}`, request);
   }
 
-  public deleteApiKey(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.endpoint}/apiKey/${id}`);
+  public deleteApiKey(idp: string, id: string): Observable<void> {
+    return this.http.delete<void>(`${this.endpoint}/apiKey/${idp}/${id}`);
   }
 
   public searchUsers(query: string): Observable<UserResponse[]> {
-    return this.http.get<UserResponse[]>(`${this.endpoint}/user/${encodeURIComponent(query)}`);
+    return this.http.get<UserResponse[]>(`${this.endpoint}/user?q=${encodeURIComponent(query)}`);
   }
 }

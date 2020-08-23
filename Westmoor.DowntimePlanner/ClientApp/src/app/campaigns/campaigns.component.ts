@@ -46,7 +46,7 @@ export class CampaignsComponent {
     const id = campaign.name;
     this.modalRef = this.modal.show(ModalDeleteComponent, { initialState: { type: 'campaign', id } });
     this.modalRef.content.onConfirm = () => this.api
-      .deleteCampaign(campaign.id)
+      .deleteCampaign(campaign.idp, campaign.id)
       .pipe(this.refresh());
   }
 

@@ -28,7 +28,11 @@ export class ApiKeyCreateComponent extends ModalCreateComponentBase<CreateApiKey
         .map(([key, _]) => this.Permissions.find(p => p.htmlEncoded === key)?.scope)
         .filter(s => !!s),
       sharedWith: (form.controls.sharedWith as FormArray).controls
-        .map(ctrls => ctrls.value)
+        .map(ctrl => ctrl as FormGroup)
+        .map(c => ({
+          kind: c.controls.kind.value,
+          ownershipId: c.controls.ownershipId.value
+        }))
     };
   }
 

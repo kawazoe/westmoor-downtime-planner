@@ -45,7 +45,7 @@ export class ApiKeysComponent {
   public revoke(apiKey: ApiKeyResponse) {
     this.modalRef = this.modal.show(ModalDeleteComponent, { initialState: { type: 'api key', id: apiKey.key } });
     this.modalRef.content.onConfirm = () => this.api
-      .deleteApiKey(apiKey.key)
+      .deleteApiKey(apiKey.idp, apiKey.key)
       .pipe(this.refresh());
   }
 

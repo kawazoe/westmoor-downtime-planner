@@ -5,12 +5,11 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
 using Westmoor.DowntimePlanner.Entities;
-using Westmoor.DowntimePlanner.Extensions;
 using Westmoor.DowntimePlanner.Security;
 
 namespace Westmoor.DowntimePlanner.Repositories
 {
-    public class Auth0ApiUserRepository : IAuth0ApiUserRepository
+    public class Auth0ApiUserReadRepository : IAuth0ApiUserReadRepository
     {
         private static readonly string[] Fields =
         {
@@ -27,7 +26,7 @@ namespace Westmoor.DowntimePlanner.Repositories
         private readonly HttpClient _httpClient;
         private readonly ITenantAccessor _tenantAccessor;
 
-        public Auth0ApiUserRepository(
+        public Auth0ApiUserReadRepository(
             HttpClient httpClient,
             ITenantAccessor tenantAccessor
         )
@@ -85,59 +84,5 @@ namespace Westmoor.DowntimePlanner.Repositories
 
         public async Task<string[]> GetTenantsAsync(string id) =>
             (await GetByIdAsync(id)).UserMetadata.Campaigns;
-
-        public async Task AddTenantAsync(string userId, string tenantId)
-        {
-            if (_tenantAccessor.Tenant.Contains(tenantId))
-            {
-                return;
-            }
-
-            var user = await GetByIdAsync(userId);
-
-            var payload = JsonSerializer.Serialize(new
-            {
-                user_metadata = new
-                {
-                    campaigns = user.UserMetadata.Campaigns
-                        .Append(tenantId)
-                }
-            });
-            var message = new HttpRequestMessage(
-                    HttpMethod.Patch,
-                    "/api/v2/users/" + userId
-                )
-                .WithJsonContent(payload);
-
-            var response = await _httpClient.SendAsync(message);
-            response.EnsureSuccessStatusCode();
-        }
-
-        public async Task RemoveTenantAsync(string userId, string tenantId)
-        {
-            if (_tenantAccessor.Tenant.Contains(tenantId))
-            {
-                return;
-            }
-
-            var user = await GetByIdAsync(userId);
-
-            var payload = JsonSerializer.Serialize(new
-            {
-                user_metadata = new
-                {
-                    campaigns = user.UserMetadata.Campaigns
-                        .Except(new[] {tenantId})
-                }
-            });
-            var message = new HttpRequestMessage(
-                    HttpMethod.Patch,
-                    "/api/v2/users/" + userId
-                )
-                .WithJsonContent(payload);
-
-            var response = await _httpClient.SendAsync(message);
-            response.EnsureSuccessStatusCode();
-        }
     }
 }

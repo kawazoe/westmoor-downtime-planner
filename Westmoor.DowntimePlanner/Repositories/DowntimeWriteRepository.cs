@@ -1,60 +1,41 @@
-using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos;
 using Westmoor.DowntimePlanner.Entities;
-using Westmoor.DowntimePlanner.Extensions;
 using Westmoor.DowntimePlanner.Requests;
 
 namespace Westmoor.DowntimePlanner.Repositories
 {
-    public class DowntimeRepository : IDowntimeRepository
+    public class DowntimeWriteRepository : IDowntimeWriteRepository
     {
         private readonly Task<Container> _container;
-        private readonly ICosmosEntityManipulator<DowntimeEntity> _entityManipulator;
-        private readonly ICharacterRepository _characterRepository;
-        private readonly IActivityRepository _activityRepository;
+        private readonly ICosmosEntityMutator<DowntimeEntity> _entityMutator;
+        private readonly IDowntimeReadRepository _readRepository;
+        private readonly IActivityReadRepository _activityReadRepository;
+        private readonly ICharacterReadRepository _characterReadRepository;
+        private readonly ICharacterWriteRepository _characterWriteRepository;
 
-        public DowntimeRepository(
+        public DowntimeWriteRepository(
             Task<Container> container,
-            ICosmosEntityManipulator<DowntimeEntity> entityManipulator,
-            ICharacterRepository characterRepository,
-            IActivityRepository activityRepository
+            ICosmosEntityMutator<DowntimeEntity> entityMutator,
+            IDowntimeReadRepository readRepository,
+            IActivityReadRepository activityReadRepository,
+            ICharacterReadRepository characterReadRepository,
+            ICharacterWriteRepository characterWriteRepository
         )
         {
             _container = container;
-            _entityManipulator = entityManipulator;
-            _characterRepository = characterRepository;
-            _activityRepository = activityRepository;
-        }
-
-        public async Task<DowntimeEntity[]> GetAsync(Expression<Func<DowntimeEntity, bool>> predicate)
-        {
-            return await (await _container).GetItemLinqQueryable<DowntimeEntity>(
-                    requestOptions: new QueryRequestOptions { PartitionKey = _entityManipulator.DefaultPartitionKey }
-                )
-                .Where(predicate)
-                .Where(_entityManipulator.GetScopeFilterPredicate())
-                .OrderByDescending(d => d.CreatedOn)
-                .ToAsyncEnumerable()
-                .ToArrayAsync();
-        }
-
-        public async Task<DowntimeEntity> GetByIdAsync(string id)
-        {
-            var entity = await (await _container)
-                .ReadItemAsync<DowntimeEntity>(id, _entityManipulator.DefaultPartitionKey);
-
-            return _entityManipulator.GetScopeFilterPredicate().Compile().Invoke(entity)
-                ? entity
-                : null;
+            _entityMutator = entityMutator;
+            _readRepository = readRepository;
+            _activityReadRepository = activityReadRepository;
+            _characterReadRepository = characterReadRepository;
+            _characterWriteRepository = characterWriteRepository;
         }
 
         public async Task CreateAsync(CreateDowntimeRequest request)
         {
-            var character = await _characterRepository.GetByIdAsync(request.CharacterId);
-            var activity = await _activityRepository.GetByIdAsync(request.ActivityId);
+            var character = await _characterReadRepository.GetByIdAsync(request.CharacterId);
+            var activity = await _activityReadRepository.GetByIdAsync(request.ActivityId);
             var costs = request.Costs
                 .Select(p => new DowntimeCostEntity
                 {
@@ -72,12 +53,12 @@ namespace Westmoor.DowntimePlanner.Repositories
                 SharedWith = character.SharedWith.Concat(activity.SharedWith).ToArray()
             };
 
-            await (await _container).CreateItemAsync(await _entityManipulator.CreateMetadataAsync(entity, request.SharedWith));
+            await (await _container).CreateItemAsync(await _entityMutator.CreateMetadataAsync(entity, request.SharedWith));
         }
 
         public async Task UpdateAsync(string id, UpdateDowntimeRequest request)
         {
-            var entity = await GetByIdAsync(id);
+            var entity = await _readRepository.GetByIdAsync(id);
 
             var costs = request.Costs
                 .Select(p => new DowntimeCostEntity
@@ -96,14 +77,14 @@ namespace Westmoor.DowntimePlanner.Repositories
             };
 
             await (await _container).ReplaceItemAsync(
-                await _entityManipulator.UpdateMetadataAsync(updatedEntity, entity, request.SharedWith),
+                await _entityMutator.UpdateMetadataAsync(updatedEntity, entity, request.SharedWith),
                 id
             );
         }
 
         public async Task AdvanceAsync(string id, AdvanceDowntimeRequest request)
         {
-            var entity = await GetByIdAsync(id);
+            var entity = await _readRepository.GetByIdAsync(id);
 
             var costs = entity.Costs
                 .Select(cost => (
@@ -129,7 +110,7 @@ namespace Westmoor.DowntimePlanner.Repositories
             };
 
             await (await _container).ReplaceItemAsync(
-                await _entityManipulator.UpdateMetadataAsync(updatedEntity, entity, null),
+                await _entityMutator.UpdateMetadataAsync(updatedEntity, entity, null),
                 id
             );
         }
@@ -138,7 +119,7 @@ namespace Westmoor.DowntimePlanner.Repositories
         {
             var downtimes = await request.Ids
                 .ToAsyncEnumerable()
-                .SelectAwait(async id => await GetByIdAsync(id))
+                .SelectAwait(async id => await _readRepository.GetByIdAsync(id))
                 .ToArrayAsync();
 
             foreach (var entity in downtimes)
@@ -167,7 +148,7 @@ namespace Westmoor.DowntimePlanner.Repositories
                 };
 
                 await (await _container).ReplaceItemAsync(
-                    await _entityManipulator.UpdateMetadataAsync(updatedEntity, entity, null),
+                    await _entityMutator.UpdateMetadataAsync(updatedEntity, entity, null),
                     entity.Id
                 );
             }
@@ -209,13 +190,13 @@ namespace Westmoor.DowntimePlanner.Repositories
 
             foreach (var (characterId, characterRequest) in daysDeltaByCharacter)
             {
-                await _characterRepository.AwardAsync(characterId, characterRequest);
+                await _characterWriteRepository.AwardAsync(characterId, characterRequest);
             }
         }
 
-        public async Task DeleteAsync(string id)
+        public async Task DeleteAsync(string idp, string id)
         {
-            await (await _container).DeleteItemAsync<DowntimeEntity>(id, _entityManipulator.DefaultPartitionKey);
+            await (await _container).DeleteItemAsync<DowntimeEntity>(id, new PartitionKey(idp));
         }
     }
 }

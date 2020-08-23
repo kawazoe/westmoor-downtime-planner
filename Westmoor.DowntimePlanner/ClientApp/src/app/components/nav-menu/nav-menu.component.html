@@ -14,6 +14,10 @@
       <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
            [collapse]="!isExpanded">
         <ul class="navbar-nav flex-grow">
+          <li class="navbar-picker" *ngIf="campaigns$ | async as campaigns">
+            <app-picker [choices]="campaigns" [labelSelector]="campaignName" (change)="setCampaign($event)">
+            </app-picker>
+          </li>
           <li class="nav-item"
               [routerLinkActive]="['link-active']"
               [routerLinkActiveOptions]="{ exact: true }">

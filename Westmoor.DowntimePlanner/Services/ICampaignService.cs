@@ -10,6 +10,6 @@ namespace Westmoor.DowntimePlanner.Services
         Task<CampaignEntity> GetByIdAsync(string id);
         Task CreateAsync(CreateCampaignRequest request);
         Task UpdateAsync(string id, UpdateCampaignRequest request);
-        Task DeleteAsync(string id);
+        Task DeleteAsync(string idp, string id);
     }
 }

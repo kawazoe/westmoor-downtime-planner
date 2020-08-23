@@ -19,9 +19,13 @@ namespace Westmoor.DowntimePlanner.Controllers
             _service = service;
         }
 
-        [HttpGet("{query}")]
-        public async Task<UserResponse[]> SearchAsync(string query) =>
+        [HttpGet]
+        public async Task<UserResponse[]> SearchAsync([FromQuery(Name = "q")] string query) =>
             await _service.SearchAsync(query);
+
+        [HttpGet("{id}")]
+        public async Task<UserResponse> GetByIdAsync(string id) =>
+            await _service.GetByIdAsync(id);
 
         [HttpGet("{id}/campaign")]
         public async Task<string[]> GetCampaignsAsync(string id) =>

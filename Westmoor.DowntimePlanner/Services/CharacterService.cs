@@ -8,32 +8,38 @@ namespace Westmoor.DowntimePlanner.Services
 {
     public class CharacterService : ICharacterService
     {
-        private readonly ICharacterRepository _repository;
-        private readonly IDowntimeRepository _downtimeRepository;
+        private readonly ICharacterReadRepository _readRepository;
+        private readonly ICharacterWriteRepository _writeRepository;
+        private readonly IDowntimeReadRepository _downtimeReadRepository;
+        private readonly IDowntimeWriteRepository _downtimeWriteRepository;
 
         public CharacterService(
-            ICharacterRepository repository,
-            IDowntimeRepository downtimeRepository
+            ICharacterReadRepository readRepository,
+            ICharacterWriteRepository writeRepository,
+            IDowntimeReadRepository downtimeReadRepository,
+            IDowntimeWriteRepository downtimeWriteRepository
         )
         {
-            _repository = repository;
-            _downtimeRepository = downtimeRepository;
+            _readRepository = readRepository;
+            _writeRepository = writeRepository;
+            _downtimeReadRepository = downtimeReadRepository;
+            _downtimeWriteRepository = downtimeWriteRepository;
         }
 
         public async Task<CharacterEntity[]> GetAllAsync() =>
-            await _repository.GetAllAsync();
+            await _readRepository.GetAllAsync();
 
         public async Task<CharacterEntity> GetByIdAsync(string id) =>
-            await _repository.GetByIdAsync(id);
+            await _readRepository.GetByIdAsync(id);
 
         public async Task CreateAsync(CreateCharacterRequest request) =>
-            await _repository.CreateAsync(request);
+            await _writeRepository.CreateAsync(request);
 
         public async Task UpdateAsync(string id, UpdateCharacterRequest request)
         {
-            await _repository.UpdateAsync(id, request);
+            await _writeRepository.UpdateAsync(id, request);
 
-            var ownedDowntimes = await _downtimeRepository.GetAsync(d => d.Character.Id == id);
+            var ownedDowntimes = await _downtimeReadRepository.GetAsync(d => d.Character.Id == id);
 
             foreach (var downtime in ownedDowntimes)
             {
@@ -50,14 +56,14 @@ namespace Westmoor.DowntimePlanner.Services
                     SharedWith = request.SharedWith
                 };
 
-                await _downtimeRepository.UpdateAsync(downtime.Id, downtimeUpdate);
+                await _downtimeWriteRepository.UpdateAsync(downtime.Id, downtimeUpdate);
             }
         }
 
         public async Task AwardAsync(string id, AwardCharacterRequest request) =>
-            await _repository.AwardAsync(id, request);
+            await _writeRepository.AwardAsync(id, request);
 
-        public async Task DeleteAsync(string id) =>
-            await _repository.DeleteAsync(id);
+        public async Task DeleteAsync(string idp, string id) =>
+            await _writeRepository.DeleteAsync(idp, id);
     }
 }

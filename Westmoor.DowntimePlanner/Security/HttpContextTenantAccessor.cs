@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -22,12 +23,13 @@ namespace Westmoor.DowntimePlanner.Security
         }
 
         public string[] AccessibleTenants => _httpContextAccessor.HttpContext.User.Claims
-            .Where(c => c.Type == _options.AccessibleTenantsClaimType)
+            .Where(c => c.Type.Equals(_options.AccessibleTenantsClaimType, StringComparison.OrdinalIgnoreCase))
             .Select(c => c.Value)
             .ToArray();
 
-        public string Tenant => _httpContextAccessor.HttpContext.User.Claims
-            .FirstOrDefault(c => c.Type == _options.TenantClaimType)
-            ?.Value;
+        public string[] ActiveTenants => _httpContextAccessor.HttpContext.User.Claims
+            .Where(c => string.Equals(c.Type, _options.TenantClaimType, StringComparison.OrdinalIgnoreCase))
+            .Select(c => c.Value)
+            .ToArray();
     }
 }

@@ -28,7 +28,11 @@ export class ApiKeyUpdateComponent extends ModalUpdateComponentBase<ApiKeyRespon
         .map(([key, _]) => this.Permissions.find(p => p.htmlEncoded === key)?.scope)
         .filter(s => !!s),
       sharedWith: (form.controls.sharedWith as FormArray).controls
-        .map(ctrls => ctrls.value)
+        .map(ctrl => ctrl as FormGroup)
+        .map(c => ({
+          kind: c.controls.kind.value,
+          ownershipId: c.controls.ownershipId.value
+        }))
     };
   }
 
@@ -38,7 +42,14 @@ export class ApiKeyUpdateComponent extends ModalUpdateComponentBase<ApiKeyRespon
       permissions: new FormGroup(Object.fromEntries(this.Permissions
         .map(p => [p.htmlEncoded, new FormControl(this.source.permissions.includes(p.scope))])
       )),
-      sharedWith: new FormArray(this.source.sharedWith.map(u => new FormControl(u.ownershipId)), Validators.required)
+      sharedWith: new FormArray(
+        this.source.sharedWith
+          .map(u => new FormGroup({
+            kind: new FormControl(u.kind),
+            ownershipId: new FormControl(u.ownershipId)
+          })),
+        Validators.required
+      )
     });
   }
 }

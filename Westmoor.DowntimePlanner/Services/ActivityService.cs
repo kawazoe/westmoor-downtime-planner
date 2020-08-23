@@ -7,26 +7,31 @@ namespace Westmoor.DowntimePlanner.Services
 {
     public class ActivityService : IActivityService
     {
-        private readonly IActivityRepository _repository;
+        private readonly IActivityReadRepository _readRepository;
+        private readonly IActivityWriteRepository _writeRepository;
 
-        public ActivityService(IActivityRepository repository)
+        public ActivityService(
+            IActivityReadRepository readRepository,
+            IActivityWriteRepository writeRepository
+        )
         {
-            _repository = repository;
+            _readRepository = readRepository;
+            _writeRepository = writeRepository;
         }
 
         public async Task<ActivityEntity[]> GetAllAsync() =>
-            await _repository.GetAllAsync();
+            await _readRepository.GetAllAsync();
 
         public async Task<ActivityEntity> GetByIdAsync(string id) =>
-            await _repository.GetByIdAsync(id);
+            await _readRepository.GetByIdAsync(id);
 
         public async Task CreateAsync(CreateActivityRequest request) =>
-            await _repository.CreateAsync(request);
+            await _writeRepository.CreateAsync(request);
 
         public async Task UpdateAsync(string id, UpdateActivityRequest request) =>
-            await _repository.UpdateAsync(id, request);
+            await _writeRepository.UpdateAsync(id, request);
 
-        public async Task DeleteAsync(string id) =>
-            await _repository.DeleteAsync(id);
+        public async Task DeleteAsync(string idp, string id) =>
+            await _writeRepository.DeleteAsync(idp, id);
     }
 }

@@ -37,9 +37,9 @@ namespace Westmoor.DowntimePlanner.Controllers
         public async Task UpdateAsync(string id, UpdateActivityRequest request) =>
             await _service.UpdateAsync(id, request);
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{idp}/{id}")]
         [Authorize(Policy = Policies.WriteActivities)]
-        public async Task DeleteAsync(string id) =>
-            await _service.DeleteAsync(id);
+        public async Task DeleteAsync(string idp, string id) =>
+            await _service.DeleteAsync(idp, id);
     }
 }

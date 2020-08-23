@@ -20,3 +20,8 @@ a.nav-link {
   width: 3rem;
   height: 3rem;
 }
+
+.navbar-picker {
+  display: inline-block;
+  padding-top: 0.35rem;
+}

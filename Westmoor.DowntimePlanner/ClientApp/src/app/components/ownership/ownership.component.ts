@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { FormArray, FormControl } from '@angular/forms';
-import { Observable, Observer, of } from 'rxjs';
-import { debounceTime, switchMap } from 'rxjs/operators';
-import { ApiService, SharedWithResponse, UserResponse } from '../../services/business/api.service';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { combineLatest, defer, of } from 'rxjs';
+import { debounceTime, map, startWith, switchMap } from 'rxjs/operators';
+import { ApiService, CampaignResponse, SharedWithResponse, UserResponse } from '../../services/business/api.service';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 import { AuthService } from '../../services/business/auth.service';
 
@@ -18,9 +18,7 @@ export class OwnershipComponent {
   public user$ = this.auth.user$;
 
   public search: string;
-  public usersByEmail$ = new Observable((o: Observer<string>) => {
-      o.next(this.search);
-    })
+  public usersByEmail$ = defer(() => of(this.search))
     .pipe(
       debounceTime(500),
       switchMap(query => {
@@ -28,10 +26,40 @@ export class OwnershipComponent {
           return of([]);
         }
 
-        return this.api.searchUsers( query.includes(':')
+        const queryOrDefault = query.includes(':')
           ? query
-          : `email:${query}* OR name:${query}*`
-        );
+          : `email:${query}* OR name:${query}*`;
+
+
+        return combineLatest([
+            this.api.searchCampaigns(queryOrDefault)
+              .pipe(
+                map(cs => cs.map(c => ({
+                  kind: 'tenant',
+                  ownershipId: c.id,
+                  picture: null,
+                  email: null,
+                  username: null,
+                  name: c.name
+                }) as SharedWithResponse)),
+                startWith([])
+              ),
+            this.api.searchUsers(queryOrDefault)
+              .pipe(
+                map(us => us.map(u => ({
+                  kind: 'user',
+                  ownershipId: u.userMetadata.ownershipId,
+                  picture: u.picture,
+                  email: u.email,
+                  username: u.username,
+                  name: u.name
+                }) as SharedWithResponse)),
+                startWith([])
+              )
+          ])
+          .pipe(
+            map(([campaigns, users]: [CampaignResponse[], UserResponse[]]) => [...campaigns, ...users])
+          );
       })
     );
 
@@ -42,16 +70,13 @@ export class OwnershipComponent {
   }
 
   public share(match: TypeaheadMatch) {
-    const user = match.item as UserResponse;
+    const sharedWith = match.item as SharedWithResponse;
 
     this.search = '';
 
-    const ownershipId = user.userMetadata.ownershipId;
-    if (!ownershipId) {
-      return;
-    }
-
-    const index = this.formArray.controls.findIndex(c => c.value === ownershipId);
+    const index = this.formArray.controls
+      .map(ctrl => ctrl as FormGroup)
+      .findIndex(c => c.controls.ownershipId.value === sharedWith.ownershipId);
 
     if (index !== -1) {
       return;
@@ -59,19 +84,18 @@ export class OwnershipComponent {
 
     this.sharedWith = [
       ...this.sharedWith,
-      {
-        ownershipId,
-        picture: user.picture,
-        email: user.email,
-        username: user.username,
-        name: user.name
-      }
+      sharedWith
     ];
-    this.formArray.push(new FormControl(ownershipId));
+    this.formArray.push(new FormGroup({
+      kind: new FormControl('user'),
+      ownershipId: new FormControl(sharedWith.ownershipId)
+    }));
   }
 
-  public delete(id: string) {
-    const index = this.formArray.controls.findIndex(c => c.value === id);
+  public delete(ownershipId: string) {
+    const index = this.formArray.controls
+      .map(ctrl => ctrl as FormGroup)
+      .findIndex(c => c.controls.ownershipId.value === ownershipId);
 
     if (index === -1) {
       return;

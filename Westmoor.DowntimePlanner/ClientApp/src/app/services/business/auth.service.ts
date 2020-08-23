@@ -6,8 +6,6 @@ import { catchError, first, map, shareReplay, switchMap, tap } from 'rxjs/operat
 import { capitalize } from '../../../lib/string';
 import { OperatorProjection } from '../../../lib/rxjs/types';
 import { environment } from '../../../environments/environment';
-import { AnalyticsService } from './analytics.service';
-import { TenantService } from './tenant.service';
 
 export interface UserProfile {
   sub: string;
@@ -100,9 +98,7 @@ export class AuthService {
     .pipe(
       first(),
       map(c => {
-        this.tenant.current.next(null);
         this.userSubject.next(null);
-        this.analytics.clearUserContext();
         c.logout(this.logoutOptions);
       })
     );
@@ -111,10 +107,6 @@ export class AuthService {
     .pipe(
       switchMap(c => from(c.getUser())),
       tap(user => {
-        const tenant = user['https://westmoor.rpg/campaigns'][0];
-        const identity = user['https://westmoor.rpg/ownership_id'] || user.sub;
-        this.analytics.setUserContext(identity, tenant);
-        this.tenant.current.next(tenant);
         this.userSubject.next(user);
       })
     ) as Observable<UserProfile>;
@@ -123,10 +115,7 @@ export class AuthService {
 
   public user$ = this.userSubject.asObservable();
 
-  constructor(
-    private readonly analytics: AnalyticsService,
-    private readonly tenant: TenantService
-  ) {
+  constructor() {
     // Set up local auth streams
     this.localAuthSetup();
   }

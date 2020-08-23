@@ -152,7 +152,7 @@ export class HomeComponent {
 
   private endCancelDowntimes() {
     const batch = this.selectedDowntimes
-      .map(downtime => this.api.deleteDowntime(downtime.id));
+      .map(downtime => this.api.deleteDowntime(downtime.idp, downtime.id));
 
     return concat(...batch)
       .pipe(
