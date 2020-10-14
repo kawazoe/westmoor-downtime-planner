@@ -28,7 +28,7 @@ export class NavMenuComponent {
     return campaign && campaign.name;
   }
 
-  setCampaign(campaign: CampaignResponse) {
-    this.tenant.setActives([campaign.id]);
+  setCampaigns(campaigns: CampaignResponse[]) {
+    this.tenant.setActives(campaigns.map(c => c.id));
   }
 }

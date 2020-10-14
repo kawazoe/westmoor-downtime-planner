@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { concat, of, ReplaySubject } from 'rxjs';
-import { ApiService } from './api.service';
+import { ApiService, CampaignResponse } from './api.service';
 import { map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 

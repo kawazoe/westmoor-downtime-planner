@@ -42,6 +42,7 @@ import { ModalHeaderComponent } from './components/modal-edit/modal-header.compo
 import { ModalDeleteComponent } from './components/modal-edit/modal-delete.component';
 import { AlertBoxComponent } from './components/alert-box/alert-box.component';
 import { OwnershipComponent } from './components/ownership/ownership.component';
+import { MultiPickerComponent } from './components/multi-picker/multi-picker.component';
 import { PickerComponent } from './components/picker/picker.component';
 import { ProgressesPresenterComponent } from './components/progresses-presenter/progresses-presenter.component';
 import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
@@ -81,6 +82,7 @@ import { CampaignUpdateComponent } from './campaigns/campaign-update.component';
     ModalDeleteComponent,
     AlertBoxComponent,
     OwnershipComponent,
+    MultiPickerComponent,
     PickerComponent,
     ProgressesPresenterComponent,
     TermsOfServiceComponent,

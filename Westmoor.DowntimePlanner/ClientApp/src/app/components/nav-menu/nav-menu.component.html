@@ -15,8 +15,8 @@
            [collapse]="!isExpanded">
         <ul class="navbar-nav flex-grow">
           <li class="navbar-picker" *ngIf="campaigns$ | async as campaigns">
-            <app-picker [choices]="campaigns" [labelSelector]="campaignName" (change)="setCampaign($event)">
-            </app-picker>
+            <app-multi-picker [choices]="campaigns" [listLabelSelector]="campaignName" (change)="setCampaigns($event)">
+            </app-multi-picker>
           </li>
           <li class="nav-item"
               [routerLinkActive]="['link-active']"
