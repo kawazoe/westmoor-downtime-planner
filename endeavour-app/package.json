@@ -11,12 +11,14 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "jexl": "^2.3.0",
     "vue": "^3.0.3",
     "vue-router": "^4.0.0-rc.5",
     "vuex": "^4.0.0-rc.2"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
+    "@types/jexl": "^2.2.0",
     "@types/mocha": "^8.0.4",
     "@typescript-eslint/eslint-plugin": "^4.8.2",
     "@typescript-eslint/parser": "^4.8.2",
