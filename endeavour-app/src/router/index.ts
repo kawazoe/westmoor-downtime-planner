@@ -1,22 +1,63 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 
-import Home from '../views/Home.vue';
+import TheLanding from '@/views/TheLanding.vue';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'Home',
-    component: Home,
+    name: 'landing',
+    component: TheLanding,
   },
   {
-    path: '/about',
-    name: 'About',
+    path: '/campaigns',
+    name: 'campaigns',
+    component: () => import(/* WebpackChunkName: "campaigns" */ '../views/TheCampaigns.vue'),
 
-    // Route level code-splitting
-    // This generates a separate chunk (about.[hash].js) for this route
-    // Which is lazy-loaded when the route is visited.
-    component: () => import(/* WebpackChunkName: "about" */ '../views/About.vue'),
+    children: [
+      {
+        path: ':campaignId',
+        name: 'campaign',
+
+        component: () => import(/* WebpackChunkName: "campaign" */ '../views/TheCampaign.vue'),
+
+        children: [
+          {
+            path: 'activities',
+            component: () => import(/* WebpackChunkName: "activities" */ '../views/TheCampaignActivities.vue'),
+          },
+          {
+            path: 'characters',
+            component: () => import(/* WebpackChunkName: "campaigns" */ '../views/TheCampaignCharacters.vue'),
+          },
+          {
+            path: 'endeavours',
+            component: () => import(/* WebpackChunkName: "endeavours" */ '../views/TheCampaignEndeavours.vue'),
+          },
+          {
+            path: 'resources',
+            component: () => import(/* WebpackChunkName: "resources" */ '../views/TheCampaignResources.vue'),
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: '/player',
+    name: 'player',
+    component: () => import(/* WebpackChunkName: "player" */ '../views/ThePlayer.vue'),
+
+    children: [
+      {
+        path: 'characters',
+        component: () => import(/* WebpackChunkName: "player" */ '../views/ThePlayerCharacters.vue'),
+      },
+    ],
+  },
+  {
+    path: '/tos',
+    name: 'tos',
+    component: () => import(/* WebpackChunkName: "tos" */ '../views/TheTermsOfService.vue'),
   },
 ];
 

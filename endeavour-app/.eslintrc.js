@@ -104,7 +104,7 @@ module.exports = {
     'no-useless-rename': 'error',
     'no-var': 'error',
     'object-shorthand': ['error', 'always'],
-    'prefer-arrow-callback': 'error',
+    'prefer-arrow-callback': ['error', { allowNamedFunctions: true }],
     'prefer-const': 'error',
     'prefer-numeric-literals': 'error',
     'prefer-spread': 'error',
