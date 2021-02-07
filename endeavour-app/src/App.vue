@@ -15,7 +15,7 @@
   </main>
 </template>
 
-<style lang="scss" module>
+<style>
 body {
   margin: 0;
   padding: 0;
