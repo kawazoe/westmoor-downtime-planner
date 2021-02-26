@@ -46,7 +46,7 @@ module.exports = {
     'array-element-newline': ['error', 'consistent'],
     'block-spacing': ['error', 'always'],
     'brace-style': ['error', '1tbs'],
-    'capitalized-comments': ['error', 'always', { ignoreConsecutiveComments: true }],
+    'capitalized-comments': 'off',
     'comma-dangle': ['error', 'always-multiline'],
     'comma-spacing': 'error',
     'comma-style': ['error', 'last'],
@@ -115,6 +115,9 @@ module.exports = {
     'symbol-description': 'error',
     'template-curly-spacing': ['error', 'never'],
     'yield-star-spacing': 'error',
+
+    // Undo @vue/cli globals
+    '@typescript-eslint/no-var-requires': 'off',
   },
   overrides: [
     {
@@ -195,12 +198,10 @@ module.exports = {
         '@typescript-eslint/prefer-optional-chain': 'error',
         '@typescript-eslint/type-annotation-spacing': 'error',
         '@typescript-eslint/unified-signatures': 'error',
+
+        // Redo @vue/cli globals
+        '@typescript-eslint/no-var-requires': ['error'],
       },
-    },
-    {
-      // HACK: https://github.com/vuejs/eslint-plugin-vue/issues/1355
-      files: ['**/*.html'],
-      rules: { 'vue/comment-directive': 'off' },
     },
   ],
 };
