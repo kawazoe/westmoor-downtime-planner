@@ -106,14 +106,42 @@ function getRouteComponent(event: ChildActivationEnd): Type<Component> {
   return recurseSnapshot(event.snapshot);
 }
 
-const routeComponentName = pipe(
-  getRouteComponent,
-  c => c['decorators'] as {args: Component[]}[],
-  first,
-  d => d.args,
-  first,
-  c => c.selector
-);
+function routeComponentName(event: ChildActivationEnd) {
+  /**
+   * This function attempts to extract the selector for components that are part of a route.
+   * Since this information is part of decorators, it will be stored differently in optimized build.
+   * This is also undocumented and can change between typescript and angular versions.
+   *
+   * Use at your own risk.
+   * @param component
+   */
+  function getSelector(component: Type<Component>) {
+    // tslint:disable:no-string-literal
+    // noinspection JSNonASCIINames
+    const optimizationOn = (component as any)['ɵcmp'] as { selectors: string[][] };
+    if (optimizationOn) {
+      return optimizationOn.selectors?.[0]?.[0];
+    }
+
+    // tslint:disable:no-string-literal
+    const optimizationOff = (component as any)['__annotations__'] as { selector: string }[];
+    if (optimizationOff) {
+      return optimizationOff[0]?.selector;
+    }
+  }
+
+  const result = getSelector(getRouteComponent(event));
+
+  if (result == null) {
+    throw new Error(`Could not find the component's selector.
+Angular might have changed how they are stored.
+Try to debug this exception in the failing environment and look inside the getSelector's parameter.`
+  );
+  }
+
+  return result;
+}
+
 const firstNavigationStart = chain(first, ofType(NavigationStart));
 const lastChildActivationEnd = chain(last, ofType(ChildActivationEnd));
 const lastNavigationEnd = chain(last, ofType(NavigationEnd));
