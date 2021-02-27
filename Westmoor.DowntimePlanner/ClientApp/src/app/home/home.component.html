@@ -83,7 +83,7 @@
       <td>{{downtime.character.characterFullName}}</td>
       <td>{{downtime.activity.name}}</td>
       <td>
-        <app-progresses-presenter [progresses]="downtime.progresses" [animate]="true"></app-progresses-presenter>
+        <app-progresses-presenter [progresses]="downtime.costs" [animate]="true"></app-progresses-presenter>
       </td>
     </tr>
     </tbody>
@@ -106,7 +106,7 @@
       <td>{{downtime.character.characterFullName}}</td>
       <td>{{downtime.activity.name}}</td>
       <td>
-        <app-progresses-presenter [progresses]="downtime.progresses" [animate]="false"></app-progresses-presenter>
+        <app-progresses-presenter [progresses]="downtime.costs" [animate]="false"></app-progresses-presenter>
       </td>
     </tr>
     </tbody>

@@ -139,7 +139,7 @@ export interface DowntimeResponse {
   id: string;
   character: CharacterResponse;
   activity: ActivityResponse;
-  progresses: DowntimeCostResponse[];
+  costs: DowntimeCostResponse[];
   sharedWith: SharedWithResponse[];
 }
 
