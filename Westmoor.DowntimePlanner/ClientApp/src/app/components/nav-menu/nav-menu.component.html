@@ -41,7 +41,9 @@
           <ng-container *ngIf="user$ | async as user; else signedOut">
             <div class="btn-group mx-2" dropdown placement="bottom right">
               <button type="button" dropdownToggle class="btn rounded-circle">
-                <img class="rounded-circle" [src]="user.picture || '/assets/default-profile.svg'">
+                <img class="rounded-circle"
+                     [src]="user.picture || '/assets/default-profile.svg'"
+                     (error)="$event.target.src = '/assets/default-profile.svg'">
               </button>
               <ul role="menu" *dropdownMenu class="dropdown-menu dropdown-menu-right">
                 <li role="menuitem"><a class="dropdown-item" [routerLink]="['/signout']">Sign Out</a></li>
