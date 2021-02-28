@@ -38,14 +38,14 @@ export class ApiKeysComponent {
   public edit(apiKey: ApiKeyResponse) {
     this.modalRef = this.modal.show(ApiKeyUpdateComponent, { initialState: { source: apiKey } });
     this.modalRef.content.onSave = request => this.api
-      .updateApiKey(apiKey.key, request)
+      .updateApiKey(apiKey.id, request)
       .pipe(this.refresh());
   }
 
   public revoke(apiKey: ApiKeyResponse) {
-    this.modalRef = this.modal.show(ModalDeleteComponent, { initialState: { type: 'api key', id: apiKey.key } });
+    this.modalRef = this.modal.show(ModalDeleteComponent, { initialState: { type: 'api key', id: apiKey.id } });
     this.modalRef.content.onConfirm = () => this.api
-      .deleteApiKey(apiKey.idp, apiKey.key)
+      .deleteApiKey(apiKey.idp, apiKey.id)
       .pipe(this.refresh());
   }
 

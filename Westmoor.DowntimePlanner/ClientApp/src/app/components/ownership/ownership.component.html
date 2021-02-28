@@ -18,13 +18,13 @@
          placeholder="Add by name or email...">
 </div>
 
-<ng-container *ngFor="let share of sharedWith">
-  <div class="profile">
-    <img class="rounded-circle" [src]="share.picture || '/assets/default-profile.svg'">
+<ng-container *ngFor="let entry of formArray.controls">
+  <div class="profile" *ngIf="entry | cast:FormGroupType as shareGroup">
+    <img class="rounded-circle" [src]="shareGroup.controls.picture.value || '/assets/default-profile.svg'">
     <span class="mx-2">
-      {{share.name}}
-      <ng-container *ngIf="share.email || share.username as user"> - {{user}}</ng-container>
+      {{shareGroup.controls.name.value}}
+      <ng-container *ngIf="shareGroup.controls.email.value || shareGroup.controls.username.value as user"> - {{user}}</ng-container>
     </span>
-    <button type="button" class="btn btn-danger" (click)="delete(share.ownershipId)">Delete...</button>
+    <button type="button" class="btn btn-danger" (click)="delete(shareGroup.controls.ownershipId.value)">Delete...</button>
   </div>
 </ng-container>

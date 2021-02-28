@@ -63,7 +63,11 @@ export class ActivityUpdateComponent extends ModalUpdateComponentBase<ActivityRe
         this.source.sharedWith
           .map(u => new FormGroup({
             kind: new FormControl(u.kind),
-            ownershipId: new FormControl(u.ownershipId)
+            ownershipId: new FormControl(u.ownershipId),
+            picture: new FormControl(u.picture),
+            email: new FormControl(u.email),
+            username: new FormControl(u.username),
+            name: new FormControl(u.name)
           })),
         Validators.required
       )

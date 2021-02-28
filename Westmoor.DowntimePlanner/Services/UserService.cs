@@ -28,8 +28,7 @@ namespace Westmoor.DowntimePlanner.Services
                 .ToArray();
 
         public async Task<UserResponse> GetByIdAsync(string id) =>
-            (await _readRepository.SearchAsync($"user_metadata.ownership_id:\"{id}\""))
-                .FirstOrDefault()
+            (await _readRepository.GetByIdAsync(id))
                 .MapOrDefault(ToResponse);
 
         public async Task<string[]> GetCampaignsAsync(string id) =>

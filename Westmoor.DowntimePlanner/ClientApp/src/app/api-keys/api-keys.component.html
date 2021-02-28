@@ -16,7 +16,7 @@
   </thead>
   <tbody *ngIf="apiKeys$ | async as apiKeys">
     <tr *ngFor="let apiKey of apiKeys">
-      <td>{{apiKey.key}}</td>
+      <td>{{apiKey.id}}</td>
       <td>{{apiKey.owner}}</td>
       <td>{{apiKey.permissions | json}}</td>
       <td>

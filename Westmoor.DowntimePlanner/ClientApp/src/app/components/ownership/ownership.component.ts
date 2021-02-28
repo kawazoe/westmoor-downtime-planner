@@ -12,8 +12,9 @@ import { AuthService } from '../../services/business/auth.service';
   styleUrls: ['./ownership.component.css']
 })
 export class OwnershipComponent {
+  public FormGroupType = FormGroup;
+
   @Input() public formArray: FormArray;
-  @Input() public sharedWith: SharedWithResponse[];
 
   public user$ = this.auth.user$;
 
@@ -82,13 +83,13 @@ export class OwnershipComponent {
       return;
     }
 
-    this.sharedWith = [
-      ...this.sharedWith,
-      sharedWith
-    ];
     this.formArray.push(new FormGroup({
-      kind: new FormControl('user'),
-      ownershipId: new FormControl(sharedWith.ownershipId)
+      kind: new FormControl(sharedWith.kind),
+      ownershipId: new FormControl(sharedWith.ownershipId),
+      picture: new FormControl(sharedWith.picture),
+      email: new FormControl(sharedWith.email),
+      username: new FormControl(sharedWith.username),
+      name: new FormControl(sharedWith.name)
     }));
   }
 
@@ -102,9 +103,5 @@ export class OwnershipComponent {
     }
 
     this.formArray.removeAt(index);
-  }
-
-  getOwnershipId(ownershipId: string) {
-    return (sharedWith: SharedWithResponse) => sharedWith.ownershipId === ownershipId;
   }
 }

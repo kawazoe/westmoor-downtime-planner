@@ -192,7 +192,7 @@ export class AdvanceDowntimeBatchRequest {
 
 export interface ApiKeyResponse {
   idp: string;
-  key: string;
+  id: string;
   owner: string;
   permissions: string[];
   createdOn: string;

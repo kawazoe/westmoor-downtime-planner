@@ -62,27 +62,11 @@ namespace Westmoor.DowntimePlanner.Repositories
             return await JsonSerializer.DeserializeAsync<UserEntity[]>(stream);
         }
 
-        public async Task<UserEntity> GetByIdAsync(string id)
-        {
-            var message = new HttpRequestMessage(
-                    HttpMethod.Get,
-                    "/api/v2/users/" + id
-                );
-
-            var response = await _httpClient.SendAsync(message);
-            response.EnsureSuccessStatusCode();
-
-            var stream = await response.Content.ReadAsStreamAsync();
-            var result = await JsonSerializer.DeserializeAsync<UserEntity>(stream);
-
-            var tenants = _tenantAccessor.AccessibleTenants;
-            var isWithinAccessibleTenants = result.UserMetadata.Campaigns.Any(c => tenants.Contains(c));
-            return isWithinAccessibleTenants
-                ? result
-                : null;
-        }
+        public async Task<UserEntity> GetByIdAsync(string id) =>
+            (await SearchAsync($"user_metadata.ownership_id:\"{id}\""))
+            .FirstOrDefault();
 
         public async Task<string[]> GetTenantsAsync(string id) =>
-            (await GetByIdAsync(id)).UserMetadata.Campaigns;
+            (await GetByIdAsync(id))?.UserMetadata.Campaigns;
     }
 }
