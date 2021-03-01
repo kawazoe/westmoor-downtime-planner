@@ -3,6 +3,7 @@ import { concat, of, ReplaySubject } from 'rxjs';
 import { ApiService, CampaignResponse } from './api.service';
 import { map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import { RefreshService } from './refresh.service';
 
 @Injectable({
   providedIn: 'root'
@@ -32,11 +33,13 @@ export class TenantService {
 
   constructor(
     private readonly auth: AuthService,
-    private readonly api: ApiService
+    private readonly api: ApiService,
+    private readonly refresh: RefreshService
   ) {
   }
 
   public setActives(tenantIds: string[]) {
     this.actives.next(tenantIds);
+    this.refresh.trigger();
   }
 }

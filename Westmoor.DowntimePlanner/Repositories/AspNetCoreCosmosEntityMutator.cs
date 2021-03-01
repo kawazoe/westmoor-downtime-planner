@@ -44,7 +44,8 @@ namespace Westmoor.DowntimePlanner.Repositories
             var tenantIds = sharedWith
                 .Where(u => u.Kind == SharedWithKind.Tenant)
                 .Select(u => u.OwnershipId)
-                .ConcatRight(_tenantAccessor.ActiveTenants);
+                .ConcatRight(_tenantAccessor.ActiveTenants)
+                .Race(_tenantAccessor.AccessibleTenants);
 
             var entitySharedWith = entity.SharedWith ?? new SharedWithEntity[0];
 

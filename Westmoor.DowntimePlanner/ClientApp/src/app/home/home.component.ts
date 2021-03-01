@@ -12,9 +12,10 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { AwardCharacterComponent } from './award-character.component';
 import { AdvanceDowntimeComponent } from './advance-downtime.component';
 import { ScheduleDowntimeComponent } from './schedule-downtime.component';
-import { BehaviorSubject, concat, of, OperatorFunction } from 'rxjs';
-import { last, map, switchMap, take } from 'rxjs/operators';
+import { concat} from 'rxjs';
+import { last, map, tap } from 'rxjs/operators';
 import { ModalDeleteComponent } from '../components/modal-edit/modal-delete.component';
+import { RefreshService } from '../services/business/refresh.service';
 
 @Component({
   selector: 'app-home',
@@ -24,13 +25,21 @@ export class HomeComponent {
   public user$ = this.auth.user$;
   public userFullName$ = this.auth.user$.pipe(map(u => u?.name));
 
-  private characters = new BehaviorSubject<CharacterResponse[]>([]);
-  private currentDowntimes = new BehaviorSubject<DowntimeResponse[]>([]);
-  private completedDowntimes = new BehaviorSubject<DowntimeResponse[]>([]);
-
-  public characters$ = this.characters.asObservable();
-  public currentDowntimes$ = this.currentDowntimes.asObservable();
-  public completedDowntimes$ = this.completedDowntimes.asObservable();
+  public characters$ = this.api.getAllCharacters()
+    .pipe(
+      tap(() => { this.selectedCharacters = []; }),
+      this.refresh.listen(t => [undefined, 'characters'].includes(t))
+    );
+  public currentDowntimes$ = this.api.getCurrentDowntimes()
+    .pipe(
+      tap(() => { this.selectedDowntimes = []; }),
+      this.refresh.listen(t => [undefined, 'currentDowntimes'].includes(t))
+    );
+  public completedDowntimes$ = this.api.getCompletedDowntimes()
+    .pipe(
+      tap(() => { this.selectedDowntimes = []; }),
+      this.refresh.listen(t => [undefined, 'completedDowntimes'].includes(t))
+    );
 
   public selectedCharacters: CharacterResponse[] = [];
   public selectedDowntimes: DowntimeResponse[] = [];
@@ -40,15 +49,9 @@ export class HomeComponent {
   constructor(
     private auth: AuthService,
     private api: ApiService,
-    private modal: BsModalService
+    private modal: BsModalService,
+    private refresh: RefreshService
   ) {
-    of(null)
-      .pipe(
-        this.refreshCharacters(),
-        this.refreshCurrentDowntimes(),
-        this.refreshCompletedDowntimes()
-      )
-      .subscribe();
   }
 
   public toggleCharacter(character: CharacterResponse) {
@@ -65,42 +68,6 @@ export class HomeComponent {
     } else {
       this.selectedDowntimes = [...this.selectedDowntimes, downtime];
     }
-  }
-
-  private refreshCharacters(): OperatorFunction<any, void> {
-    return o => o
-      .pipe(
-        switchMap(() => this.api.getAllCharacters()),
-        take(1),
-        map(cs => {
-          this.selectedCharacters = [];
-          this.characters.next(cs);
-        })
-      );
-  }
-
-  private refreshCurrentDowntimes(): OperatorFunction<any, void> {
-    return o => o
-      .pipe(
-        switchMap(() => this.api.getCurrentDowntimes()),
-        take(1),
-        map(ds => {
-          this.selectedDowntimes = [];
-          this.currentDowntimes.next(ds);
-        })
-      );
-  }
-
-  private refreshCompletedDowntimes(): OperatorFunction<any, void> {
-    return o => o
-      .pipe(
-        switchMap(() => this.api.getCompletedDowntimes()),
-        take(1),
-        map(ds => {
-          this.selectedDowntimes = [];
-          this.completedDowntimes.next(ds);
-        })
-      );
   }
 
   public beginAwardCharacter() {
@@ -121,24 +88,24 @@ export class HomeComponent {
   private endAwardCharacter(request: AwardCharacterBatchRequest) {
     return this.api.awardCharacterBatch(request)
       .pipe(
-        this.refreshCharacters()
+        this.refresh.onNext(() => 'characters')
       );
   }
 
   private endScheduleDowntime(request: CreateDowntimeBatchRequest) {
     return this.api.createDowntimeBatch(request)
       .pipe(
-        this.refreshCharacters(),
-        this.refreshCurrentDowntimes()
+        this.refresh.onNext(() => 'characters'),
+        this.refresh.onNext(() => 'currentDowntimes')
       );
   }
 
   private endAdvanceDowntime(request: AdvanceDowntimeBatchRequest) {
     return this.api.advanceDowntimeBatch(request)
       .pipe(
-        this.refreshCharacters(),
-        this.refreshCurrentDowntimes(),
-        this.refreshCompletedDowntimes()
+        this.refresh.onNext(() => 'characters'),
+        this.refresh.onNext(() => 'currentDowntimes'),
+        this.refresh.onNext(() => 'completedDowntimes'),
       );
   }
 
@@ -157,7 +124,7 @@ export class HomeComponent {
     return concat(...batch)
       .pipe(
         last(),
-        this.refreshCompletedDowntimes()
+        this.refresh.onNext(() => 'currentDowntimes')
       );
   }
 }
