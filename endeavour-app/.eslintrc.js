@@ -111,7 +111,7 @@ module.exports = {
     'prefer-template': 'error',
     'require-yield': 'error',
     'rest-spread-spacing': ['error', 'never'],
-    'sort-imports': ['error', { allowSeparatedGroups: true }],
+    'sort-imports': ['error', { ignoreCase: true, allowSeparatedGroups: true }],
     'symbol-description': 'error',
     'template-curly-spacing': ['error', 'never'],
     'yield-star-spacing': 'error',

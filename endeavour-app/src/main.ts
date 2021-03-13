@@ -4,7 +4,12 @@ import store from './store';
 
 import './app.css';
 
+import { faChevronRight } from '@fortawesome/pro-solid-svg-icons';
+import { svgIconCache } from '@/components/AppSvgIconCache';
+
 import App from './App.vue';
+
+svgIconCache.add(faChevronRight);
 
 createApp(App)
   .use(store)
