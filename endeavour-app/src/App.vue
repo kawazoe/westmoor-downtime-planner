@@ -1,35 +1,41 @@
 <template>
-  <app-svg-icon-cache></app-svg-icon-cache>
+  <the-svg-icon-cache></the-svg-icon-cache>
 
-  <header>
-    <nav>
-      <ul>
-        <li><router-link to="/"><app-icon :icon="faChevronRight"></app-icon> Landing</router-link></li>
-        <li><router-link to="/campaigns"><app-icon :icon="faChevronRight"></app-icon> Campaigns</router-link></li>
-        <li><router-link to="/player">Player</router-link></li>
-        <li><router-link to="/tos">Terms of Service</router-link></li>
-      </ul>
-    </nav>
+  <header class="p-2 sm:p-0 border-b-2 border-primary shadow-md">
+    <the-main-nav></the-main-nav>
   </header>
 
-  <main>
+  <main class="flex">
     <router-view/>
   </main>
+
+  <footer>
+    <the-footer></the-footer>
+  </footer>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import { faChevronRight } from '@fortawesome/pro-solid-svg-icons';
-
-import AppIcon from '@/components/AppIcon';
-import AppSvgIconCache from '@/components/AppSvgIconCache';
+import TheFooter from '@/components/TheFooter.vue';
+import TheMainNav from '@/components/TheMainNav.vue';
+import TheSvgIconCache from '@/components/TheSvgIconCache';
 
 export default defineComponent({
   name: 'App',
-  components: { AppIcon, AppSvgIconCache },
-  setup() {
-    return { faChevronRight };
-  },
+  components: { TheFooter, TheMainNav, TheSvgIconCache },
 });
 </script>
+
+<style>
+#app {
+  display: flex;
+  flex-direction: column;
+
+  min-height: 100vh;
+
+  main {
+    flex-grow: 1;
+  }
+}
+</style>

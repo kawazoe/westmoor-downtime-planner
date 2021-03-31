@@ -136,13 +136,13 @@ module.exports = {
         'no-redeclare': 'off',
         '@typescript-eslint/no-redeclare': ['error', { ignoreDeclarationMerge: true }],
         'no-unused-expressions': 'off',
-        '@typescript-eslint/no-unused-expressions': 'error',
+        '@typescript-eslint/no-unused-expressions': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
 
         // https://eslint.org/docs/rules/#variables
         'no-shadow': 'off',
         '@typescript-eslint/no-shadow': ['error', { ignoreTypeValueShadow: true }],
         'no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-vars': ['error'],
+        '@typescript-eslint/no-unused-vars': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
 
         // https://eslint.org/docs/rules/#stylistic-issues
         'brace-style': 'off',
@@ -200,7 +200,11 @@ module.exports = {
         '@typescript-eslint/unified-signatures': 'error',
 
         // Redo @vue/cli globals
-        '@typescript-eslint/no-var-requires': ['error'],
+        '@typescript-eslint/no-var-requires': 'error',
+
+        // Loosen rules in dev
+        'vue/no-unused-vars': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
+        'vue/no-unused-components': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
       },
     },
   ],

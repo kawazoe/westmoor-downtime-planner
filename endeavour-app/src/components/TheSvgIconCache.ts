@@ -54,7 +54,7 @@ export const svgIconCache = (function SvgIconCache() {
 })();
 
 export default defineComponent({
-  name: 'AppSvgIconCache',
+  name: 'TheSvgIconCache',
   setup() {
     return () => h(
       'div',

@@ -1,29 +1,41 @@
 <template>
-  <h2>The Campaigns Page</h2>
+  <div class="container flex flex-col sm:flex-row">
+    <div class="nav-campaigns">
+      <AppCampaignLink v-for="campaign of campaigns" :campaign="campaign" :key="campaign.id" />
+    </div>
 
-  <div id="nav">
-    <router-link :to="`${rel}/1`">Campaign 1</router-link> |
-    <router-link :to="`${rel}/2`">Campaign 2</router-link> |
-    <router-link :to="`${rel}/3`">Campaign 3</router-link>
+    <div class="min-w-0 flex-grow">
+      <router-view/>
+    </div>
   </div>
-
-  <router-view/>
 </template>
 
-<script>
-import { defineComponent } from 'vue';
+<script lang="ts">
+import { computed, defineComponent } from 'vue';
+import { useStore } from 'vuex';
+
 import { useRelativeRoute } from '@/router/routes';
+
+import AppCampaignLink from '@/components/AppCampaignLink.vue';
+import type { AppState } from '@/store';
 
 export default defineComponent({
   name: 'TheCampaigns',
+  components: { AppCampaignLink },
   setup() {
+    const store = useStore<AppState>();
+    const campaigns = computed(() => store.state.campaigns);
+
     const rel = useRelativeRoute();
 
-    return { rel };
+    return { rel, campaigns };
   },
 });
 </script>
 
 <style scoped>
-
+.nav-campaigns {
+  @apply flex flex-row sm:flex-col justify-evenly sm:justify-start;
+  @apply border-primary border-b-2 sm:border-r-2 sm:border-b-0 p-2;
+}
 </style>

@@ -8,7 +8,7 @@ import type { FontAwesomeIconProps } from '@fortawesome/vue-fontawesome';
 import type { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
 import { _throw } from '@/lib/functional';
-import { svgIconCache } from './AppSvgIconCache';
+import { svgIconCache } from './TheSvgIconCache';
 
 // This is done to avoid directly referencing the IconPrefix and IconName type which is killing eslint performance.
 const pseudoFindIconDefinition = findIconDefinition as
@@ -105,7 +105,8 @@ export default defineComponent({
   setup(props, context) {
     const faRender = faSetup.call(this, props, context);
     if (typeof faRender !== 'function') {
-      throw new Error('Invalid FontAwesomeIcon render function');
+      console.error('Invalid FontAwesomeIcon render function for icon: ', props.icon);
+      return () => h('i', { icon: props.icon });
     }
 
     return () => {

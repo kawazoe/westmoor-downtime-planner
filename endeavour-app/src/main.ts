@@ -4,12 +4,12 @@ import store from './store';
 
 import './app.css';
 
-import { faChevronRight } from '@fortawesome/pro-solid-svg-icons';
-import { svgIconCache } from '@/components/AppSvgIconCache';
+import { faBars, faTimes } from '@fortawesome/pro-solid-svg-icons';
+import { svgIconCache } from '@/components/TheSvgIconCache';
 
 import App from './App.vue';
 
-svgIconCache.add(faChevronRight);
+svgIconCache.add(faBars, faTimes);
 
 createApp(App)
   .use(store)

@@ -20,6 +20,7 @@ const routes: RouteRecordRaw[] = [
         name: 'campaign',
 
         component: () => import(/* WebpackChunkName: "campaign" */ '../views/TheCampaign.vue'),
+        props: true,
 
         children: [
           {
@@ -37,6 +38,10 @@ const routes: RouteRecordRaw[] = [
           {
             path: 'resources',
             component: () => import(/* WebpackChunkName: "resources" */ '../views/TheCampaignResources.vue'),
+          },
+          {
+            path: 'settings',
+            component: () => import(/* WebpackChunkName: "resources" */ '../views/TheCampaignSettings.vue'),
           },
         ],
       },
