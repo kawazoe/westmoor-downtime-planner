@@ -70,6 +70,7 @@ export default defineComponent({
       }
     }
 
+    /*noinspection CssUnusedSymbol*/
     .router-link-active {
       @apply font-medium;
     }

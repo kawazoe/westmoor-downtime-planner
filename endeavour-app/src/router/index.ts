@@ -24,6 +24,10 @@ const routes: RouteRecordRaw[] = [
 
         children: [
           {
+            path: '',
+            redirect: to => ({ name: 'endeavours', params: to.params, replace: true }),
+          },
+          {
             path: 'activities',
             component: () => import(/* WebpackChunkName: "activities" */ '../views/TheCampaignActivities.vue'),
           },
@@ -33,6 +37,7 @@ const routes: RouteRecordRaw[] = [
           },
           {
             path: 'endeavours',
+            name: 'endeavours',
             component: () => import(/* WebpackChunkName: "endeavours" */ '../views/TheCampaignEndeavours.vue'),
           },
           {

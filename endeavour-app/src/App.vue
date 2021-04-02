@@ -28,6 +28,7 @@ export default defineComponent({
 </script>
 
 <style>
+/*noinspection CssUnusedSymbol*/
 #app {
   display: flex;
   flex-direction: column;

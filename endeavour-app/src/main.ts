@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
+
+import { key, store } from './store';
 import router from './router';
-import store from './store';
 
 import './app.css';
 
@@ -12,6 +13,6 @@ import App from './App.vue';
 svgIconCache.add(faBars, faTimes);
 
 createApp(App)
-  .use(store)
+  .use(store, key)
   .use(router)
   .mount('#app');

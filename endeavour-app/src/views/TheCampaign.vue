@@ -17,10 +17,9 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
 import type { PropType } from 'vue';
-import { useRelativeRoute } from '@/router/routes';
-import { useStore } from 'vuex';
 
-import type { AppState } from '@/store';
+import { useRelativeRoute } from '@/router/routes';
+import { useStore } from '@/store';
 
 export default defineComponent({
   name: 'TheCampaign',
@@ -31,8 +30,8 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const store = useStore<AppState>();
-    const campaign = computed(() => (store.state as AppState).campaigns.find(c => c.id === props.campaignId));
+    const store = useStore();
+    const campaign = computed(() => store.state.campaigns.find(c => c.id === props.campaignId));
 
     const rel = useRelativeRoute();
 

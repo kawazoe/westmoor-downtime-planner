@@ -12,18 +12,17 @@
 
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
-import { useStore } from 'vuex';
 
 import { useRelativeRoute } from '@/router/routes';
+import { useStore } from '@/store';
 
 import AppCampaignLink from '@/components/AppCampaignLink.vue';
-import type { AppState } from '@/store';
 
 export default defineComponent({
   name: 'TheCampaigns',
   components: { AppCampaignLink },
   setup() {
-    const store = useStore<AppState>();
+    const store = useStore();
     const campaigns = computed(() => store.state.campaigns);
 
     const rel = useRelativeRoute();
