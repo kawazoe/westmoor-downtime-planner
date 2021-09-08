@@ -1,17 +1,9 @@
 <template>
   <the-svg-icon-cache></the-svg-icon-cache>
 
-  <header class="p-2 sm:p-0 border-b-2 border-primary shadow-md">
-    <the-main-nav></the-main-nav>
-  </header>
-
-  <main class="flex">
-    <router-view/>
-  </main>
-
-  <footer>
-    <the-footer></the-footer>
-  </footer>
+  <the-main-nav></the-main-nav>
+  <router-view/>
+  <the-footer></the-footer>
 </template>
 
 <script lang="ts">
@@ -30,13 +22,10 @@ export default defineComponent({
 <style>
 /*noinspection CssUnusedSymbol*/
 #app {
-  display: flex;
-  flex-direction: column;
-
-  min-height: 100vh;
+  @apply flex flex-col min-h-screen;
 
   main {
-    flex-grow: 1;
+    @apply flex-grow;
   }
 }
 </style>

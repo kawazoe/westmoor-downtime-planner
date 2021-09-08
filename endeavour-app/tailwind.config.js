@@ -45,11 +45,11 @@ module.exports = {
       white: colors.white,
     },
     container: { center: true },
-    extend: {},
   },
-  variants: { extend: {} },
+  variants: { extend: { safeZone: ['responsive'] } },
   plugins: [
     require('@tailwindcss/forms'),
     require('@tailwindcss/line-clamp'),
+    require('./tailwind/safe-zone'),
   ],
 };

@@ -1,78 +1,76 @@
 <template>
-  <div class="nav">
-    <div class="nav-header-section">
-      <router-link class="nav-brand" to="/">endeavour</router-link>
-      <app-toggle-button class="nav-button" :active="expanded" @toggle="expanded = $event" v-slot:default="props">
-        <app-icon v-if="props.active" :icon="faTimes" class="fa-w-16"></app-icon>
-        <app-icon v-else :icon="faBars" class="fa-w-16"></app-icon>
-      </app-toggle-button>
-    </div>
+  <header class="border-b-2 border-primary shadow-md">
+    <nav>
+      <router-link class="nav-brand sz-2" to="/">endeavour</router-link>
 
-    <nav class="nav-main-section flex" :class="{ 'hidden': !expanded }">
-      <router-link class="nav-link" to="/">Landing</router-link>
-      <router-link class="nav-link" to="/campaigns">Campaigns</router-link>
-      <router-link class="nav-link" to="/player">Player</router-link>
-      <router-link class="nav-link" to="/tos">Terms of Service</router-link>
+      <div class="nav-menu items-center">
+        <template v-if="campaigns.length">
+          <router-link class="nav-link text-2xl sz-2"
+                       v-for="campaign of campaigns"
+                       :to="`/campaigns/${makeCid(campaign)}`"
+                       :title="campaign.description"
+                       :key="campaign.id">
+            <app-icon :icon="campaign.icon" />
+          </router-link>
+        </template>
+        <template v-if="player">
+          <router-link class="nav-link text-2xl sz-2" to="/player">
+            <app-icon :icon="faUser" />
+          </router-link>
+        </template>
+        <template v-else>
+          <router-link class="nav-link sz-2" to="/pricing">Pricing</router-link>
+          <router-link class="nav-link sz-2" to="/sign-in">Sign In</router-link>
+        </template>
+      </div>
     </nav>
-  </div>
+  </header>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 
-import { faBars, faTimes } from '@fortawesome/pro-solid-svg-icons';
+import { makeCid } from '@/store/core-types';
+import { useStore } from '@/store';
+
+import { faBars, faTimes, faUser } from '@fortawesome/pro-solid-svg-icons';
 
 import AppIcon from '@/components/AppIcon';
-import AppToggleButton from '@/components/AppToggleButton.vue';
 
 export default defineComponent({
   name: 'TheMainNav',
-  components: { AppToggleButton, AppIcon },
+  components: { AppIcon },
   setup() {
+    const store = useStore();
+    const player = computed(() => store.state.player);
+    const campaigns = computed(() => store.state.campaigns);
+
     const expanded = ref(false);
 
-    return { faBars, faTimes, expanded };
+    return { makeCid, faBars, faTimes, faUser, player, campaigns, expanded };
   },
 });
 </script>
 
 <style scoped>
-.nav {
-  @apply container sm:flex sm:justify-between sm:items-baseline lg:items-center;
+nav {
+  @apply container flex items-center justify-between px-4 py-2;
 
-  .nav-header-section {
-    @apply flex justify-between text-2xl;
-
-    .nav-brand {
-      @apply py-2 sm:px-2 hover:text-primary-light;
-    }
-
-    .nav-button {
-      @apply block sm:hidden px-3 border-2 border-black rounded;
-    }
+  .nav-brand {
+    @apply text-2xl hover:text-primary-light;
   }
 
-  .nav-main-section {
-    @apply mt-2 sm:mt-0 sm:flex flex-col sm:flex-row sm:justify-end uppercase;
+  .nav-menu {
+    @apply flex gap-6;
 
     .nav-link {
-      @apply my-1 sm:my-0;
-      @apply sm:mx-1 lg:mx-2;
-      @apply py-2;
-      @apply sm:px-1 md:px-2;
+      @apply uppercase;
       @apply hover:text-primary-light;
-
-      &:first-of-type {
-        @apply ml-0;
-      }
-      &:last-of-type {
-        @apply mr-0;
-      }
     }
 
     /*noinspection CssUnusedSymbol*/
     .router-link-active {
-      @apply font-medium;
+      @apply font-medium text-primary-dark;
     }
   }
 }

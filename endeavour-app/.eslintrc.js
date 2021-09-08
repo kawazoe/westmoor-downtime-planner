@@ -38,7 +38,7 @@ module.exports = {
 
     // https://eslint.org/docs/rules/#variables
     'no-shadow': 'error',
-    'no-unused-vars': 'error',
+    'no-unused-vars': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
 
     // https://eslint.org/docs/rules/#stylistic-issues
     'array-bracket-newline': ['error', { multiline: true }],
@@ -89,7 +89,7 @@ module.exports = {
     'space-unary-ops': 'error',
     'spaced-comment': ['error', 'always', { line: { exceptions: ['/'], markers: ['<'] }, block: { exceptions: ['*'] } }],
     'switch-colon-spacing': 'error',
-    'template-tag-spacing': ['error', 'always'],
+    'template-tag-spacing': ['error', 'never'],
     'unicode-bom': ['error', 'never'],
 
     // https://eslint.org/docs/rules/#ecmascript-6

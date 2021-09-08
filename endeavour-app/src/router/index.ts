@@ -16,7 +16,7 @@ const routes: RouteRecordRaw[] = [
 
     children: [
       {
-        path: ':campaignId',
+        path: ':campaignCid',
         name: 'campaign',
 
         component: () => import(/* WebpackChunkName: "campaign" */ '../views/TheCampaign.vue'),
@@ -56,13 +56,6 @@ const routes: RouteRecordRaw[] = [
     path: '/player',
     name: 'player',
     component: () => import(/* WebpackChunkName: "player" */ '../views/ThePlayer.vue'),
-
-    children: [
-      {
-        path: 'characters',
-        component: () => import(/* WebpackChunkName: "player" */ '../views/ThePlayerCharacters.vue'),
-      },
-    ],
   },
   {
     path: '/tos',
