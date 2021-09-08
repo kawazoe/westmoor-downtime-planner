@@ -5,37 +5,23 @@ import { _throw } from '@/lib/functional';
 import { brand } from '@/lib/branding';
 
 export type Uuid = Brand<string, 'Uuid'>;
-
-const uuidRegex = /^[0-9A-Za-z_-]{10}$/.compile();
+const uuidRegex = /^[0-9A-Za-z_-]{1,5}$/.compile();
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Uuid = brand((v: string): v is Uuid => uuidRegex.test(v));
 
 export type PartitionId = Brand<string, 'PartitionId'>;
+const partitionIdRegex = /^[0-9A-Za-z_-]{1,7}$/.compile();
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const PartitionId = brand((v: string): v is PartitionId => Uuid.is(v));
+export const PartitionId = brand((v: string): v is PartitionId => partitionIdRegex.test(v));
 
-export type OwnershipId = Brand<string, 'OwnershipId'>;
+export type CombinedId = Brand<string, 'CombinedId'>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const OwnershipId = brand((v: string): v is OwnershipId => Uuid.is(v));
+export const CombinedId = brand((v: string): v is CombinedId => {
+  const [idp, id] = splitCidSafe(v as CombinedId, Uuid);
+  return idp !== undefined && id !== undefined;
+});
 
-export type Uri = Brand<string, 'Uri'>;
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Uri = brand((v: string): v is Uri => true);
-
-export type Email = Brand<string, 'Email'>;
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Email = brand((v: string): v is Email => true);
-
-export interface EntityId<TId> {
-  idp: PartitionId;
-  id: TId;
-}
-
-export function byRef<TId>(idp: PartitionId, id: TId): (entity: EntityId<TId>) => boolean {
-  return e => e.idp === idp && e.id === id;
-}
-
-// TODO: maintain this dynamically
+// TODO: maintain this list dynamically
 const cidSplits = [
   undefined, //< undefined
   undefined, //< undefined
@@ -51,12 +37,46 @@ const cidSplits = [
   6,         //< 6:5
   7,         //< 7:5
 ];
-export function makeCid<TId>(entity: EntityId<TId>): string {
-  return `${entity.idp}${entity.id}`;
+
+export function makeCid<TId>(entity: RawEntityId<TId>): CombinedId {
+  return CombinedId.cast(`${entity.idp}${entity.id}`);
 }
-export function splitCid<TId extends string>(cid: string, idIron: Iron<string, TId>): [PartitionId, TId] {
+export function splitCid<TId extends string>(cid: CombinedId, idIron: Iron<string, TId>): [PartitionId, TId] {
   const index = cidSplits[cid.length] ?? _throw(() => new Error(`Invalid combined id. Unknown length: ${cid.length}.`));
   return [PartitionId.cast(cid.substring(0, index)), idIron.cast(cid.substring(index))];
+}
+export function splitCidSafe<TId extends string>(cid: CombinedId, idIron: Iron<string, TId>): [PartitionId | undefined, TId | undefined] | [] {
+  const index = cidSplits[cid.length];
+  return index === undefined
+    ? []
+    : [PartitionId.as(cid.substring(0, index)), idIron.as(cid.substring(index))];
+}
+
+export type OwnershipId = Brand<string, 'OwnershipId'>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const OwnershipId = brand((v: string): v is OwnershipId => Uuid.is(v));
+
+export type Uri = Brand<string, 'Uri'>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Uri = brand((v: string): v is Uri => true);
+
+export type Email = Brand<string, 'Email'>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const Email = brand((v: string): v is Email => true);
+
+export interface RawEntityId<TId> {
+  idp: PartitionId;
+  id: TId;
+}
+
+export interface EntityId<TId> extends RawEntityId<TId> {
+  cid: CombinedId;
+}
+export function makeId<TId>(rawId: RawEntityId<TId>): EntityId<TId> {
+  return {
+    ...rawId,
+    cid: makeCid(rawId),
+  };
 }
 
 export interface EntityRef<TId> extends EntityId<TId> {
@@ -68,6 +88,7 @@ export function makeRef<TId>(entity: EntityRef<TId>): EntityRef<TId> {
   return {
     idp: entity.idp,
     id: entity.id,
+    cid: entity.cid,
     description: entity.description,
     icon: entity.icon,
   };

@@ -8,6 +8,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
+
+import type { CombinedId } from '@/store/core-types';
 import TheCampaignNav from '@/components/TheCampaignNav.vue';
 
 export default defineComponent({
@@ -15,7 +17,7 @@ export default defineComponent({
   components: { TheCampaignNav },
   props: {
     campaignCid: {
-      type: String as PropType<string>,
+      type: String as unknown as PropType<CombinedId>,
       required: true,
     },
   },

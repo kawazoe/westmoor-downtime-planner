@@ -4,15 +4,13 @@
       <router-link class="nav-brand sz-2" to="/">endeavour</router-link>
 
       <div class="nav-menu items-center">
-        <template v-if="campaigns.length">
-          <router-link class="nav-link text-2xl sz-2"
-                       v-for="campaign of campaigns"
-                       :to="`/campaigns/${makeCid(campaign)}`"
-                       :title="campaign.description"
-                       :key="campaign.id">
-            <app-icon :icon="campaign.icon" />
-          </router-link>
-        </template>
+        <router-link class="nav-link text-2xl sz-2"
+                     v-for="campaign of campaigns"
+                     :to="`/campaigns/${makeCid(campaign)}`"
+                     :title="campaign.description"
+                     :key="campaign.id">
+          <app-icon :icon="campaign.icon" />
+        </router-link>
         <template v-if="player">
           <router-link class="nav-link text-2xl sz-2" to="/player">
             <app-icon :icon="faUser" />

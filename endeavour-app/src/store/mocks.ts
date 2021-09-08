@@ -3,8 +3,8 @@ import type { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
 import type { CampaignEntity, CharacterEntity, PlayerEntity, SubscriptionEntity } from '@/store/business-types';
 import { CampaignId, CharacterId, PlayerId, SubscriptionId } from '@/store/business-types';
-import type { EntityMeta, EntityRef, EntityRights, Right } from '@/store/core-types';
-import { makeRef, OwnershipId, PartitionId } from '@/store/core-types';
+import type { CombinedId, EntityMeta, EntityRef, EntityRights, Right } from '@/store/core-types';
+import { makeId, makeRef, OwnershipId, PartitionId } from '@/store/core-types';
 
 function randomGlobeIcon(): IconDefinition {
   const rnd = Math.random() * 4;
@@ -67,14 +67,18 @@ function mockEntity<T>(...args: unknown[]): T {
 }
 
 const ownerJohn: EntityRef<OwnershipId> = {
-  id: OwnershipId.cast('fu1'),
-  idp: PartitionId.cast('fu1'),
+  ...makeId({
+    id: OwnershipId.cast('fu1'),
+    idp: PartitionId.cast('fu1'),
+  }),
   description: 'John Doe',
 };
 
 const ownerPeter: EntityRef<OwnershipId> = {
-  id: OwnershipId.cast('lFH'),
-  idp: PartitionId.cast('lFH'),
+  ...makeId({
+    id: OwnershipId.cast('lFH'),
+    idp: PartitionId.cast('lFH'),
+  }),
   description: 'Peter Parker',
 };
 
@@ -82,8 +86,10 @@ export const characterIronMan = mockEntity<CharacterEntity>(
   mockMeta('CharacterEntity'),
   mockRights(ownerJohn),
   {
-    id: CharacterId.cast('Mk'),
-    idp: ownerJohn.idp,
+    ...makeId({
+      id: CharacterId.cast('Mk'),
+      idp: ownerJohn.idp,
+    }),
     description: 'IronMan',
     fullName: 'IronMan',
     resources: {
@@ -97,8 +103,10 @@ export const characterBatMan = mockEntity<CharacterEntity>(
   mockMeta('CharacterEntity'),
   mockRights(ownerJohn),
   {
-    id: CharacterId.cast('L2'),
-    idp: ownerJohn.idp,
+    ...makeId({
+      id: CharacterId.cast('L2'),
+      idp: ownerJohn.idp,
+    }),
     description: 'BatMan',
     fullName: 'BatMan',
     resources: {
@@ -108,17 +116,19 @@ export const characterBatMan = mockEntity<CharacterEntity>(
     modifierCards: [],
   },
 );
-export const testCharacters: CharacterEntity[] = [
-  characterIronMan,
-  characterBatMan,
-];
+export const testCharacters: Record<CombinedId, CharacterEntity> = {
+  [characterIronMan.cid]: characterIronMan,
+  [characterBatMan.cid]: characterBatMan,
+};
 
 export const campaignLoremIpsum = mockEntity<CampaignEntity>(
   mockMeta('CampaignEntity'),
   mockRights(ownerJohn),
   {
-    id: CampaignId.cast('V9'),
-    idp: ownerJohn.idp,
+    ...makeId({
+      id: CampaignId.cast('V9'),
+      idp: ownerJohn.idp,
+    }),
     description: 'Lorem Ipsum',
     icon: randomGlobeIcon(),
     actionCards: [],
@@ -129,8 +139,10 @@ export const campaignDolorSitAmet = mockEntity<CampaignEntity>(
   mockMeta('CampaignEntity'),
   mockRights(ownerJohn),
   {
-    id: CampaignId.cast('6I'),
-    idp: ownerJohn.idp,
+    ...makeId({
+      id: CampaignId.cast('6I'),
+      idp: ownerJohn.idp,
+    }),
     description: 'Dolor Sit Amet',
     icon: randomGlobeIcon(),
     actionCards: [],
@@ -141,25 +153,29 @@ export const campaignConsecteturAdipiscingElit = mockEntity<CampaignEntity>(
   mockMeta('CampaignEntity'),
   mockRights(ownerJohn),
   {
-    id: CampaignId.cast('iS'),
-    idp: ownerPeter.idp,
+    ...makeId({
+      id: CampaignId.cast('iS'),
+      idp: ownerPeter.idp,
+    }),
     description: 'Consectetur adipiscing elit',
     icon: randomGlobeIcon(),
     actionCards: [],
     modifierCards: [],
   },
 );
-export const testCampaigns: CampaignEntity[] = [
-  campaignLoremIpsum,
-  campaignDolorSitAmet,
-  campaignConsecteturAdipiscingElit,
-];
+export const testCampaigns: Record<CombinedId, CampaignEntity> = {
+  [campaignLoremIpsum.cid]: campaignLoremIpsum,
+  [campaignDolorSitAmet.cid]: campaignDolorSitAmet,
+  [campaignConsecteturAdipiscingElit.cid]: campaignConsecteturAdipiscingElit,
+};
 
 export const subscriptionJohn = mockEntity<SubscriptionEntity>(
   mockMeta('SubscriptionEntity'),
   {
-    id: SubscriptionId.cast('W9'),
-    idp: ownerJohn.idp,
+    ...makeId({
+      id: SubscriptionId.cast('W9'),
+      idp: ownerJohn.idp,
+    }),
     description: 'Annual Subscription',
   },
 );
@@ -167,8 +183,10 @@ export const subscriptionJohn = mockEntity<SubscriptionEntity>(
 export const subscriptionPeter = mockEntity<SubscriptionEntity>(
   mockMeta('SubscriptionEntity'),
   {
-    id: SubscriptionId.cast('D6'),
-    idp: ownerPeter.idp,
+    ...makeId({
+      id: SubscriptionId.cast('D6'),
+      idp: ownerPeter.idp,
+    }),
     description: 'Annual Subscription',
   },
 );
@@ -177,8 +195,10 @@ export const playerJohn = mockEntity<PlayerEntity>(
   mockMeta('PlayerEntity'),
   mockRights(ownerJohn),
   {
-    id: PlayerId.cast(ownerJohn.id),
-    idp: ownerJohn.idp,
+    ...makeId({
+      id: PlayerId.cast(ownerJohn.id),
+      idp: ownerJohn.idp,
+    }),
     description: ownerJohn.description,
     icon: ownerJohn.icon,
     characters: [
@@ -197,8 +217,10 @@ export const playerPeter = mockEntity<PlayerEntity>(
   mockMeta('PlayerEntity'),
   mockRights(ownerJohn),
   {
-    id: PlayerId.cast(ownerPeter.id),
-    idp: ownerPeter.idp,
+    ...makeId({
+      id: PlayerId.cast(ownerPeter.id),
+      idp: ownerPeter.idp,
+    }),
     description: ownerPeter.description,
     icon: ownerPeter.icon,
     characters: [],
@@ -207,4 +229,7 @@ export const playerPeter = mockEntity<PlayerEntity>(
   },
 );
 
-export const testPlayers: PlayerEntity[] = [playerJohn, playerPeter];
+export const testPlayers: Record<CombinedId, PlayerEntity> = {
+  [playerJohn.cid]: playerJohn,
+  [playerPeter.cid]: playerPeter,
+};

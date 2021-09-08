@@ -23,9 +23,8 @@ import type { PropType } from 'vue';
 
 import { faBars, faTimes } from '@fortawesome/pro-regular-svg-icons';
 
-import { _throw, find } from '@/lib/functional';
-import { byRef, splitCid } from '@/store/core-types';
-import { CampaignId } from '@/store/business-types';
+import { _throw } from '@/lib/functional';
+import type { CombinedId } from '@/store/core-types';
 import { useRelativeRoute } from '@/router/routes';
 import { useStore } from '@/store';
 
@@ -37,7 +36,7 @@ export default defineComponent({
   components: { AppIcon, AppToggleButton },
   props: {
     campaignCid: {
-      type: String as PropType<string>,
+      type: String as unknown as PropType<CombinedId>,
       required: true,
     },
   },
@@ -45,10 +44,7 @@ export default defineComponent({
     const rel = useRelativeRoute();
 
     const store = useStore();
-    const campaign = computed(() => find(
-      byRef(...splitCid(props.campaignCid, CampaignId)),
-      store.state.campaigns,
-    ) ?? _throw(new Error('Invalid campaign id.')));
+    const campaign = computed(() => store.state.campaigns[props.campaignCid] ?? _throw(new Error('Invalid campaign id.')));
 
     const expanded = ref(false);
 

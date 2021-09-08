@@ -4,19 +4,17 @@ import type { Store } from 'vuex';
 
 import type {
   CampaignEntity,
-  CampaignId,
   CharacterEntity,
-  CharacterId,
   PlayerEntity,
-  PlayerId,
 } from '@/store/business-types';
 import { playerJohn, testCampaigns, testCharacters, testPlayers } from '@/store/mocks';
+import type { CombinedId } from '@/store/core-types';
 
 export interface RootState {
   player: PlayerEntity | null;
-  players: Record<PlayerId, PlayerEntity>;
-  campaigns: Record<CampaignId, CampaignEntity>;
-  characters: Record<CharacterId, CharacterEntity>;
+  players: Record<CombinedId, PlayerEntity>;
+  campaigns: Record<CombinedId, CampaignEntity>;
+  characters: Record<CombinedId, CharacterEntity>;
 }
 
 export const key: InjectionKey<Store<RootState>> = Symbol('vuex.RootState');
