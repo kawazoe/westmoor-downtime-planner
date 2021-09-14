@@ -33,7 +33,7 @@ const routes: RouteRecordRaw[] = [
           },
           {
             path: 'characters',
-            component: () => import(/* WebpackChunkName: "campaigns" */ '../views/TheCampaignCharacters.vue'),
+            component: () => import(/* WebpackChunkName: "characters" */ '../views/TheCampaignCharacters.vue'),
           },
           {
             path: 'endeavours',
@@ -46,7 +46,7 @@ const routes: RouteRecordRaw[] = [
           },
           {
             path: 'settings',
-            component: () => import(/* WebpackChunkName: "resources" */ '../views/TheCampaignSettings.vue'),
+            component: () => import(/* WebpackChunkName: "settings" */ '../views/TheCampaignSettings.vue'),
           },
         ],
       },
@@ -56,6 +56,17 @@ const routes: RouteRecordRaw[] = [
     path: '/player',
     name: 'player',
     component: () => import(/* WebpackChunkName: "player" */ '../views/ThePlayer.vue'),
+  },
+  {
+    path: '/player/characters',
+
+    redirect: to => ({ name: 'player', params: to.params, replace: true }),
+  },
+  {
+    path: '/player/characters/:characterCid',
+
+    component: () => import(/* WebpackChunkName: "endeavours" */ '../views/ThePlayerCharacter.vue'),
+    props: true,
   },
   {
     path: '/tos',

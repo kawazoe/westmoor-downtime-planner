@@ -1,5 +1,7 @@
 <template>
-  <router-link :to="`/characters/${makeCid(character)}`"><app-entity-card :description="character.description" /></router-link>
+  <router-link :to="`${rel}/characters/${makeCid(character)}`">
+    <app-entity-card :description="character.description" />
+  </router-link>
 </template>
 
 <script lang="ts">
@@ -8,6 +10,7 @@ import type { PropType } from 'vue';
 
 import type { CharacterEntity } from '@/store/business-types';
 import { makeCid } from '@/store/core-types';
+import { useRelativeRoute } from '@/router/routes';
 
 import AppEntityCard from '@/components/AppEntityCard.vue';
 
@@ -21,7 +24,9 @@ export default defineComponent({
     },
   },
   setup() {
-    return { makeCid };
+    const rel = useRelativeRoute();
+
+    return { makeCid, rel };
   },
 });
 </script>

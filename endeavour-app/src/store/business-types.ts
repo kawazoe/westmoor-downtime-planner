@@ -13,6 +13,12 @@ export const SubscriptionId = brand((v: string): v is SubscriptionId => Uuid.is(
 
 export type SubscriptionEntity = EntityRef<SubscriptionId> & EntityMeta;
 
+export type GameSystemId = Brand<string, 'GameSystemId'>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GameSystemId = brand((v: string): v is GameSystemId => Uuid.is(v));
+
+export type GameSystemEntity = EntityRef<GameSystemId> & EntityMeta;
+
 export type FungibleResourceId = Brand<string, 'FungibleResourceId'>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const FungibleResourceId = brand((v: string): v is FungibleResourceId => Uuid.is(v));
@@ -21,7 +27,7 @@ export type FungibleResourceEntity = EntityRef<FungibleResourceId>;
 
 export type NonFungibleResourceId = Brand<string, 'NonFungibleResourceId'>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const NonFungibleResourceId = brand((v: string): v is FungibleResourceId => Uuid.is(v));
+export const NonFungibleResourceId = brand((v: string): v is NonFungibleResourceId => Uuid.is(v));
 
 export type NonFungibleResourceEntity = EntityRef<NonFungibleResourceId>;
 
@@ -48,8 +54,9 @@ export const CharacterId = brand((v: string): v is CharacterId => Uuid.is(v));
 
 export interface CharacterEntity extends EntityRef<CharacterId>, EntityMeta, EntityRights {
   fullName: string;
+  bio: string;
   resources: {
-    fungibles: Map<FungibleResourceId, number>,
+    fungibles: Map<EntityRef<FungibleResourceId>, number>,
     nonFungibles: EntityRef<NonFungibleResourceId>[],
   };
   modifierCards: EntityRef<ModifierCardId>[];
@@ -60,6 +67,7 @@ export type CampaignId = Brand<string, 'CampaignId'>;
 export const CampaignId = brand((v: string): v is CampaignId => Uuid.is(v));
 
 export interface CampaignEntity extends EntityRef<CampaignId>, EntityMeta, EntityRights {
+  gameSystem: EntityRef<GameSystemId>;
   actionCards: ActionCardEntity[];
   modifierCards: ModifierCardEntity[];
 }
