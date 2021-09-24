@@ -23,13 +23,13 @@ export type FungibleResourceId = Brand<string, 'FungibleResourceId'>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const FungibleResourceId = brand((v: string): v is FungibleResourceId => Uuid.is(v));
 
-export type FungibleResourceEntity = EntityRef<FungibleResourceId>;
+export type FungibleResourceEntity = EntityRef<FungibleResourceId> & EntityMeta & EntityRights;
 
 export type NonFungibleResourceId = Brand<string, 'NonFungibleResourceId'>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const NonFungibleResourceId = brand((v: string): v is NonFungibleResourceId => Uuid.is(v));
 
-export type NonFungibleResourceEntity = EntityRef<NonFungibleResourceId>;
+export type NonFungibleResourceEntity = EntityRef<NonFungibleResourceId> & EntityMeta & EntityRights;
 
 export interface CardBase<TId> extends EntityRef<TId>, EntityMeta, EntityRights {
   canApply: (context: unknown) => boolean | number; //< JEXL Expression

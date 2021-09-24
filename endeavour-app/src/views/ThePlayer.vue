@@ -26,8 +26,8 @@ import { faAtlas, faMoneyBill, faPortrait } from '@fortawesome/pro-regular-svg-i
 
 import { useStore } from '@/store';
 
-import AppCampaignCard from '@/components/AppCampaignCard';
-import AppCharacterCard from '@/components/AppCharacterCard';
+import AppCampaignCard from '@/containers/AppCampaignCard';
+import AppCharacterCard from '@/containers/AppCharacterCard';
 import AppIcon from '@/components/AppIcon';
 import AppSubscriptionPresenter from '@/components/AppSubscriptionPresenter';
 

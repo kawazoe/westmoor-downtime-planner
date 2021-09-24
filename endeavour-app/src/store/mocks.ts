@@ -201,8 +201,11 @@ export const characterIronMan = mockEntity<CharacterEntity>(
     fullName: 'IronMan',
     bio: 'He\'s a multi-billionaire dude who loves to build things.',
     resources: {
-      fungibles: new Map<EntityRef<FungibleResourceId>, number>(),
-      nonFungibles: [],
+      fungibles: new Map<EntityRef<FungibleResourceId>, number>([
+        [makeRef(fungibleCurrency), 42],
+        [makeRef(fungibleTime), 13],
+      ]),
+      nonFungibles: [makeRef(nonFungibleSword)],
     },
     modifierCards: [],
   },

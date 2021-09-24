@@ -3,7 +3,7 @@ const colors = require('tailwindcss/colors');
 module.exports = {
   purge: {
     content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
-    whitelistPatterns: [/svg.*/, /fa.*/],
+    options: { safelist: [/svg.*/, /fa.*/] },
   },
   darkMode: false, // or 'media' or 'class'
   theme: {
@@ -51,5 +51,6 @@ module.exports = {
     require('@tailwindcss/forms'),
     require('@tailwindcss/line-clamp'),
     require('./tailwind/safe-zone'),
+    require('./tailwind/border-spacing'),
   ],
 };
