@@ -40,8 +40,8 @@ export default defineComponent({
   components: { AppIcon },
   setup() {
     const store = useStore();
-    const player = computed(() => store.state.player);
-    const campaigns = computed(() => store.state.campaigns);
+    const player = computed(() => store.getters['player']);
+    const campaigns = computed(() => store.getters['campaigns/all']);
 
     const expanded = ref(false);
 

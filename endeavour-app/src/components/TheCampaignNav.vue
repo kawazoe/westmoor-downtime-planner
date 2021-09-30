@@ -44,7 +44,7 @@ export default defineComponent({
     const rel = useRelativeRoute();
 
     const store = useStore();
-    const campaign = computed(() => store.state.campaigns[props.campaignCid] ?? _throw(new Error('Invalid campaign id.')));
+    const campaign = computed(() => store.getters['campaigns/byCid'](props.campaignCid) ?? _throw(new Error('Invalid campaign id.')));
 
     const expanded = ref(false);
 

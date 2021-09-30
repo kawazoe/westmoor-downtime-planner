@@ -53,7 +53,7 @@ export default defineComponent({
   setup(props) {
     const store = useStore();
 
-    const character = computed(() => store.state.characters[props.characterCid] ?? _throw(new Error('Missing character.')));
+    const character = computed(() => store.getters['characters/byCid'](props.characterCid) ?? _throw(new Error('Missing character.')));
     const fungibleResources = computed(() => Array.from(character.value.resources.fungibles));
     const nonFungibleResources = computed(() => character.value.resources.nonFungibles);
 

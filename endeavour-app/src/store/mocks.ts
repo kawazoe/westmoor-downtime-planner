@@ -1,3 +1,7 @@
+import type { AnyFactories, AnyModels, Registry } from 'miragejs/-types';
+import { createServer } from 'miragejs';
+import type { Server } from 'miragejs/server';
+
 import { faGlobeAfrica, faGlobeAmericas, faGlobeAsia, faGlobeEurope } from '@fortawesome/pro-solid-svg-icons';
 import type { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
@@ -19,8 +23,8 @@ import {
   PlayerId,
   SubscriptionId,
 } from '@/store/business-types';
-import type { CombinedId, EntityMeta, EntityRef, EntityRights, OwnershipEntity, Right } from '@/store/core-types';
 import { Email, makeId, makeRef, OwnershipId, PartitionId, Uri } from '@/store/core-types';
+import type { EntityMeta, EntityRef, EntityRights, OwnershipEntity, Right } from '@/store/core-types';
 
 function randomGlobeIcon(): IconDefinition {
   const rnd = Math.random() * 4;
@@ -132,9 +136,7 @@ const genericGameSystem = mockEntity<GameSystemEntity>(
 );
 const genericGameSystemRef = makeRef(genericGameSystem);
 
-export const testGameSystems: Record<CombinedId, GameSystemEntity> = { [genericGameSystem.cid]: genericGameSystem };
-
-export const fungibleTime = mockEntity<FungibleResourceEntity>(
+const fungibleTime = mockEntity<FungibleResourceEntity>(
   mockMeta('FungibleResourceEntity'),
   mockRightsPublic(ownerJohnRef),
   {
@@ -145,7 +147,7 @@ export const fungibleTime = mockEntity<FungibleResourceEntity>(
     description: 'Time (days)',
   },
 );
-export const fungibleCurrency = mockEntity<FungibleResourceEntity>(
+const fungibleCurrency = mockEntity<FungibleResourceEntity>(
   mockMeta('FungibleResourceEntity'),
   mockRightsPublic(ownerJohnRef),
   {
@@ -156,12 +158,8 @@ export const fungibleCurrency = mockEntity<FungibleResourceEntity>(
     description: 'Currency (gold)',
   },
 );
-export const testFungibleResources: Record<CombinedId, FungibleResourceEntity> = {
-  [fungibleTime.cid]: fungibleTime,
-  [fungibleCurrency.cid]: fungibleCurrency,
-};
 
-export const nonFungibleDoomCoin = mockEntity<NonFungibleResourceEntity>(
+const nonFungibleDoomCoin = mockEntity<NonFungibleResourceEntity>(
   mockMeta('NonFungibleResourceEntity'),
   mockRightsPublic(ownerJohnRef),
   {
@@ -172,7 +170,7 @@ export const nonFungibleDoomCoin = mockEntity<NonFungibleResourceEntity>(
     description: 'Doom Coin',
   },
 );
-export const nonFungibleSword = mockEntity<NonFungibleResourceEntity>(
+const nonFungibleSword = mockEntity<NonFungibleResourceEntity>(
   mockMeta('NonFungibleResourceEntity'),
   mockRightsPublic(ownerJohnRef),
   {
@@ -184,12 +182,7 @@ export const nonFungibleSword = mockEntity<NonFungibleResourceEntity>(
   },
 );
 
-export const testNonFungibleResources: Record<CombinedId, NonFungibleResourceEntity> = {
-  [nonFungibleDoomCoin.cid]: nonFungibleDoomCoin,
-  [nonFungibleSword.cid]: nonFungibleSword,
-};
-
-export const characterIronMan = mockEntity<CharacterEntity>(
+const characterIronMan = mockEntity<CharacterEntity>(
   mockMeta('CharacterEntity'),
   mockRights(ownerJohnRef),
   {
@@ -210,7 +203,7 @@ export const characterIronMan = mockEntity<CharacterEntity>(
     modifierCards: [],
   },
 );
-export const characterBatMan = mockEntity<CharacterEntity>(
+const characterBatMan = mockEntity<CharacterEntity>(
   mockMeta('CharacterEntity'),
   mockRights(ownerJohnRef),
   {
@@ -228,12 +221,8 @@ export const characterBatMan = mockEntity<CharacterEntity>(
     modifierCards: [],
   },
 );
-export const testCharacters: Record<CombinedId, CharacterEntity> = {
-  [characterIronMan.cid]: characterIronMan,
-  [characterBatMan.cid]: characterBatMan,
-};
 
-export const campaignLoremIpsum = mockEntity<CampaignEntity>(
+const campaignLoremIpsum = mockEntity<CampaignEntity>(
   mockMeta('CampaignEntity'),
   mockRightsPublic(ownerJohnRef),
   {
@@ -248,7 +237,7 @@ export const campaignLoremIpsum = mockEntity<CampaignEntity>(
     modifierCards: [],
   },
 );
-export const campaignDolorSitAmet = mockEntity<CampaignEntity>(
+const campaignDolorSitAmet = mockEntity<CampaignEntity>(
   mockMeta('CampaignEntity'),
   mockRights(ownerJohnRef),
   {
@@ -263,7 +252,7 @@ export const campaignDolorSitAmet = mockEntity<CampaignEntity>(
     modifierCards: [],
   },
 );
-export const campaignConsecteturAdipiscingElit = mockEntity<CampaignEntity>(
+const campaignConsecteturAdipiscingElit = mockEntity<CampaignEntity>(
   mockMeta('CampaignEntity'),
   mockRights(ownerPeterRef),
   {
@@ -278,13 +267,8 @@ export const campaignConsecteturAdipiscingElit = mockEntity<CampaignEntity>(
     modifierCards: [],
   },
 );
-export const testCampaigns: Record<CombinedId, CampaignEntity> = {
-  [campaignLoremIpsum.cid]: campaignLoremIpsum,
-  [campaignDolorSitAmet.cid]: campaignDolorSitAmet,
-  [campaignConsecteturAdipiscingElit.cid]: campaignConsecteturAdipiscingElit,
-};
 
-export const subscriptionJohn = mockEntity<SubscriptionEntity>(
+const subscriptionJohn = mockEntity<SubscriptionEntity>(
   mockMeta('SubscriptionEntity'),
   {
     ...makeId({
@@ -295,7 +279,7 @@ export const subscriptionJohn = mockEntity<SubscriptionEntity>(
   },
 );
 
-export const subscriptionPeter = mockEntity<SubscriptionEntity>(
+const subscriptionPeter = mockEntity<SubscriptionEntity>(
   mockMeta('SubscriptionEntity'),
   {
     ...makeId({
@@ -306,7 +290,7 @@ export const subscriptionPeter = mockEntity<SubscriptionEntity>(
   },
 );
 
-export const playerJohn = mockEntity<PlayerEntity>(
+const playerJohn = mockEntity<PlayerEntity>(
   mockMeta('PlayerEntity'),
   mockRights(ownerJohnRef),
   {
@@ -328,7 +312,7 @@ export const playerJohn = mockEntity<PlayerEntity>(
   },
 );
 
-export const playerPeter = mockEntity<PlayerEntity>(
+const playerPeter = mockEntity<PlayerEntity>(
   mockMeta('PlayerEntity'),
   mockRights(ownerPeterRef),
   {
@@ -347,7 +331,53 @@ export const playerPeter = mockEntity<PlayerEntity>(
   },
 );
 
-export const testPlayers: Record<CombinedId, PlayerEntity> = {
-  [playerJohn.cid]: playerJohn,
-  [playerPeter.cid]: playerPeter,
-};
+const owners = [
+  ownerAll,
+  ownerJohn,
+  ownerPeter,
+];
+const gameSystems = [genericGameSystem];
+const fungibleResources = [
+  fungibleTime,
+  fungibleCurrency,
+];
+const nonFungibleResources = [
+  nonFungibleDoomCoin,
+  nonFungibleSword,
+];
+const characters = [
+  characterIronMan,
+  characterBatMan,
+];
+const campaigns = [
+  campaignLoremIpsum,
+  campaignDolorSitAmet,
+  campaignConsecteturAdipiscingElit,
+];
+const players = [
+  playerJohn,
+  playerPeter,
+];
+
+createServer({
+  routes() {
+    this.namespace = 'api/v1';
+
+    function createShorthands<TId, T extends EntityRef<TId>>(
+      this: Server<Registry<AnyModels, AnyFactories>>,
+      endpoint: string,
+      data: T[],
+    ): void {
+      this.get(`/${endpoint}`, () => data);
+      this.get(`/${endpoint}/:cid`, (_, request) => data.filter(v => v.cid === request.params.cid));
+    }
+
+    createShorthands.call(this, 'owners', owners);
+    createShorthands.call(this, 'game-systems', gameSystems);
+    createShorthands.call(this, 'fungible-resources', fungibleResources);
+    createShorthands.call(this, 'non-fungible-resources', nonFungibleResources);
+    createShorthands.call(this, 'characters', characters);
+    createShorthands.call(this, 'campaigns', campaigns);
+    createShorthands.call(this, 'players', players);
+  },
+});

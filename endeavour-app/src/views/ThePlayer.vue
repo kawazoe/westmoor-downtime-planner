@@ -36,7 +36,7 @@ export default defineComponent({
   components: { AppSubscriptionPresenter, AppCampaignCard, AppCharacterCard, AppIcon },
   setup() {
     const store = useStore();
-    const player = computed(() => store.state.player);
+    const player = computed(() => store.getters['player']);
 
     return { faPortrait, faAtlas, faMoneyBill, player };
   },
