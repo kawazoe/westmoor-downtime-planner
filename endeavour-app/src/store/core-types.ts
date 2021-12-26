@@ -1,7 +1,7 @@
 import type { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
 import type { Brand, Iron } from '@/lib/branding';
-import { _throw } from '@/lib/functional';
+import { _throw } from '@/lib/functional/_throw';
 import { brand } from '@/lib/branding';
 
 export type Uuid = Brand<string, 'Uuid'>;

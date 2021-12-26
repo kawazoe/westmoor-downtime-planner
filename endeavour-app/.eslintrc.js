@@ -173,6 +173,8 @@ module.exports = {
         '@typescript-eslint/no-duplicate-imports': 'error',
         'no-useless-constructor': 'off',
         '@typescript-eslint/no-useless-constructor': 'error',
+        'no-empty-function': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
 
         // https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin#supported-rules
         '@typescript-eslint/array-type': ['error', { default: 'array', readonly: 'array' }],

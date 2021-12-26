@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import type { FontAwesomeIconProps } from '@fortawesome/vue-fontawesome';
 import type { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
-import { _throw } from '@/lib/functional';
+import { _throw } from '@/lib/functional/_throw';
 import { svgIconCache } from './TheSvgIconCache';
 
 // This is done to avoid directly referencing the IconPrefix and IconName type which is killing eslint performance.

@@ -23,7 +23,7 @@ import type { PropType } from 'vue';
 
 import { faBars, faTimes } from '@fortawesome/pro-regular-svg-icons';
 
-import { _throw } from '@/lib/functional';
+import { _throw } from '@/lib/functional/_throw';
 import type { CombinedId } from '@/store/core-types';
 import { useRelativeRoute } from '@/router/routes';
 import { useStore } from '@/store';

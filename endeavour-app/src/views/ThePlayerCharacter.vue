@@ -34,7 +34,7 @@
 import { computed, defineComponent } from 'vue';
 import type { PropType } from 'vue';
 
-import { _throw } from '@/lib/functional';
+import { _throw } from '@/lib/functional/_throw';
 import type { CombinedId } from '@/store/core-types';
 import { useStore } from '@/store';
 
