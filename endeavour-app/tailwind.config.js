@@ -1,11 +1,9 @@
 const colors = require('tailwindcss/colors');
 
 module.exports = {
-  purge: {
-    content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
-    options: { safelist: [/svg.*/, /fa.*/] },
-  },
-  darkMode: false, // or 'media' or 'class'
+  mode: 'jit',
+  content: ['./src/**/*.{vue,js,ts,jsx,tsx}'],
+  safelist: [{ pattern: /svg.*/ }, { pattern: /fa.*/ }],
   theme: {
     colors: {
       transparent: 'transparent',
@@ -40,7 +38,7 @@ module.exports = {
         DEFAULT: colors.cyan['400'],
         dark: colors.cyan['500'],
       },
-      gray: colors.warmGray,
+      gray: colors.stone,
       black: colors.black,
       white: colors.white,
     },

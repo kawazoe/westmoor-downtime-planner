@@ -5,12 +5,12 @@ import { _throw } from '@/lib/functional/_throw';
 import { brand } from '@/lib/branding';
 
 export type Uuid = Brand<string, 'Uuid'>;
-const uuidRegex = /^[0-9A-Za-z_-]{1,5}$/.compile();
+const uuidRegex = /^[0-9A-Za-z_-]{1,5}$/;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Uuid = brand((v: string): v is Uuid => uuidRegex.test(v));
 
 export type PartitionId = Brand<string, 'PartitionId'>;
-const partitionIdRegex = /^[0-9A-Za-z_-]{1,7}$/.compile();
+const partitionIdRegex = /^[0-9A-Za-z_-]{1,7}$/;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PartitionId = brand((v: string): v is PartitionId => partitionIdRegex.test(v));
 

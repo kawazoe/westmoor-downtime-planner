@@ -103,7 +103,7 @@ export default defineComponent({
   },
 
   setup(props, context) {
-    const faRender = faSetup.call(this, props, context);
+    const faRender = faSetup.call(this, props as never, context);
     if (typeof faRender !== 'function') {
       console.error('Invalid FontAwesomeIcon render function for icon: ', props.icon);
       return () => h('i', { icon: props.icon });
@@ -119,7 +119,7 @@ export default defineComponent({
         return h('svg', faVNode.props, [h('use', { 'xlink:href': symbol })]);
       }
 
-      return h(faIcon, props);
+      return h(faIcon, props as never);
     };
   },
 });
