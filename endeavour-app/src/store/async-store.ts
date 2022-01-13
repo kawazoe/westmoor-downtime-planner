@@ -1,5 +1,8 @@
 import type { Action, ActionContext, ActionHandler, ActionObject, Getter, Module } from 'vuex';
-import { _throw } from '@/lib/functional';
+import { _throw } from '@/lib/_throw';
+
+import * as A from 'fp-ts/Array';
+import { flow, pipe } from 'fp-ts/function';
 
 // Concepts
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,6 +15,12 @@ function unwrapFunction<T>(value: T | (() => T)): T {
     ? (value as () => T)()
     : value;
 }
+
+const recordConcat = flow(
+  A.map(Object.entries),
+  A.flatten,
+  Object.fromEntries,
+);
 
 function adaptAction<S, R>(
   action: Action<S, R> | undefined,
@@ -202,6 +211,39 @@ export function createAsyncValueModule<K extends string, P, V>(propName: K, trig
     mutations: createAsyncValueMutations(propName),
     actions: createAsyncValueActions(propName, trigger),
   } as Module<AsyncValueState<K, V>, unknown>;
+}
+
+export function mergeStoreModules<S1, R>(m1: Module<S1, R>): Module<S1, R>;
+export function mergeStoreModules<S1, S2, R>(m1: Module<S1, R>, m2: Module<S2, R>): Module<S1 & S2, R>;
+export function mergeStoreModules<S1, S2, S3, R>(m1: Module<S1, R>, m2: Module<S2, R>, m3: Module<S3, R>): Module<S1 & S2 & S3, R>;
+export function mergeStoreModules<S1, S2, S3, S4, R>(m1: Module<S1, R>, m2: Module<S2, R>, m3: Module<S3, R>, m4: Module<S4, R>): Module<S1 & S2 & S3 & S4, R>;
+export function mergeStoreModules<S, R>(...modules: Module<Partial<S>, R>[]): Module<S, R> {
+  return {
+    namespaced: true,
+    state() {
+      return pipe(
+        modules,
+        A.map(m => m.state || {}),
+        A.map(unwrapFunction),
+        recordConcat,
+      );
+    },
+    getters: pipe(
+      modules,
+      A.map(m => m.getters || {}),
+      recordConcat,
+    ),
+    mutations: pipe(
+      modules,
+      A.map(m => m.mutations || {}),
+      recordConcat,
+    ),
+    actions: pipe(
+      modules,
+      A.map(m => m.actions || {}),
+      recordConcat,
+    ),
+  };
 }
 
 export type StoreModuleDefinition<S, R> = Omit<Module<S & { status: AsyncStatus, error: string | null }, R>, 'state'> & { state: S | (() => S) | undefined };

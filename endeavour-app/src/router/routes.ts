@@ -2,7 +2,7 @@ import { computed, inject } from 'vue';
 import { useRoute, viewDepthKey } from 'vue-router';
 import type { ComputedRef } from 'vue';
 
-import { _throw } from '@/lib/functional/_throw';
+import { _throw } from '@/lib/_throw';
 
 export function useRelativeRoute(): ComputedRef<string> {
   const route = useRoute();

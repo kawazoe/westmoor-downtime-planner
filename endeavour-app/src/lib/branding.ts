@@ -1,4 +1,4 @@
-import { _throw } from '@/lib/functional';
+import { _throw } from '@/lib/_throw';
 import { CustomError } from '@/lib/generics';
 import type { Key } from '@/lib/generics';
 
