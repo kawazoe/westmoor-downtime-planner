@@ -1,42 +1,44 @@
 <template>
-  <main class="container px-4">
-    <h2>Welcome {{player.description}}</h2>
+  <main class="container px-4" v-if="player.status === 'success'">
+    <h2>Welcome {{player.value.description}}</h2>
 
     <h3><app-icon :icon="faPortrait" /> Characters</h3>
     <section>
-      <app-character-card class="w-full" v-for="character of player.characters" :key="character.id" :character="character" />
+      <app-character-card class="w-full" v-for="character of player.value.characters" :key="character.id" :character="character" />
     </section>
 
     <h3><app-icon :icon="faAtlas" /> Campaigns</h3>
     <section>
-      <app-campaign-card class="w-full" v-for="campaign of player.campaigns" :key="campaign.id" :campaign="campaign" />
+      <app-campaign-card class="w-full" v-for="campaign of player.value.campaigns" :key="campaign.id" :campaign="campaign" />
     </section>
 
     <h3><app-icon :icon="faMoneyBill" /> Subscription</h3>
     <section>
-      <app-subscription-presenter class="w-full" :subscription="player.subscription" />
+      <app-subscription-presenter class="w-full" :subscription="player.value.subscription" />
     </section>
   </main>
 </template>
 
-<script>
+<script lang="ts">
 import { computed, defineComponent } from 'vue';
 
 import { faAtlas, faMoneyBill, faPortrait } from '@fortawesome/pro-regular-svg-icons';
 
+import type { AsyncValue } from '@/store/async-store';
+import type { PlayerEntity } from '@/store/business-types';
 import { useStore } from '@/store';
 
-import AppCampaignCard from '@/containers/AppCampaignCard';
-import AppCharacterCard from '@/containers/AppCharacterCard';
+import AppCampaignCard from '@/containers/AppCampaignCard.vue';
+import AppCharacterCard from '@/containers/AppCharacterCard.vue';
 import AppIcon from '@/components/AppIcon';
-import AppSubscriptionPresenter from '@/components/AppSubscriptionPresenter';
+import AppSubscriptionPresenter from '@/components/AppSubscriptionPresenter.vue';
 
 export default defineComponent({
   name: 'ThePlayer',
   components: { AppSubscriptionPresenter, AppCampaignCard, AppCharacterCard, AppIcon },
   setup() {
     const store = useStore();
-    const player = computed(() => store.getters['player']);
+    const player = computed(() => store.getters['players/current'] as AsyncValue<PlayerEntity>);
 
     return { faPortrait, faAtlas, faMoneyBill, player };
   },

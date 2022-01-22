@@ -1,4 +1,4 @@
-import type { Action, ActionContext, ActionHandler, ActionObject, Getter, Module } from 'vuex';
+import type { ActionContext, ActionHandler, Getter, Module } from 'vuex';
 import { _throw } from '@/lib/_throw';
 
 import * as A from 'fp-ts/Array';
@@ -22,38 +22,11 @@ const recordConcat = flow(
   Object.fromEntries,
 );
 
-function adaptAction<S, R>(
-  action: Action<S, R> | undefined,
-  wrapper: {
-    before?: ActionHandler<S, R>,
-    after?: ActionHandler<S, R>,
-    instead?: ActionHandler<S, R>,
-    error?: ActionHandler<S, R>,
-  },
-): ActionObject<S, R> {
-  const initObject = typeof action === 'function'
-    ? { handler: action }
-    : action;
-
-  return {
-    ...action ?? {},
-    async handler(injectee, payload) {
-      try {
-        await wrapper.before?.call(this, injectee, payload);
-        await (initObject?.handler ?? wrapper.instead ?? (() => {})).call(this, injectee, payload);
-        await wrapper.after?.call(this, injectee, payload);
-      } catch (error: unknown) {
-        await wrapper.error?.call(this, injectee, { ...payload, error });
-      }
-    },
-  };
-}
-
 export type AsyncStatus = 'initial' | 'loading' | 'success' | 'error';
 
 // State
 ///////////////////////////////////////////////////////////////////////////////
-type AsyncValueState<K extends string, V> =
+export type AsyncValueState<K extends string, V> =
   & { [P in `${K}_status`]: AsyncStatus; }
   & { [P in `${K}_value`]: V | undefined; }
   & { [P in `${K}_error`]: string | undefined; };
@@ -187,12 +160,14 @@ function createAsyncValueMutations<K extends string, V, S extends AsyncValueStat
 type AsyncValueActions<K extends string, V, S extends AsyncValueState<K, V>, R> =
   & { [P in `${K}_trigger`]: ActionHandler<S, R>; };
 
-function createAsyncValueActions<K extends string, V, P, S extends AsyncValueState<K, V>, R>(propName: K, trigger: (payload?: P) => Promise<V>): AsyncValueActions<K, V, S, R> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function createAsyncValueActions<K extends string, V, S extends AsyncValueState<K, V>, R>(propName: K, trigger: (injectee: ActionContext<S, unknown>, payload?: any) => Promise<V>): AsyncValueActions<K, V, S, R> {
   return {
-    [`${propName}_trigger`](ctx: ActionContext<S, R>, payload?: P) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [`${propName}_trigger`](ctx: ActionContext<S, R>, payload?: any) {
       ctx.commit(`${propName}_load`);
 
-      return trigger(payload).then(
+      return trigger(ctx, payload).then(
         v => ctx.commit(`${propName}_resolve`, v),
         e => ctx.commit(`${propName}_error`, e),
       );
@@ -202,7 +177,11 @@ function createAsyncValueActions<K extends string, V, P, S extends AsyncValueSta
 
 // Module
 ///////////////////////////////////////////////////////////////////////////////
-export function createAsyncValueModule<K extends string, P, V>(propName: K, trigger: (payload?: P) => Promise<V>): Module<AsyncValueState<K, V>, unknown> {
+export function fromPromise<K extends string, V>(
+  propName: K,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  trigger: (injectee: ActionContext<AsyncValueState<K, V>, unknown>, payload?: any) => Promise<V>,
+): Module<AsyncValueState<K, V>, unknown> {
   return {
     state() {
       return createAsyncValueState(propName, 'initial', undefined, undefined);
@@ -213,13 +192,16 @@ export function createAsyncValueModule<K extends string, P, V>(propName: K, trig
   } as Module<AsyncValueState<K, V>, unknown>;
 }
 
-export function mergeStoreModules<S1, R>(m1: Module<S1, R>): Module<S1, R>;
-export function mergeStoreModules<S1, S2, R>(m1: Module<S1, R>, m2: Module<S2, R>): Module<S1 & S2, R>;
-export function mergeStoreModules<S1, S2, S3, R>(m1: Module<S1, R>, m2: Module<S2, R>, m3: Module<S3, R>): Module<S1 & S2 & S3, R>;
-export function mergeStoreModules<S1, S2, S3, S4, R>(m1: Module<S1, R>, m2: Module<S2, R>, m3: Module<S3, R>, m4: Module<S4, R>): Module<S1 & S2 & S3 & S4, R>;
-export function mergeStoreModules<S, R>(...modules: Module<Partial<S>, R>[]): Module<S, R> {
+export function merge<S1, R>(m1: Module<S1, R>): Module<S1, R>;
+export function merge<S1, S2, R>(m1: Module<S1, R>, m2: Module<S2, R>): Module<S1 & S2, R>;
+export function merge<S1, S2, S3, R>(m1: Module<S1, R>, m2: Module<S2, R>, m3: Module<S3, R>): Module<S1 & S2 & S3, R>;
+export function merge<S1, S2, S3, S4, R>(m1: Module<S1, R>, m2: Module<S2, R>, m3: Module<S3, R>, m4: Module<S4, R>): Module<S1 & S2 & S3 & S4, R>;
+export function merge<S1, S2, S3, S4, S5, R>(m1: Module<S1, R>, m2: Module<S2, R>, m3: Module<S3, R>, m4: Module<S4, R>, m5: Module<S5, R>): Module<S1 & S2 & S3 & S4 & S5, R>;
+export function merge<S1, S2, S3, S4, S5, S6, R>(m1: Module<S1, R>, m2: Module<S2, R>, m3: Module<S3, R>, m4: Module<S4, R>, m5: Module<S5, R>, m6: Module<S6, R>): Module<S1 & S2 & S3 & S4 & S5 & S6, R>;
+export function merge<S1, S2, S3, S4, S5, S6, S7, R>(m1: Module<S1, R>, m2: Module<S2, R>, m3: Module<S3, R>, m4: Module<S4, R>, m5: Module<S5, R>, m6: Module<S6, R>, m7: Module<S7, R>): Module<S1 & S2 & S3 & S4 & S5 & S6 & S7, R>;
+export function merge<S, R>(...modules: Module<Partial<S>, R>[]): Module<S, R> {
   return {
-    namespaced: true,
+    namespaced: modules.some(m => m.namespaced),
     state() {
       return pipe(
         modules,
@@ -243,38 +225,10 @@ export function mergeStoreModules<S, R>(...modules: Module<Partial<S>, R>[]): Mo
       A.map(m => m.actions || {}),
       recordConcat,
     ),
+    modules: pipe(
+      modules,
+      A.map(m => m.modules || {}),
+      recordConcat,
+    ),
   };
 }
-
-export type StoreModuleDefinition<S, R> = Omit<Module<S & { status: AsyncStatus, error: string | null }, R>, 'state'> & { state: S | (() => S) | undefined };
-export function createStoreModule<S, R>(module: StoreModuleDefinition<S, R>): Module<S & { status: AsyncStatus, error: string | null }, R> {
-  return {
-    namespaced: true,
-    state() {
-      return { ...unwrapFunction(module.state), status: 'initial' } as S & { status: AsyncStatus, error: string | null };
-    },
-    mutations: {
-      load(s) {
-        s.status = 'loading';
-      },
-      resolve(s) {
-        s.status = 'success';
-      },
-      reject(s, payload) {
-        s.status = 'error';
-        s.error = 'message' in payload ? payload.message : `${payload}`;
-      },
-    },
-    actions: {
-      init: adaptAction(
-        module.actions?.init,
-        {
-          before: ({ commit }) => commit('load'),
-          after: ({ commit }) => commit('resolve'),
-          error: ({ commit }, { error }) => commit('reject', error),
-        },
-      ),
-    },
-  };
-}
-

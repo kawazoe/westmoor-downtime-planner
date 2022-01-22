@@ -4,14 +4,16 @@
       <router-link class="nav-brand sz-2" to="/">endeavour</router-link>
 
       <div class="nav-menu items-center">
-        <router-link class="nav-link text-2xl sz-2"
-                     v-for="campaign of campaigns"
-                     :to="`/campaigns/${makeCid(campaign)}`"
-                     :title="campaign.description"
-                     :key="campaign.id">
-          <app-icon :icon="campaign.icon" />
-        </router-link>
-        <template v-if="player">
+        <template v-if="campaigns.status === 'success'">
+          <router-link class="nav-link text-2xl sz-2"
+                       v-for="campaign of campaigns.value"
+                       :to="`/campaigns/${makeCid(campaign)}`"
+                       :title="campaign.description"
+                       :key="campaign.id">
+            <app-icon :icon="campaign.icon" />
+          </router-link>
+        </template>
+        <template v-if="player.status === 'success'">
           <router-link class="nav-link text-2xl sz-2" to="/player">
             <app-icon :icon="faUser" />
           </router-link>
@@ -28,6 +30,8 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue';
 
+import type { CampaignEntity, PlayerEntity } from '@/store/business-types';
+import type { AsyncValue } from '@/store/async-store';
 import { makeCid } from '@/store/core-types';
 import { useStore } from '@/store';
 
@@ -40,8 +44,8 @@ export default defineComponent({
   components: { AppIcon },
   setup() {
     const store = useStore();
-    const player = computed(() => store.getters['player']);
-    const campaigns = computed(() => store.getters['campaigns/all']);
+    const player = computed(() => store.getters['players/current'] as AsyncValue<PlayerEntity>);
+    const campaigns = computed(() => store.getters['campaigns/data'] as AsyncValue<CampaignEntity[]>);
 
     const expanded = ref(false);
 

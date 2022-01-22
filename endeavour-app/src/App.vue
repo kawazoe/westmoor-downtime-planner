@@ -21,10 +21,10 @@ export default defineComponent({
   components: { TheFooter, TheMainNav, TheSvgIconCache },
   setup() {
     const store = useStore();
-    const ready = computed(() => store.getters['ready']);
+    const ready = computed(() => store.getters['init']?.status === 'success');
 
     onMounted(() => {
-      store.dispatch('init');
+      store.dispatch('init_trigger');
     });
 
     return { ready };

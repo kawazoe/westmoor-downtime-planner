@@ -10,8 +10,8 @@ export class BrandingError extends CustomError {
     super(`[BrandingError] ${message}`);
   }
 
-  public static brandingFailed(id: string): BrandingError {
-    return new BrandingError(`Branding failed for brand: ${id}. Source value did not pass type-guard function.`);
+  public static brandingFailed(id: string, v: unknown): BrandingError {
+    return new BrandingError(`Branding failed for brand: ${id}. Source value '${v}' did not pass type-guard function.`);
   }
 }
 
@@ -46,7 +46,7 @@ export function brand<TSource, TBrand extends TSource>(is: (value: TSource) => v
   function cast(v: TSource): TBrand {
     return is(v)
       ? v
-      : _throw(BrandingError.brandingFailed(is.name.replace('is', '')));
+      : _throw(BrandingError.brandingFailed(is.name || 'unnamed', v));
   }
 
   return Object.freeze({ is, as, cast });
