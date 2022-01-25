@@ -194,10 +194,10 @@ const characterIronMan = mockEntity<CharacterEntity>(
     fullName: 'IronMan',
     bio: 'He\'s a multi-billionaire dude who loves to build things.',
     resources: {
-      fungibles: new Map<EntityRef<FungibleResourceId>, number>([
+      fungibles: [
         [makeRef(fungibleCurrency), 42],
         [makeRef(fungibleTime), 13],
-      ]),
+      ],
       nonFungibles: [makeRef(nonFungibleSword)],
     },
     modifierCards: [],
@@ -215,7 +215,7 @@ const characterBatMan = mockEntity<CharacterEntity>(
     fullName: 'BatMan',
     bio: 'He\'s a multi-billionaire dude who loves to wear a mask.',
     resources: {
-      fungibles: new Map<EntityRef<FungibleResourceId>, number>(),
+      fungibles: [],
       nonFungibles: [],
     },
     modifierCards: [],

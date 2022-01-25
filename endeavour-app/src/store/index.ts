@@ -71,12 +71,12 @@ export const store = createStore<RootState & Partial<RootModules>>({
         campaigns: AsyncModule.merge(
           { namespaced: true },
           AsyncModule.fromPromise('data', () => campaigns.getAll()),
-          { getters: { byCid: (state: AsyncValueState<'data', CampaignEntity[]>) => (cid: CombinedId) => (state.data_status === 'success' ? state.data_value?.find(c => c.cid === cid) : null) } },
+          AsyncModule.fromPromise('current', (_, { id }: { id: CombinedId }) => campaigns.getById(id)),
         ),
         characters: AsyncModule.merge(
           { namespaced: true },
           AsyncModule.fromPromise('data', () => characters.getAll()),
-          { getters: { byCid: (state: AsyncValueState<'data', CharacterEntity[]>) => (cid: CombinedId) => (state.data_status === 'success' ? state.data_value?.find(c => c.cid === cid) : null) } },
+          AsyncModule.fromPromise('current', (_, { id }: { id: CombinedId }) => characters.getById(id)),
         ),
       },
     },

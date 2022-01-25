@@ -56,7 +56,7 @@ export interface CharacterEntity extends EntityRef<CharacterId>, EntityMeta, Ent
   fullName: string;
   bio: string;
   resources: {
-    fungibles: Map<EntityRef<FungibleResourceId>, number>,
+    fungibles: [EntityRef<FungibleResourceId>, number][],
     nonFungibles: EntityRef<NonFungibleResourceId>[],
   };
   modifierCards: EntityRef<ModifierCardId>[];

@@ -1,40 +1,43 @@
 <template>
   <main class="container px-4">
-    <h2>
-      {{character.fullName}}
-      <span class="text-base font-light tracking-tight italic text-gray-600">by {{character.owner.description}}</span>
-    </h2>
+    <template v-if="character.status === 'success'">
+      <h2>
+        {{character.value.fullName}}
+        <span class="text-base font-light tracking-tight italic text-gray-600">by {{character.value.owner.description}}</span>
+      </h2>
 
-    <p>{{character.bio}}</p>
+      <p>{{character.value.bio}}</p>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 grid-rows-1 gap-x-8">
-      <div>
-        <h3>Resources</h3>
-        <section>
-          <app-fungible-resources :fungible-resources="fungibleResources" />
-        </section>
+      <div class="grid grid-cols-1 sm:grid-cols-2 grid-rows-1 gap-x-8">
+        <div>
+          <h3>Resources</h3>
+          <section>
+            <app-fungible-resources :fungible-resources="character.value.resources.fungibles" />
+          </section>
+        </div>
+
+        <div>
+          <h3>Items</h3>
+          <section>
+            <app-non-fungible-resources :non-fungible-resources="character.value.resources.nonFungibles" />
+          </section>
+        </div>
       </div>
 
-      <div>
-        <h3>Items</h3>
-        <section>
-          <app-non-fungible-resources :non-fungible-resources="nonFungibleResources" />
-        </section>
-      </div>
-    </div>
-
-    <h3>Cards</h3>
-    <section>
-      <app-modifier-list></app-modifier-list>
-    </section>
+      <h3>Cards</h3>
+      <section>
+        <app-modifier-list></app-modifier-list>
+      </section>
+    </template>
   </main>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, onMounted } from 'vue';
 import type { PropType } from 'vue';
 
-import { _throw } from '@/lib/_throw';
+import type { AsyncValue } from '@/store/async-store';
+import type { CharacterEntity } from '@/store/business-types';
 import type { CombinedId } from '@/store/core-types';
 import { useStore } from '@/store';
 
@@ -53,11 +56,13 @@ export default defineComponent({
   setup(props) {
     const store = useStore();
 
-    const character = computed(() => store.getters['characters/byCid'](props.characterCid) ?? _throw(new Error('Missing character.')));
-    const fungibleResources = computed(() => Array.from(character.value.resources.fungibles));
-    const nonFungibleResources = computed(() => character.value.resources.nonFungibles);
+    const character = computed(() => store.getters['characters/current'] as AsyncValue<CharacterEntity | null>);
 
-    return { character, fungibleResources, nonFungibleResources };
+    onMounted(() => {
+      store.dispatch('characters/current_trigger', { id: props.characterCid });
+    });
+
+    return { character };
   },
 });
 </script>

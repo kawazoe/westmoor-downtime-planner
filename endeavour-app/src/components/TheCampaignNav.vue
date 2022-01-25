@@ -5,25 +5,28 @@
       <app-icon v-else :icon="faBars" class="fa-w-16"></app-icon>
     </app-toggle-button>
 
-    <div class="nav-menu" :class="{ expanded }">
-      <router-link class="nav-link sz-2" :to="`${rel}/endeavours`">Endeavours</router-link>
-      <router-link class="nav-link sz-2" :to="`${rel}/activities`">Activities</router-link>
-      <router-link class="nav-link sz-2" :to="`${rel}/resources`">Resources</router-link>
-      <router-link class="nav-link sz-2" :to="`${rel}/characters`">Characters</router-link>
-      <router-link class="nav-link sz-2" :to="`${rel}/settings`">Settings</router-link>
-    </div>
+    <template v-if="campaign.status === 'success'">
+      <div class="nav-menu" :class="{ expanded }">
+        <router-link class="nav-link sz-2" :to="`${rel}/endeavours`">Endeavours</router-link>
+        <router-link class="nav-link sz-2" :to="`${rel}/activities`">Activities</router-link>
+        <router-link class="nav-link sz-2" :to="`${rel}/resources`">Resources</router-link>
+        <router-link class="nav-link sz-2" :to="`${rel}/characters`">Characters</router-link>
+        <router-link class="nav-link sz-2" :to="`${rel}/settings`">Settings</router-link>
+      </div>
 
-    <h2 class="nav-brand sz-2" :title="campaign.description">{{campaign.description}}</h2>
+      <h2 class="nav-brand sz-2" :title="campaign.value.description">{{campaign.value.description}}</h2>
+    </template>
   </nav>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, onMounted, ref } from 'vue';
 import type { PropType } from 'vue';
 
 import { faBars, faTimes } from '@fortawesome/pro-regular-svg-icons';
 
-import { _throw } from '@/lib/_throw';
+import type { AsyncValue } from '@/store/async-store';
+import type { CampaignEntity } from '@/store/business-types';
 import type { CombinedId } from '@/store/core-types';
 import { useRelativeRoute } from '@/router/routes';
 import { useStore } from '@/store';
@@ -44,9 +47,13 @@ export default defineComponent({
     const rel = useRelativeRoute();
 
     const store = useStore();
-    const campaign = computed(() => store.getters['campaigns/byCid'](props.campaignCid) ?? _throw(new Error('Invalid campaign id.')));
+    const campaign = computed(() => store.getters['campaigns/current'] as AsyncValue<CampaignEntity | null>);
 
     const expanded = ref(false);
+
+    onMounted(() => {
+      store.dispatch('campaigns/current_trigger', { id: props.campaignCid });
+    });
 
     return { faTimes, faBars, rel, campaign, expanded };
   },

@@ -6,7 +6,9 @@
 </template>
 
 <script lang="ts">
+import * as A from 'fp-ts/Array';
 import { computed, defineComponent } from 'vue';
+import { pipe } from 'fp-ts/function';
 import type { PropType } from 'vue';
 
 import type { EntityRef } from '@/store/core-types';
@@ -19,12 +21,15 @@ export default defineComponent({
   components: { AppTable },
   props: {
     fungibleResources: {
-      type: Array as PropType<[EntityRef<FungibleResourceId>, number][]>,
+      type: Object as PropType<[EntityRef<FungibleResourceId>, number][]>,
       required: true,
     },
   },
   setup(props) {
-    const content = computed(() => props.fungibleResources.map(([resource, amount]) => [resource.description, `${amount}`]));
+    const content = computed(() => pipe(
+      props.fungibleResources,
+      A.map(([resource, amount]) => [resource.description, `${amount}`]),
+    ));
 
     return { content };
   },
