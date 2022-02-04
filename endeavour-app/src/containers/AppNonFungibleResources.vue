@@ -3,8 +3,8 @@
              :content="content" />
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed, defineProps } from 'vue';
 import type { PropType } from 'vue';
 
 import type { EntityRef } from '@/store/core-types';
@@ -12,21 +12,14 @@ import type { NonFungibleResourceId } from '@/store/business-types';
 
 import AppTable from '@/components/AppTable.vue';
 
-export default defineComponent({
-  name: 'app-non-fungible-resources',
-  components: { AppTable },
-  props: {
-    nonFungibleResources: {
-      type: Array as PropType<EntityRef<NonFungibleResourceId>[]>,
-      required: true,
-    },
-  },
-  setup(props) {
-    const content = computed(() => props.nonFungibleResources.map(r => [r.description]));
-
-    return { content };
+const props = defineProps({
+  nonFungibleResources: {
+    type: Array as PropType<EntityRef<NonFungibleResourceId>[]>,
+    required: true,
   },
 });
+
+const content = computed(() => props.nonFungibleResources.map(r => [r.description]));
 </script>
 
 <style scoped></style>

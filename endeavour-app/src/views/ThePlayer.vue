@@ -19,8 +19,8 @@
   </main>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 
 import { faAtlas, faMoneyBill, faPortrait } from '@fortawesome/pro-regular-svg-icons';
 
@@ -33,17 +33,9 @@ import AppCharacterCard from '@/containers/AppCharacterCard.vue';
 import AppIcon from '@/components/AppIcon';
 import AppSubscriptionPresenter from '@/components/AppSubscriptionPresenter.vue';
 
-export default defineComponent({
-  name: 'ThePlayer',
-  components: { AppSubscriptionPresenter, AppCampaignCard, AppCharacterCard, AppIcon },
-  setup() {
-    const store = useStore();
-    const player = computed(() => store.getters['players/current'] as AsyncValue<PlayerEntity>);
-    store.dispatch('players/current_init');
-
-    return { faPortrait, faAtlas, faMoneyBill, player };
-  },
-});
+const store = useStore();
+const player = computed(() => store.getters['players/current'] as AsyncValue<PlayerEntity>);
+store.dispatch('players/current_init');
 </script>
 
 <style scoped>

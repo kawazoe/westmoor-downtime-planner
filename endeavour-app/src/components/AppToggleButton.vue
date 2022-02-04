@@ -4,22 +4,16 @@
   </button>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { defineEmits, defineProps } from 'vue';
 import type { PropType } from 'vue';
 
-export default defineComponent({
-  name: 'AppToggleButton',
-  props: { active: { type: Boolean as PropType<boolean> } },
-  emits: ['toggle'],
-  setup(props, { emit }) {
-    return {
-      toggle(value: boolean) {
-        emit('toggle', value);
-      },
-    };
-  },
-});
+defineProps({ active: { type: Boolean as PropType<boolean> } });
+const emit = defineEmits(['toggle']);
+
+function toggle(value: boolean): void {
+  emit('toggle', value);
+}
 </script>
 
 <style scoped>

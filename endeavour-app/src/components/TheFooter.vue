@@ -38,21 +38,11 @@
   </footer>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
+<script lang="ts" setup>
 import AppIcon from '@/components/AppIcon';
 
 import { faFacebookSquare, faGithubSquare } from '@fortawesome/free-brands-svg-icons';
 import { faUser, faUsers } from '@fortawesome/pro-solid-svg-icons';
-
-export default defineComponent({
-  name: 'TheFooter',
-  components: { AppIcon },
-  setup() {
-    return { faFacebookSquare, faGithubSquare, faUser, faUsers };
-  },
-});
 </script>
 
 <style scoped>

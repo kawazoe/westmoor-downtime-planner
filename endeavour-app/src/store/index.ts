@@ -17,7 +17,7 @@ import { CombinedId, Uri } from '@/store/core-types';
 import type { AsyncValueState } from '@/store/async-store';
 import { RestRepository } from '@/store/rest-repository';
 
-export type RootState = AsyncValueState<'init', boolean>;
+export type RootState = AsyncValueState<'ready', boolean>;
 export type RootModules = {
   players: AsyncValueState<'data', PlayerEntity[]> & AsyncValueState<'current', PlayerEntity | null>,
 };
@@ -37,7 +37,7 @@ export const store = createStore<RootState & Partial<RootModules>>({
     ? [createLogger()]
     : [],
   ...AsyncModule.merge(
-    AsyncModule.fromPromise('init', async ({ dispatch }) => {
+    AsyncModule.fromPromise('ready', async ({ dispatch }) => {
       await dispatch('gameSystems/data_trigger');
       return true;
     }),

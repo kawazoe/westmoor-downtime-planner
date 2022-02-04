@@ -4,19 +4,16 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { defineProps } from 'vue';
 import type { PropType } from 'vue';
 
 import type { SubscriptionEntity } from '@/store/business-types';
 
-export default defineComponent({
-  name: 'AppSubscriptionPresenter',
-  props: {
-    subscription: {
-      type: Object as PropType<SubscriptionEntity>,
-      required: true,
-    },
+defineProps({
+  subscription: {
+    type: Object as PropType<SubscriptionEntity>,
+    required: true,
   },
 });
 </script>

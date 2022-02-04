@@ -8,28 +8,17 @@
   </template>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, onMounted } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 
 import TheFooter from '@/components/TheFooter.vue';
 import TheMainNav from '@/components/TheMainNav.vue';
 import TheSvgIconCache from '@/components/TheSvgIconCache';
 import { useStore } from '@/store';
 
-export default defineComponent({
-  name: 'App',
-  components: { TheFooter, TheMainNav, TheSvgIconCache },
-  setup() {
-    const store = useStore();
-    const ready = computed(() => store.getters['init']?.status === 'success');
-
-    onMounted(() => {
-      store.dispatch('init_trigger');
-    });
-
-    return { ready };
-  },
-});
+const store = useStore();
+const ready = computed(() => store.getters['ready']?.status === 'success');
+store.dispatch('ready_init');
 </script>
 
 <style>

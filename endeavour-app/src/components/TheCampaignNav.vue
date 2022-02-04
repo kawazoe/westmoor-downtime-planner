@@ -19,8 +19,8 @@
   </nav>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, ref, watch } from 'vue';
+<script lang="ts" setup>
+import { computed, defineProps, ref, watch } from 'vue';
 import type { PropType } from 'vue';
 
 import { faBars, faTimes } from '@fortawesome/pro-regular-svg-icons';
@@ -34,31 +34,24 @@ import { useStore } from '@/store';
 import AppIcon from '@/components/AppIcon';
 import AppToggleButton from '@/components/AppToggleButton.vue';
 
-export default defineComponent({
-  name: 'TheCampaignNav',
-  components: { AppIcon, AppToggleButton },
-  props: {
-    campaignCid: {
-      type: String as unknown as PropType<CombinedId>,
-      required: true,
-    },
-  },
-  setup(props) {
-    const rel = useRelativeRoute();
-
-    const store = useStore();
-    const campaign = computed(() => store.getters['campaigns/current'] as AsyncValue<CampaignEntity | null>);
-    watch(
-      () => props.campaignCid,
-      () => store.dispatch('campaigns/current_trigger', { id: props.campaignCid }),
-      { immediate: true },
-    );
-
-    const expanded = ref(false);
-
-    return { faTimes, faBars, rel, campaign, expanded };
+const props = defineProps({
+  campaignCid: {
+    type: String as unknown as PropType<CombinedId>,
+    required: true,
   },
 });
+
+const rel = useRelativeRoute();
+
+const store = useStore();
+const campaign = computed(() => store.getters['campaigns/current'] as AsyncValue<CampaignEntity | null>);
+watch(
+  () => props.campaignCid,
+  () => store.dispatch('campaigns/current_trigger', { id: props.campaignCid }),
+  { immediate: true },
+);
+
+const expanded = ref(false);
 </script>
 
 <style scoped>

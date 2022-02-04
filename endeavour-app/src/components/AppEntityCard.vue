@@ -9,27 +9,21 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { defineProps } from 'vue';
 
-import { faEdit, faTrash } from '@fortawesome/pro-regular-svg-icons';
+import { faTrash } from '@fortawesome/pro-regular-svg-icons';
 
 import AppButton from '@/components/AppButton.vue';
 import AppIcon from '@/components/AppIcon';
 
-export default defineComponent({
-  name: 'AppEntityCard',
-  components: { AppButton, AppIcon },
-  props: {
-    description: {
-      type: String,
-      required: true,
-    },
-  },
-  setup() {
-    return { faEdit, faTrash };
+defineProps({
+  description: {
+    type: String,
+    required: true,
   },
 });
+
 </script>
 
 <style scoped>

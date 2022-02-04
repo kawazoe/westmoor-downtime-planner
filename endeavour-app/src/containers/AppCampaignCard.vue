@@ -4,8 +4,8 @@
   </router-link>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { defineProps } from 'vue';
 import type { PropType } from 'vue';
 
 import type { CampaignEntity } from '@/store/business-types';
@@ -13,17 +13,10 @@ import { makeCid } from '@/store/core-types';
 
 import AppEntityCard from '@/components/AppEntityCard.vue';
 
-export default defineComponent({
-  name: 'AppCampaignCard',
-  components: { AppEntityCard },
-  props: {
-    campaign: {
-      type: Object as PropType<CampaignEntity>,
-      required: true,
-    },
-  },
-  setup() {
-    return { makeCid };
+defineProps({
+  campaign: {
+    type: Object as PropType<CampaignEntity>,
+    required: true,
   },
 });
 </script>

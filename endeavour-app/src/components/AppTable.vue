@@ -45,29 +45,26 @@
   </table>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { defineProps } from 'vue';
 import type { PropType } from 'vue';
 
-export default defineComponent({
-  name: 'AppTable',
-  props: {
-    header: {
-      type: Array as PropType<string[][]>,
-      default: () => [],
-    },
-    headerClass: {
-      type: Function as PropType<(row: string[], index: number) => Record<string, unknown>>,
-      default: () => ({}),
-    },
-    content: {
-      type: Array as PropType<string[][]>,
-      default: () => [],
-    },
-    contentClass: {
-      type: Function as PropType<(row: string[], index: number) => Record<string, unknown>>,
-      default: () => ({}),
-    },
+defineProps({
+  header: {
+    type: Array as PropType<string[][]>,
+    default: () => [],
+  },
+  headerClass: {
+    type: Function as PropType<(row: string[], index: number) => Record<string, unknown>>,
+    default: () => ({}),
+  },
+  content: {
+    type: Array as PropType<string[][]>,
+    default: () => [],
+  },
+  contentClass: {
+    type: Function as PropType<(row: string[], index: number) => Record<string, unknown>>,
+    default: () => ({}),
   },
 });
 </script>

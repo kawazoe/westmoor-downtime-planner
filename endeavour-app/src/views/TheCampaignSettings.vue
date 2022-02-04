@@ -4,8 +4,7 @@
   </article>
 </template>
 
-<script>
-export default { name: 'TheCampaignSettings' };
+<script lang="ts" setup>
 </script>
 
 <style scoped>

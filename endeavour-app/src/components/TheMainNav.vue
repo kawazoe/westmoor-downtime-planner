@@ -27,8 +27,8 @@
   </header>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
 
 import type { CampaignEntity, PlayerEntity } from '@/store/business-types';
 import type { AsyncValue } from '@/store/async-store';
@@ -36,25 +36,15 @@ import { makeCid } from '@/store/core-types';
 import type { RestData } from '@/store/core-types';
 import { useStore } from '@/store';
 
-import { faBars, faTimes, faUser } from '@fortawesome/pro-solid-svg-icons';
+import { faUser } from '@fortawesome/pro-solid-svg-icons';
 
 import AppIcon from '@/components/AppIcon';
 
-export default defineComponent({
-  name: 'TheMainNav',
-  components: { AppIcon },
-  setup() {
-    const store = useStore();
-    const player = computed(() => store.getters['players/current'] as AsyncValue<PlayerEntity>);
-    const campaigns = computed(() => store.getters['campaigns/data'] as AsyncValue<RestData<CampaignEntity>>);
-    store.dispatch('players/current_init');
-    store.dispatch('campaigns/data_init');
-
-    const expanded = ref(false);
-
-    return { makeCid, faBars, faTimes, faUser, player, campaigns, expanded };
-  },
-});
+const store = useStore();
+const player = computed(() => store.getters['players/current'] as AsyncValue<PlayerEntity>);
+const campaigns = computed(() => store.getters['campaigns/data'] as AsyncValue<RestData<CampaignEntity>>);
+store.dispatch('players/current_init');
+store.dispatch('campaigns/data_init');
 </script>
 
 <style scoped>

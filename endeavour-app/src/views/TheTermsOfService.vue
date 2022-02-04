@@ -59,8 +59,7 @@
   </main>
 </template>
 
-<script>
-export default { name: 'TheTermsOfService' };
+<script lang="ts" setup>
 </script>
 
 <style scoped>

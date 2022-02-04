@@ -80,8 +80,7 @@
   </main>
 </template>
 
-<script>
-export default { name: 'TheLanding' };
+<script lang="ts" setup>
 </script>
 
 <style scoped>

@@ -4,8 +4,8 @@
   </router-link>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { defineProps } from 'vue';
 import type { PropType } from 'vue';
 
 import type { CharacterEntity } from '@/store/business-types';
@@ -14,21 +14,14 @@ import { useRelativeRoute } from '@/router/routes';
 
 import AppEntityCard from '@/components/AppEntityCard.vue';
 
-export default defineComponent({
-  name: 'AppCharacterCard',
-  components: { AppEntityCard },
-  props: {
-    character: {
-      type: Object as PropType<CharacterEntity>,
-      required: true,
-    },
-  },
-  setup() {
-    const rel = useRelativeRoute();
-
-    return { makeCid, rel };
+defineProps({
+  character: {
+    type: Object as PropType<CharacterEntity>,
+    required: true,
   },
 });
+
+const rel = useRelativeRoute();
 </script>
 
 <style scoped>

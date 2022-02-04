@@ -32,8 +32,8 @@
   </main>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, onMounted } from 'vue';
+<script lang="ts" setup>
+import { computed, defineProps } from 'vue';
 import type { PropType } from 'vue';
 
 import type { AsyncValue } from '@/store/async-store';
@@ -44,27 +44,17 @@ import { useStore } from '@/store';
 import AppFungibleResources from '@/containers/AppFungibleResources.vue';
 import AppNonFungibleResources from '@/containers/AppNonFungibleResources.vue';
 
-export default defineComponent({
-  name: 'ThePlayerCharacter',
-  components: { AppNonFungibleResources, AppFungibleResources },
-  props: {
-    characterCid: {
-      type: String as unknown as PropType<CombinedId>,
-      required: true,
-    },
-  },
-  setup(props) {
-    const store = useStore();
-
-    const character = computed(() => store.getters['characters/current'] as AsyncValue<CharacterEntity | null>);
-
-    onMounted(() => {
-      store.dispatch('characters/current_trigger', { id: props.characterCid });
-    });
-
-    return { character };
+const props = defineProps({
+  characterCid: {
+    type: String as unknown as PropType<CombinedId>,
+    required: true,
   },
 });
+
+const store = useStore();
+
+const character = computed(() => store.getters['characters/current'] as AsyncValue<CharacterEntity | null>);
+store.dispatch('characters/current_trigger', { id: props.characterCid });
 </script>
 
 <style scoped>
