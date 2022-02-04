@@ -5,7 +5,7 @@
       <app-icon v-else :icon="faBars" class="fa-w-16"></app-icon>
     </app-toggle-button>
 
-    <template v-if="campaign.status === 'success'">
+    <template v-if="campaign.status === 'success' || campaign.status === 'refreshing'">
       <div class="nav-menu" :class="{ expanded }">
         <router-link class="nav-link sz-2" :to="`${rel}/endeavours`">Endeavours</router-link>
         <router-link class="nav-link sz-2" :to="`${rel}/activities`">Activities</router-link>
@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 import type { PropType } from 'vue';
 
 import { faBars, faTimes } from '@fortawesome/pro-regular-svg-icons';
@@ -48,12 +48,13 @@ export default defineComponent({
 
     const store = useStore();
     const campaign = computed(() => store.getters['campaigns/current'] as AsyncValue<CampaignEntity | null>);
+    watch(
+      () => props.campaignCid,
+      () => store.dispatch('campaigns/current_trigger', { id: props.campaignCid }),
+      { immediate: true },
+    );
 
     const expanded = ref(false);
-
-    onMounted(() => {
-      store.dispatch('campaigns/current_trigger', { id: props.campaignCid });
-    });
 
     return { faTimes, faBars, rel, campaign, expanded };
   },

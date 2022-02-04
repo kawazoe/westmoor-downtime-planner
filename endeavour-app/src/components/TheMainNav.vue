@@ -6,7 +6,7 @@
       <div class="nav-menu items-center">
         <template v-if="campaigns.status === 'success'">
           <router-link class="nav-link text-2xl sz-2"
-                       v-for="campaign of campaigns.value"
+                       v-for="campaign of campaigns.value.data"
                        :to="`/campaigns/${makeCid(campaign)}`"
                        :title="campaign.description"
                        :key="campaign.id">
@@ -33,6 +33,7 @@ import { computed, defineComponent, ref } from 'vue';
 import type { CampaignEntity, PlayerEntity } from '@/store/business-types';
 import type { AsyncValue } from '@/store/async-store';
 import { makeCid } from '@/store/core-types';
+import type { RestData } from '@/store/core-types';
 import { useStore } from '@/store';
 
 import { faBars, faTimes, faUser } from '@fortawesome/pro-solid-svg-icons';
@@ -45,7 +46,9 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const player = computed(() => store.getters['players/current'] as AsyncValue<PlayerEntity>);
-    const campaigns = computed(() => store.getters['campaigns/data'] as AsyncValue<CampaignEntity[]>);
+    const campaigns = computed(() => store.getters['campaigns/data'] as AsyncValue<RestData<CampaignEntity>>);
+    store.dispatch('players/current_init');
+    store.dispatch('campaigns/data_init');
 
     const expanded = ref(false);
 

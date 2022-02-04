@@ -38,15 +38,7 @@ export const store = createStore<RootState & Partial<RootModules>>({
     : [],
   ...AsyncModule.merge(
     AsyncModule.fromPromise('init', async ({ dispatch }) => {
-      await Promise.all([
-        dispatch('gameSystems/data_trigger'),
-        dispatch('fungibleResources/data_trigger'),
-        dispatch('nonFungibleResources/data_trigger'),
-        dispatch('players/data_trigger'),
-        dispatch('campaigns/data_trigger'),
-        dispatch('characters/data_trigger'),
-        dispatch('players/current_trigger', { id: CombinedId.cast('fu1fu1') }),
-      ]);
+      await dispatch('gameSystems/data_trigger');
       return true;
     }),
     {
@@ -66,7 +58,7 @@ export const store = createStore<RootState & Partial<RootModules>>({
         players: AsyncModule.merge(
           { namespaced: true },
           AsyncModule.fromPromise('data', () => players.getAll()),
-          AsyncModule.fromPromise('current', (_, { id }: { id: CombinedId }) => players.getById(id)),
+          AsyncModule.fromPromise('current', () => players.getById(CombinedId.cast('fu1fu1'))),
         ),
         campaigns: AsyncModule.merge(
           { namespaced: true },

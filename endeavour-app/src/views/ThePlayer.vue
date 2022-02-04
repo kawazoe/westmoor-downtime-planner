@@ -39,6 +39,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const player = computed(() => store.getters['players/current'] as AsyncValue<PlayerEntity>);
+    store.dispatch('players/current_init');
 
     return { faPortrait, faAtlas, faMoneyBill, player };
   },

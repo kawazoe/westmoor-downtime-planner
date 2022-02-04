@@ -127,3 +127,18 @@ export interface EntityMeta {
 
   metas: Record<string, unknown>;
 }
+
+export interface RestData<T> {
+  data: T[];
+}
+export interface OffsetedRestData<T> extends RestData<T> {
+  offset: number;
+  limit: number;
+}
+export interface PagedRestData<T> extends RestData<T>  {
+  page: number;
+  pageSize: number;
+}
+export interface TokenedRestData<T> extends RestData<T>  {
+  token: Uuid;
+}

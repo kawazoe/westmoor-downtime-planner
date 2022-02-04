@@ -22,7 +22,7 @@ const recordConcat = flow(
   Object.fromEntries,
 );
 
-export type AsyncStatus = 'initial' | 'loading' | 'success' | 'error';
+export type AsyncStatus = 'initial' | 'loading' | 'success' | 'error' | 'refreshing' | 'retrying';
 
 // State
 ///////////////////////////////////////////////////////////////////////////////
@@ -93,8 +93,16 @@ export interface AsyncValueError {
   status: 'error';
   error: string;
 }
+export interface AsyncValueRefreshing<V> {
+  status: 'refreshing';
+  value: V;
+}
+export interface AsyncValueRetrying {
+  status: 'retrying';
+  error: string;
+}
 
-export type AsyncValue<V> = AsyncValueInitial | AsyncValueLoading | AsyncValueSuccess<V> | AsyncValueError;
+export type AsyncValue<V> = AsyncValueInitial | AsyncValueLoading | AsyncValueSuccess<V> | AsyncValueError | AsyncValueRefreshing<V> | AsyncValueRetrying;
 
 function createAsyncValue<K extends string, V, S extends AsyncValueState<K, V>>(
   propName: K,
@@ -102,15 +110,18 @@ function createAsyncValue<K extends string, V, S extends AsyncValueState<K, V>>(
 ): AsyncValue<V> {
   const lens = createAsyncValueStateLens<K, V>(propName)(state);
 
-  switch (lens.status.get()) {
+  const status = lens.status.get();
+
+  switch (status) {
     case 'initial':
-      return { status: 'initial' };
     case 'loading':
-      return { status: 'loading' };
+      return { status };
     case 'success':
-      return { status: 'success', value: assertUndefined(lens.value.get()) };
+    case 'refreshing':
+      return { status, value: assertUndefined(lens.value.get()) };
     case 'error':
-      return { status: 'error', error: assertUndefined(lens.error.get()) };
+    case 'retrying':
+      return { status, error: assertUndefined(lens.error.get()) };
   }
 
   throw new Error(`Unsupported AsyncStatus: ${lens.status.get()}`);
@@ -152,6 +163,14 @@ function createAsyncValueMutations<K extends string, V, S extends AsyncValueStat
       l.value.set(undefined);
       l.error.set(e);
     },
+    [`${propName}_refresh`]: (s: AsyncValueState<K, V>) => {
+      const l = propLens(s);
+      l.status.set('refreshing');
+    },
+    [`${propName}_retry`]: (s: AsyncValueState<K, V>) => {
+      const l = propLens(s);
+      l.status.set('retrying');
+    },
   } as AsyncValueMutations<K, V, S>;
 }
 
@@ -160,12 +179,49 @@ function createAsyncValueMutations<K extends string, V, S extends AsyncValueStat
 type AsyncValueActions<K extends string, V, S extends AsyncValueState<K, V>, R> =
   & { [P in `${K}_trigger`]: ActionHandler<S, R>; };
 
+function triggerStrategy(status: AsyncStatus, force?: true): 'load' | 'refresh' | 'retry' | null {
+  switch (true) {
+    case status === 'initial':
+    case status === 'loading' && force:
+      return 'load';
+    case status === 'success':
+    case status === 'refreshing' && force:
+      return 'refresh';
+    case status === 'error':
+    case status === 'retrying' && force:
+      return 'retry';
+    default:
+      return null;
+  }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function createAsyncValueActions<K extends string, V, S extends AsyncValueState<K, V>, R>(propName: K, trigger: (injectee: ActionContext<S, unknown>, payload?: any) => Promise<V>): AsyncValueActions<K, V, S, R> {
+  const propLens = createAsyncValueStateLens(propName);
+
   return {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [`${propName}_init`](ctx: ActionContext<S, R>, payload?: any) {
+      const l = propLens(ctx.state);
+
+      if (l.status.get() !== 'initial') {
+        console.info(`[AsyncValueAction] [init] Trying to init ${propName} more than once.`);
+        return Promise.resolve();
+      }
+
+      return ctx.dispatch(`${propName}_trigger`, payload);
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [`${propName}_trigger`](ctx: ActionContext<S, R>, payload?: any) {
-      ctx.commit(`${propName}_load`);
+      const l = propLens(ctx.state);
+
+      const mutation = triggerStrategy(l.status.get(), payload?.force);
+      if (!mutation) {
+        console.info(`[AsyncValueAction] [trigger] Trying to trigger ${propName} concurrently.`);
+        return Promise.resolve();
+      }
+
+      ctx.commit(`${propName}_${mutation}`);
 
       return trigger(ctx, payload).then(
         v => ctx.commit(`${propName}_resolve`, v),
