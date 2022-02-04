@@ -127,11 +127,13 @@ function createAsyncValue<K extends string, V, S extends AsyncValueState<K, V>>(
   throw new Error(`Unsupported AsyncStatus: ${lens.status.get()}`);
 }
 
-type AsyncValueGetters<K extends string, V, R> =
-  & { [P in K]: Getter<AsyncValueState<K, V>, R>; };
+type AsyncValueGetter<K extends string, V, R> = (...args: Parameters<Getter<AsyncValueState<K, V>, R>>) => AsyncValue<V>;
+
+export type AsyncValueGetters<K extends string, V, R> =
+  & { [P in K]: AsyncValueGetter<K, V, R>; };
 
 function createAsyncValueGetters<K extends string, V, R>(propName: K): AsyncValueGetters<K, V, R> {
-  return { [propName]: ((state: AsyncValueState<K, V>) => createAsyncValue(propName, state)) as Getter<AsyncValueState<K, V>, R> } as AsyncValueGetters<K, V, R>;
+  return { [propName]: ((state: AsyncValueState<K, V>) => createAsyncValue(propName, state)) as AsyncValueGetter<K, V, R> } as AsyncValueGetters<K, V, R>;
 }
 
 // Mutations

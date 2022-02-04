@@ -15,14 +15,8 @@ import type {
 } from '@/store/business-types';
 import { CombinedId, Uri } from '@/store/core-types';
 import type { AsyncValueState } from '@/store/async-store';
+import type { RestData } from '@/store/core-types';
 import { RestRepository } from '@/store/rest-repository';
-
-export type RootState = AsyncValueState<'ready', boolean>;
-export type RootModules = {
-  players: AsyncValueState<'data', PlayerEntity[]> & AsyncValueState<'current', PlayerEntity | null>,
-};
-
-export const key: InjectionKey<Store<RootState>> = Symbol('vuex.RootState');
 
 const gameSystems = new RestRepository<GameSystemEntity>(Uri.cast('/api/v1/game-systems'));
 const fungibleResources = new RestRepository<FungibleResourceEntity>(Uri.cast('/api/v1/fungible-resources'));
@@ -30,6 +24,16 @@ const nonFungibleResources = new RestRepository<NonFungibleResourceEntity>(Uri.c
 const players = new RestRepository<PlayerEntity>(Uri.cast('/api/v1/players'));
 const campaigns = new RestRepository<CampaignEntity>(Uri.cast('/api/v1/campaigns'));
 const characters = new RestRepository<CharacterEntity>(Uri.cast('/api/v1/characters'));
+
+export type RootState = AsyncValueState<'ready', boolean>;
+export type RootModules = {
+  gameSystems: AsyncValueState<'data', RestData<GameSystemEntity[]>>,
+  fungibleResources: AsyncValueState<'data', RestData<FungibleResourceEntity[]>>,
+  nonFungibleResources: AsyncValueState<'data', RestData<NonFungibleResourceEntity[]>>,
+  players: AsyncValueState<'data', RestData<PlayerEntity[]>> & AsyncValueState<'current', PlayerEntity | null>,
+  campaigns: AsyncValueState<'data', RestData<CampaignEntity[]>> & AsyncValueState<'current', CampaignEntity | null>,
+  characters: AsyncValueState<'data', RestData<CharacterEntity[]>> & AsyncValueState<'current', CharacterEntity | null>,
+};
 
 export const store = createStore<RootState & Partial<RootModules>>({
   strict: process.env.NODE_ENV !== 'production',
@@ -75,6 +79,7 @@ export const store = createStore<RootState & Partial<RootModules>>({
   ),
 } as StoreOptions<RootState>);
 
+export const key: InjectionKey<Store<RootState>> = Symbol('vuex.RootState');
 export function useStore(): Store<RootState & RootModules> {
   return baseUseStore(key) as Store<RootState & RootModules>;
 }
