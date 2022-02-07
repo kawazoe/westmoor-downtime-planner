@@ -5,17 +5,19 @@
       <app-icon v-else :icon="faBars" class="fa-w-16"></app-icon>
     </app-toggle-button>
 
-    <template v-if="campaign.status === 'success' || campaign.status === 'refreshing'">
-      <div class="nav-menu" :class="{ expanded }">
-        <router-link class="nav-link sz-2" :to="`${rel}/endeavours`">Endeavours</router-link>
-        <router-link class="nav-link sz-2" :to="`${rel}/activities`">Activities</router-link>
-        <router-link class="nav-link sz-2" :to="`${rel}/resources`">Resources</router-link>
-        <router-link class="nav-link sz-2" :to="`${rel}/characters`">Characters</router-link>
-        <router-link class="nav-link sz-2" :to="`${rel}/settings`">Settings</router-link>
-      </div>
+    <app-async-value :value="campaign">
+      <template v-slot:content="{ value }">
+        <div class="nav-menu" :class="{ expanded }">
+          <router-link class="nav-link sz-2" :to="`${rel}/endeavours`">Endeavours</router-link>
+          <router-link class="nav-link sz-2" :to="`${rel}/activities`">Activities</router-link>
+          <router-link class="nav-link sz-2" :to="`${rel}/resources`">Resources</router-link>
+          <router-link class="nav-link sz-2" :to="`${rel}/characters`">Characters</router-link>
+          <router-link class="nav-link sz-2" :to="`${rel}/settings`">Settings</router-link>
+        </div>
 
-      <h2 class="nav-brand sz-2" :title="campaign.value.description">{{campaign.value.description}}</h2>
-    </template>
+        <h2 class="nav-brand sz-2" :title="value.description">{{value.description}}</h2>
+      </template>
+    </app-async-value>
   </nav>
 </template>
 
@@ -31,6 +33,7 @@ import type { CombinedId } from '@/store/core-types';
 import { useRelativeRoute } from '@/router/routes';
 import { useStore } from '@/store';
 
+import AppAsyncValue from '@/components/AppAsyncValue';
 import AppIcon from '@/components/AppIcon';
 import AppToggleButton from '@/components/AppToggleButton.vue';
 
@@ -47,7 +50,7 @@ const store = useStore();
 const campaign = computed(() => store.getters['campaigns/current'] as AsyncValue<CampaignEntity | null>);
 watch(
   () => props.campaignCid,
-  () => store.dispatch('campaigns/current_trigger', { id: props.campaignCid }),
+  () => store.dispatch('campaigns/current_trigger', { cid: props.campaignCid }),
   { immediate: true },
 );
 

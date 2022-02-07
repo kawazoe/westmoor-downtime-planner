@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json.schemastore.org/web-types.json",
+  "name": "endeavour-app",
+  "version": "0.1.0",
+  "framework": "vue",
+  "js-types-syntax": "typescript",
+  "description-markup": "markdown",
+  "contributions": {
+    "html": {
+      "elements": [
+        {
+          "name": "app-async-value",
+          "priority": "highest",
+          "source": {
+            "module": "./src/components/AppAsyncValue.ts",
+            "symbol": "default"
+          },
+          "description": "Selects the right template to render an `AsyncValue` based on its status.",
+          "props": [
+            {
+              "name": "value",
+              "description": "An `AsyncValue` ref",
+              "type": ["AsyncValue<unknown>"]
+            },
+            {
+              "name": "empty-predicate",
+              "description": "A predicate that defines if a successful value has content, or is empty.",
+              "type": ["(value: AsyncValue<unknown>) => boolean"]
+            }
+          ],
+          "slots": [
+            {
+              "name": "initial",
+              "description": "Content to render while in the `initial` state. If left unspecified, fallbacks to the `loading` slot."
+            },
+            {
+              "name": "loading",
+              "description": "Content to render while in the `loading` state."
+            },
+            {
+              "name": "empty",
+              "description": "Content to render while in the `success` state and the `emptyPredicate` is matched. If left unspecified, fallbacks to the `content` or `default` slot."
+            },
+            {
+              "name": "content",
+              "description": "Content to render while in the `success` state and the `emptyPredicate` is not matched. If left unspecified, fallbacks to the `default` slot."
+            },
+            {
+              "name": "error",
+              "description": "Content to render while in the `error` state."
+            },
+            {
+              "name": "refreshing",
+              "description": "Content to render while in the `refreshing` state. If left unspecified, fallbacks to the `empty` slot if the `emptyPredicate` is matched, then fallbacks to the `content` or `default` slot."
+            },
+            {
+              "name": "retrying",
+              "description": "Content to render while in the `retrying` state. If left unspecified, fallbacks to the `error` slot."
+            },
+            {
+              "name": "default",
+              "description": "Alias for the `content` slot."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

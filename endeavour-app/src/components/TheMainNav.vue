@@ -4,24 +4,29 @@
       <router-link class="nav-brand sz-2" to="/">endeavour</router-link>
 
       <div class="nav-menu items-center">
-        <template v-if="campaigns.status === 'success'">
-          <router-link class="nav-link text-2xl sz-2"
-                       v-for="campaign of campaigns.value.data"
-                       :to="`/campaigns/${makeCid(campaign)}`"
-                       :title="campaign.description"
-                       :key="campaign.id">
-            <app-icon :icon="campaign.icon" />
-          </router-link>
-        </template>
-        <template v-if="player.status === 'success'">
-          <router-link class="nav-link text-2xl sz-2" to="/player">
-            <app-icon :icon="faUser" />
-          </router-link>
-        </template>
-        <template v-else>
-          <router-link class="nav-link sz-2" to="/pricing">Pricing</router-link>
-          <router-link class="nav-link sz-2" to="/sign-in">Sign In</router-link>
-        </template>
+        <app-async-value :value="campaigns">
+          <template v-slot:content="{ value }">
+            <router-link class="nav-link text-2xl sz-2"
+                         v-for="campaign of value.data"
+                         :to="`/campaigns/${makeCid(campaign)}`"
+                         :title="campaign.description"
+                         :key="campaign.id">
+              <app-icon :icon="campaign.icon" />
+            </router-link>
+          </template>
+        </app-async-value>
+
+        <app-async-value :value="player">
+          <template v-slot:content>
+            <router-link class="nav-link text-2xl sz-2" to="/player">
+              <app-icon :icon="faUser" />
+            </router-link>
+          </template>
+          <template v-slot:empty>
+            <router-link class="nav-link sz-2" to="/pricing">Pricing</router-link>
+            <router-link class="nav-link sz-2" to="/sign-in">Sign In</router-link>
+          </template>
+        </app-async-value>
       </div>
     </nav>
   </header>
@@ -38,13 +43,14 @@ import { useStore } from '@/store';
 
 import { faUser } from '@fortawesome/pro-solid-svg-icons';
 
+import AppAsyncValue from '@/components/AppAsyncValue';
 import AppIcon from '@/components/AppIcon';
 
 const store = useStore();
-const player = computed(() => store.getters['players/current'] as AsyncValue<PlayerEntity>);
 const campaigns = computed(() => store.getters['campaigns/data'] as AsyncValue<RestData<CampaignEntity>>);
-store.dispatch('players/current_init');
-store.dispatch('campaigns/data_init');
+const player = computed(() => store.getters['players/current'] as AsyncValue<PlayerEntity>);
+store.dispatch('campaigns/data_trigger');
+store.dispatch('players/current_trigger');
 </script>
 
 <style scoped>

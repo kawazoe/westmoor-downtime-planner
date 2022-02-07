@@ -1,34 +1,36 @@
 <template>
   <main class="container px-4">
-    <template v-if="character.status === 'success'">
-      <h2>
-        {{character.value.fullName}}
-        <span class="text-base font-light tracking-tight italic text-gray-600">by {{character.value.owner.description}}</span>
-      </h2>
+    <app-async-value :value="character">
+      <template v-slot:content="{ value }">
+        <h2>
+          {{value.fullName}}
+          <span class="text-base font-light tracking-tight italic text-gray-600">by {{value.owner.description}}</span>
+        </h2>
 
-      <p>{{character.value.bio}}</p>
+        <p>{{value.bio}}</p>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 grid-rows-1 gap-x-8">
-        <div>
-          <h3>Resources</h3>
-          <section>
-            <app-fungible-resources :fungible-resources="character.value.resources.fungibles" />
-          </section>
+        <div class="grid grid-cols-1 sm:grid-cols-2 grid-rows-1 gap-x-8">
+          <div>
+            <h3>Resources</h3>
+            <section>
+              <app-fungible-resources :fungible-resources="value.resources.fungibles" />
+            </section>
+          </div>
+
+          <div>
+            <h3>Items</h3>
+            <section>
+              <app-non-fungible-resources :non-fungible-resources="value.resources.nonFungibles" />
+            </section>
+          </div>
         </div>
 
-        <div>
-          <h3>Items</h3>
-          <section>
-            <app-non-fungible-resources :non-fungible-resources="character.value.resources.nonFungibles" />
-          </section>
-        </div>
-      </div>
-
-      <h3>Cards</h3>
-      <section>
-        <app-modifier-list></app-modifier-list>
-      </section>
-    </template>
+        <h3>Cards</h3>
+        <section>
+          <app-modifier-list></app-modifier-list>
+        </section>
+      </template>
+    </app-async-value>
   </main>
 </template>
 
@@ -41,6 +43,7 @@ import type { CharacterEntity } from '@/store/business-types';
 import type { CombinedId } from '@/store/core-types';
 import { useStore } from '@/store';
 
+import AppAsyncValue from '@/components/AppAsyncValue';
 import AppFungibleResources from '@/containers/AppFungibleResources.vue';
 import AppNonFungibleResources from '@/containers/AppNonFungibleResources.vue';
 
@@ -54,7 +57,7 @@ const props = defineProps({
 const store = useStore();
 
 const character = computed(() => store.getters['characters/current'] as AsyncValue<CharacterEntity | null>);
-store.dispatch('characters/current_trigger', { id: props.characterCid });
+store.dispatch('characters/current_trigger', { cid: props.characterCid });
 </script>
 
 <style scoped>

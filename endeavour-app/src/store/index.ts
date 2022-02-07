@@ -67,12 +67,12 @@ export const store = createStore<RootState & Partial<RootModules>>({
         campaigns: AsyncModule.merge(
           { namespaced: true },
           AsyncModule.fromPromise('data', () => campaigns.getAll()),
-          AsyncModule.fromPromise('current', (_, { id }: { id: CombinedId }) => campaigns.getById(id)),
+          AsyncModule.fromPromise('current', (_, { cid }: { cid: CombinedId }) => campaigns.getById(cid), p => p.cid),
         ),
         characters: AsyncModule.merge(
           { namespaced: true },
           AsyncModule.fromPromise('data', () => characters.getAll()),
-          AsyncModule.fromPromise('current', (_, { id }: { id: CombinedId }) => characters.getById(id)),
+          AsyncModule.fromPromise('current', (_, { cid }: { cid: CombinedId }) => characters.getById(cid), p => p.cid),
         ),
       },
     },

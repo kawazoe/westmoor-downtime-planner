@@ -15,6 +15,7 @@ import { owners } from '@/store/mocks/owners';
 import { players } from '@/store/mocks/players';
 
 createServer({
+  timing: 1000,
   routes() {
     this.namespace = 'api/v1';
 

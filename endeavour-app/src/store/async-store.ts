@@ -3,6 +3,7 @@ import { _throw } from '@/lib/_throw';
 
 import * as A from 'fp-ts/Array';
 import { flow, pipe } from 'fp-ts/function';
+import { _never } from '@/lib/_never';
 
 // Concepts
 ///////////////////////////////////////////////////////////////////////////////
@@ -24,15 +25,23 @@ const recordConcat = flow(
 
 export type AsyncStatus = 'initial' | 'loading' | 'success' | 'error' | 'refreshing' | 'retrying';
 
+/**
+ * This type needs to be `any` to stay compatible with vuex's payload type.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Payload = any;
+
 // State
 ///////////////////////////////////////////////////////////////////////////////
 export type AsyncValueState<K extends string, V> =
+  & { [P in `${K}_queryKey`]: unknown; }
   & { [P in `${K}_status`]: AsyncStatus; }
   & { [P in `${K}_value`]: V | undefined; }
   & { [P in `${K}_error`]: string | undefined; };
 
-function createAsyncValueState<K extends string, V>(propName: K, status: AsyncStatus, value: V | undefined, error: string | undefined): AsyncValueState<K, V> {
+function createAsyncValueState<K extends string, V>(propName: K, queryKey: unknown, status: AsyncStatus, value: V | undefined, error: string | undefined): AsyncValueState<K, V> {
   return {
+    [`${propName}_queryKey`]: queryKey,
     [`${propName}_status`]: status,
     [`${propName}_value`]: value,
     [`${propName}_error`]: error,
@@ -40,6 +49,10 @@ function createAsyncValueState<K extends string, V>(propName: K, status: AsyncSt
 }
 
 interface AsyncValueStateLens<V> {
+  queryKey: {
+    get(): unknown,
+    set(v: unknown): void,
+  };
   status: {
     get(): AsyncStatus,
     set(v: AsyncStatus): void,
@@ -56,6 +69,12 @@ interface AsyncValueStateLens<V> {
 
 function createAsyncValueStateLens<K extends string, V>(propName: K): (state: AsyncValueState<K, V>) => AsyncValueStateLens<V> {
   return (s: AsyncValueState<K, V>) => ({
+    queryKey: {
+      get: () => s[`${propName}_queryKey`] as unknown,
+      set: (v: unknown) => {
+        s[`${propName}_queryKey`] = v as unknown as AsyncValueState<K, V>[`${K}_queryKey`];
+      },
+    },
     status: {
       get: () => s[`${propName}_status`] as unknown as AsyncStatus,
       set: (v: AsyncStatus) => {
@@ -147,11 +166,12 @@ function createAsyncValueMutations<K extends string, V, S extends AsyncValueStat
   const propLens = createAsyncValueStateLens(propName);
 
   return {
-    [`${propName}_load`]: (s: AsyncValueState<K, V>) => {
-      const stateLens = propLens(s);
-      stateLens.status.set('loading');
-      stateLens.value.set(undefined);
-      stateLens.error.set(undefined);
+    [`${propName}_load`]: (s: AsyncValueState<K, V>, { queryKey }: { queryKey: unknown }) => {
+      const l = propLens(s);
+      l.queryKey.set(queryKey);
+      l.status.set('loading');
+      l.value.set(undefined);
+      l.error.set(undefined);
     },
     [`${propName}_resolve`]: (s: AsyncValueState<K, V>, v: V) => {
       const l = propLens(s);
@@ -165,13 +185,17 @@ function createAsyncValueMutations<K extends string, V, S extends AsyncValueStat
       l.value.set(undefined);
       l.error.set(e);
     },
-    [`${propName}_refresh`]: (s: AsyncValueState<K, V>) => {
+    [`${propName}_refresh`]: (s: AsyncValueState<K, V>, { queryKey }: { queryKey: unknown }) => {
       const l = propLens(s);
+      l.queryKey.set(queryKey);
       l.status.set('refreshing');
+      l.error.set(undefined);
     },
-    [`${propName}_retry`]: (s: AsyncValueState<K, V>) => {
+    [`${propName}_retry`]: (s: AsyncValueState<K, V>, { queryKey }: { queryKey: unknown }) => {
       const l = propLens(s);
+      l.queryKey.set(queryKey);
       l.status.set('retrying');
+      l.value.set(undefined);
     },
   } as AsyncValueMutations<K, V, S>;
 }
@@ -181,53 +205,57 @@ function createAsyncValueMutations<K extends string, V, S extends AsyncValueStat
 type AsyncValueActions<K extends string, V, S extends AsyncValueState<K, V>, R> =
   & { [P in `${K}_trigger`]: ActionHandler<S, R>; };
 
-function triggerStrategy(status: AsyncStatus, force?: true): 'load' | 'refresh' | 'retry' | null {
-  switch (true) {
-    case status === 'initial':
-    case status === 'loading' && force:
+function createAsyncValueActions<K extends string, V, S extends AsyncValueState<K, V>, R>(
+  propName: K,
+  trigger: (injectee: ActionContext<S, unknown>, payload?: Payload) => Promise<V>,
+  keySelector?: (payload?: Payload) => unknown,
+): AsyncValueActions<K, V, S, R> {
+  function pickMutation(
+    state: AsyncValueStateLens<unknown>,
+    payload: { queryKey: unknown },
+  ): 'load' | 'refresh' | 'retry' | null {
+    const isSameQueryKey = state.queryKey.get() === payload.queryKey;
+    if (!isSameQueryKey) {
       return 'load';
-    case status === 'success':
-    case status === 'refreshing' && force:
-      return 'refresh';
-    case status === 'error':
-    case status === 'retrying' && force:
-      return 'retry';
-    default:
-      return null;
-  }
-}
+    }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function createAsyncValueActions<K extends string, V, S extends AsyncValueState<K, V>, R>(propName: K, trigger: (injectee: ActionContext<S, unknown>, payload?: any) => Promise<V>): AsyncValueActions<K, V, S, R> {
+    const status = state.status.get();
+    switch (status) {
+      case 'initial':
+        return 'load';
+      case 'success':
+        return 'refresh';
+      case 'error':
+        return 'retry';
+      case 'loading':
+      case 'refreshing':
+      case 'retrying':
+        console.info(`[AsyncValueAction] [trigger] Batching ${propName} concurrent trigger.`);
+        return null;
+      default:
+        return _never(status);
+    }
+  }
+
   const propLens = createAsyncValueStateLens(propName);
 
   return {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [`${propName}_init`](ctx: ActionContext<S, R>, payload?: any) {
-      const l = propLens(ctx.state);
+    [`${propName}_trigger`](ctx: ActionContext<S, R>, payload?: Payload): Promise<void> {
+      const state = propLens(ctx.state);
 
-      if (l.status.get() !== 'initial') {
-        console.info(`[AsyncValueAction] [init] Trying to init ${propName} more than once.`);
-        return Promise.resolve();
-      }
+      const queryKey = keySelector?.(payload) || undefined;
+      const mutationPayload = { queryKey };
 
-      return ctx.dispatch(`${propName}_trigger`, payload);
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [`${propName}_trigger`](ctx: ActionContext<S, R>, payload?: any) {
-      const l = propLens(ctx.state);
-
-      const mutation = triggerStrategy(l.status.get(), payload?.force);
+      const mutation = pickMutation(state, mutationPayload);
       if (!mutation) {
-        console.info(`[AsyncValueAction] [trigger] Trying to trigger ${propName} concurrently.`);
         return Promise.resolve();
       }
 
-      ctx.commit(`${propName}_${mutation}`);
+      ctx.commit(`${propName}_${mutation}`, mutationPayload);
 
       return trigger(ctx, payload).then(
-        v => ctx.commit(`${propName}_resolve`, v),
-        e => ctx.commit(`${propName}_error`, e),
+        v => state.queryKey.get() === queryKey && ctx.commit(`${propName}_resolve`, v) || undefined,
+        e => state.queryKey.get() === queryKey && ctx.commit(`${propName}_error`, e) || undefined,
       );
     },
   } as AsyncValueActions<K, V, S, R>;
@@ -237,16 +265,16 @@ function createAsyncValueActions<K extends string, V, S extends AsyncValueState<
 ///////////////////////////////////////////////////////////////////////////////
 export function fromPromise<K extends string, V>(
   propName: K,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  trigger: (injectee: ActionContext<AsyncValueState<K, V>, unknown>, payload?: any) => Promise<V>,
+  trigger: (injectee: ActionContext<AsyncValueState<K, V>, unknown>, payload?: Payload) => Promise<V>,
+  keySelector?: (payload: Payload) => unknown,
 ): Module<AsyncValueState<K, V>, unknown> {
   return {
     state() {
-      return createAsyncValueState(propName, 'initial', undefined, undefined);
+      return createAsyncValueState(propName, {}, 'initial', undefined, undefined);
     },
     getters: createAsyncValueGetters(propName),
     mutations: createAsyncValueMutations(propName),
-    actions: createAsyncValueActions(propName, trigger),
+    actions: createAsyncValueActions(propName, trigger, keySelector),
   } as Module<AsyncValueState<K, V>, unknown>;
 }
 
