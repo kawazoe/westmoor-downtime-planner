@@ -5,7 +5,7 @@ import type {
   OffsetedRestData,
   OwnershipId,
   PagedRestData,
-  Right, TokenedRestData,
+  ProgressiveRestData, Right,
 } from '@/store/core-types';
 import { makeRef, Uuid } from '@/store/core-types';
 import { nanoid } from 'nanoid';
@@ -67,19 +67,19 @@ function between(value: number, min: number, max: number): boolean {
   return value >= min && value < max;
 }
 
-export interface WindowToken {
+export interface ProgressiveDataToken {
   id: Uuid;
   offset: number;
   limit: number;
   accessedOn: Date;
 }
 
-export class WindowTokenStorage {
-  private store: Map<Uuid, WindowToken> = new Map<Uuid, WindowToken>();
+export class ProgressiveDataTokenStorage {
+  private store: Map<Uuid, ProgressiveDataToken> = new Map<Uuid, ProgressiveDataToken>();
 
   public constructor(private pageSize: number = 25, private ttl: number = 60) {}
 
-  public getOrCreate(id: string | undefined): WindowToken {
+  public getOrCreate(id: string | undefined): ProgressiveDataToken {
     this.scrub();
 
     if (id && Uuid.is(id)) {
@@ -116,7 +116,7 @@ export const pageWindow = <T>(pageSize: number) => (request: Request): (d: T[]) 
 
   return (d: T[]) => ({ data: d.filter((_, index) => between(index, page * pageSize, page * pageSize + pageSize)), page, pageSize });
 };
-export const tokenWindow = <T>(storage: WindowTokenStorage) => (request: Request): (d: T[]) => TokenedRestData<T> => {
+export const progressiveWindow = <T>(storage: ProgressiveDataTokenStorage) => (request: Request): (d: T[]) => ProgressiveRestData<T> => {
   const token = storage.getOrCreate(request.params.token);
 
   return (d: T[]) => ({ data: d.filter((_, index) => between(index, token.offset, token.limit)), token: token.id });

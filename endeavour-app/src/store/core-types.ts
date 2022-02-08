@@ -139,6 +139,6 @@ export interface PagedRestData<T> extends RestData<T>  {
   page: number;
   pageSize: number;
 }
-export interface TokenedRestData<T> extends RestData<T>  {
+export interface ProgressiveRestData<T> extends RestData<T>  {
   token: Uuid;
 }
