@@ -2,6 +2,17 @@
   <main class="container px-8 sm:px-4 pb-16 text-center sm:text-left">
     <h2>Play D&D, don't manage spreadsheets</h2>
 
+    <app-async-value :value="players">
+      <template v-slot:content="{value}">
+        <app-paginated-data :collection="value" v-slot="{data}">
+          <h3>DEBUG</h3>
+          <ul>
+            <li v-for="player in data" :key="player.cid"><a class="nav-link" href="#" @click="setPlayer(player)">{{player.description}}</a></li>
+          </ul>
+        </app-paginated-data>
+      </template>
+    </app-async-value>
+
     <div class="hero hero-left">
       <img src="../assets/placeholder.png" alt="placeholder">
       <section>
@@ -81,6 +92,24 @@
 </template>
 
 <script lang="ts" setup>
+import { computed } from 'vue';
+import { useStore } from '@/store';
+
+import type { AsyncValue } from '@/store/async-store';
+import type { PlayerEntity } from '@/store/business-types';
+
+import AppAsyncValue from '@/components/AppAsyncValue';
+import AppPaginatedData from '@/components/AppPaginatedData.vue';
+
+const store = useStore();
+
+const players = computed(() => store.getters['players/data'] as AsyncValue<PlayerEntity[]>);
+store.dispatch('players/data_trigger');
+
+function setPlayer(player: PlayerEntity): void {
+  sessionStorage.setItem('current-player', player.cid);
+  store.dispatch('players/current_trigger');
+}
 </script>
 
 <style scoped>
@@ -95,4 +124,8 @@ img { @apply w-64 h-64; }
 
 .hero-left section { @apply sm:ml-8; }
 .hero-right section { @apply sm:mr-8; }
+
+.nav-link {
+  @apply hover:text-primary-light;
+}
 </style>

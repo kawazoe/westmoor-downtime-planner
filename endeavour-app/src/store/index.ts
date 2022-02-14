@@ -62,17 +62,17 @@ export const store = createStore<RootState & Partial<RootModules>>({
         players: AsyncModule.merge(
           { namespaced: true },
           AsyncModule.fromPromise('data', () => players.getAll()),
-          AsyncModule.fromPromise('current', () => players.getById(CombinedId.cast('fu1fu1'))),
+          AsyncModule.fromPromise('current', () => players.getById(CombinedId.cast(sessionStorage.getItem('current-player') ?? 'mismis'))),
         ),
         campaigns: AsyncModule.merge(
           { namespaced: true },
           AsyncModule.fromPromise('data', () => campaigns.getAll()),
-          AsyncModule.fromPromise('current', (_, { cid }: { cid: CombinedId }) => campaigns.getById(cid), p => p.cid),
+          AsyncModule.fromPromise('current', (_, { cid }: { cid: CombinedId }) => campaigns.getById(cid), { keySelector: p => p.cid }),
         ),
         characters: AsyncModule.merge(
           { namespaced: true },
           AsyncModule.fromPromise('data', () => characters.getAll()),
-          AsyncModule.fromPromise('current', (_, { cid }: { cid: CombinedId }) => characters.getById(cid), p => p.cid),
+          AsyncModule.fromPromise('current', (_, { cid }: { cid: CombinedId }) => characters.getById(cid), { keySelector: p => p.cid }),
         ),
       },
     },

@@ -1,11 +1,12 @@
 import type {
+  AbsoluteRestData,
   EntityMeta,
   EntityRef,
   EntityRights,
-  OffsetedRestData,
   OwnershipId,
-  PagedRestData,
-  ProgressiveRestData, Right,
+  ProgressiveRestData,
+  RelativeRestData,
+  Right,
 } from '@/store/core-types';
 import { makeRef, Uuid } from '@/store/core-types';
 import { nanoid } from 'nanoid';
@@ -105,18 +106,24 @@ export class ProgressiveDataTokenStorage {
   }
 }
 
-export const offsetWindow = <T>(request: Request): (d: T[]) => OffsetedRestData<T> => {
+export const stampEpoch = <T>(selector: (v: T) => number) => (request: Request): (d: T[]) => T[] => {
+  const stamp = parseIntSafe(request.params.stamp, new Date().getTime());
+
+  return (d: T[]) => d.filter(v => selector(v) <= stamp);
+};
+
+export const absolutePager = <T>(request: Request): (d: T[]) => AbsoluteRestData<T> => {
   const offset = parseIntSafe(request.params.offset, 0);
   const limit = parseIntSafe(request.params.limit, 25);
 
   return (d: T[]) => ({ data: d.filter((_, index) => between(index, offset, limit)), offset, limit });
 };
-export const pageWindow = <T>(pageSize: number) => (request: Request): (d: T[]) => PagedRestData<T> => {
+export const relativePager = <T>(pageSize: number) => (request: Request): (d: T[]) => RelativeRestData<T> => {
   const page = parseIntSafe(request.params.page, 0);
 
   return (d: T[]) => ({ data: d.filter((_, index) => between(index, page * pageSize, page * pageSize + pageSize)), page, pageSize });
 };
-export const progressiveWindow = <T>(storage: ProgressiveDataTokenStorage) => (request: Request): (d: T[]) => ProgressiveRestData<T> => {
+export const progressivePager = <T>(storage: ProgressiveDataTokenStorage) => (request: Request): (d: T[]) => ProgressiveRestData<T> => {
   const token = storage.getOrCreate(request.params.token);
 
   return (d: T[]) => ({ data: d.filter((_, index) => between(index, token.offset, token.limit)), token: token.id });

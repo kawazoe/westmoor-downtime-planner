@@ -53,6 +53,7 @@ export type CharacterId = Brand<string, 'CharacterId'>;
 export const CharacterId = brand((v: string): v is CharacterId => Uuid.is(v));
 
 export interface CharacterEntity extends EntityRef<CharacterId>, EntityMeta, EntityRights {
+  gameSystem: EntityRef<GameSystemId>;
   fullName: string;
   bio: string;
   resources: {
@@ -68,6 +69,7 @@ export const CampaignId = brand((v: string): v is CampaignId => Uuid.is(v));
 
 export interface CampaignEntity extends EntityRef<CampaignId>, EntityMeta, EntityRights {
   gameSystem: EntityRef<GameSystemId>;
+  characters: EntityRef<CharacterId>[];
   actionCards: ActionCardEntity[];
   modifierCards: ModifierCardEntity[];
 }

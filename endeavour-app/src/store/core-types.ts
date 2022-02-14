@@ -94,7 +94,14 @@ export function makeRef<TId>(entity: EntityRef<TId>): EntityRef<TId> {
   };
 }
 
-export type OwnershipEntity = EntityRef<OwnershipId> & {
+export interface OwnershipMeta {
+  schemaVersion: number;
+
+  createdOn: string;
+  modifiedOn: string;
+}
+
+export type OwnershipEntity = EntityRef<OwnershipId> & OwnershipMeta & {
   fullName: string,
   picture?: Uri,
   email?: Email,
@@ -131,11 +138,11 @@ export interface EntityMeta {
 export interface RestData<T> {
   data: T[];
 }
-export interface OffsetedRestData<T> extends RestData<T> {
+export interface AbsoluteRestData<T> extends RestData<T> {
   offset: number;
   limit: number;
 }
-export interface PagedRestData<T> extends RestData<T>  {
+export interface RelativeRestData<T> extends RestData<T>  {
   page: number;
   pageSize: number;
 }

@@ -6,12 +6,12 @@
 
         <h3><app-icon :icon="faPortrait" /> Characters</h3>
         <section>
-          <app-character-card class="w-full" v-for="character of value.characters" :key="character.id" :character="character" />
+          <app-character-card class="w-full" v-for="character of value.characters" :key="character.cid" :character="character" />
         </section>
 
         <h3><app-icon :icon="faAtlas" /> Campaigns</h3>
         <section>
-          <app-campaign-card class="w-full" v-for="campaign of value.campaigns" :key="campaign.id" :campaign="campaign" />
+          <app-campaign-card class="w-full" v-for="campaign of value.campaigns" :key="campaign.cid" :campaign="campaign" />
         </section>
 
         <h3><app-icon :icon="faMoneyBill" /> Subscription</h3>
