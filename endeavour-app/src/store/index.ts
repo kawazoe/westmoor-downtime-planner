@@ -14,8 +14,8 @@ import type {
   PlayerEntity,
 } from '@/store/business-types';
 import { CombinedId, Uri } from '@/store/core-types';
-import type { AsyncValueState } from '@/store/async-store';
-import type { RestData } from '@/store/core-types';
+import type { AsyncValue } from '@/store/async-store';
+import type { Binder } from '@/store/core-types';
 import { RestRepository } from '@/store/rest-repository';
 
 const gameSystems = new RestRepository<GameSystemEntity>(Uri.cast('/api/v1/game-systems'));
@@ -25,14 +25,14 @@ const players = new RestRepository<PlayerEntity>(Uri.cast('/api/v1/players'));
 const campaigns = new RestRepository<CampaignEntity>(Uri.cast('/api/v1/campaigns'));
 const characters = new RestRepository<CharacterEntity>(Uri.cast('/api/v1/characters'));
 
-export type RootState = AsyncValueState<'ready', boolean>;
+export type RootState = { ready: AsyncValue<boolean> };
 export type RootModules = {
-  gameSystems: AsyncValueState<'data', RestData<GameSystemEntity[]>>,
-  fungibleResources: AsyncValueState<'data', RestData<FungibleResourceEntity[]>>,
-  nonFungibleResources: AsyncValueState<'data', RestData<NonFungibleResourceEntity[]>>,
-  players: AsyncValueState<'data', RestData<PlayerEntity[]>> & AsyncValueState<'current', PlayerEntity | null>,
-  campaigns: AsyncValueState<'data', RestData<CampaignEntity[]>> & AsyncValueState<'current', CampaignEntity | null>,
-  characters: AsyncValueState<'data', RestData<CharacterEntity[]>> & AsyncValueState<'current', CharacterEntity | null>,
+  gameSystems: { data: AsyncValue<Binder<GameSystemEntity>> },
+  fungibleResources: { data: AsyncValue<Binder<FungibleResourceEntity>> },
+  nonFungibleResources: { data: AsyncValue<Binder<NonFungibleResourceEntity>> },
+  players: { data: AsyncValue<Binder<PlayerEntity>> } & { current: AsyncValue<PlayerEntity | null> },
+  campaigns: { data: AsyncValue<Binder<CampaignEntity>> } & { current: AsyncValue<CampaignEntity | null> },
+  characters: { data: AsyncValue<Binder<CharacterEntity>> } & { current: AsyncValue<CharacterEntity | null> },
 };
 
 export const store = createStore<RootState & Partial<RootModules>>({
@@ -49,29 +49,30 @@ export const store = createStore<RootState & Partial<RootModules>>({
       modules: {
         gameSystems: AsyncModule.merge(
           { namespaced: true },
-          AsyncModule.fromPromise('data', () => gameSystems.getAll()),
+          AsyncModule.fromPromise('data', () => gameSystems.getPage()()),
         ),
         fungibleResources: AsyncModule.merge(
           { namespaced: true },
-          AsyncModule.fromPromise('data', () => fungibleResources.getAll()),
+          AsyncModule.fromPromise('data', () => fungibleResources.getPage()()),
         ),
         nonFungibleResources: AsyncModule.merge(
           { namespaced: true },
-          AsyncModule.fromPromise('data', () => nonFungibleResources.getAll()),
+          AsyncModule.fromPromise('data', () => nonFungibleResources.getPage()()),
         ),
         players: AsyncModule.merge(
           { namespaced: true },
-          AsyncModule.fromPromise('data', () => players.getAll()),
+          AsyncModule.fromPromise('data', () => players.getPage()()),
+          // TODO: default id is only there temporarily. This call shouldn't trigger if there isn't an id.
           AsyncModule.fromPromise('current', () => players.getById(CombinedId.cast(sessionStorage.getItem('current-player') ?? 'mismis'))),
         ),
         campaigns: AsyncModule.merge(
           { namespaced: true },
-          AsyncModule.fromPromise('data', () => campaigns.getAll()),
+          AsyncModule.fromPromise('data', () => campaigns.getPage()()),
           AsyncModule.fromPromise('current', (_, { cid }: { cid: CombinedId }) => campaigns.getById(cid), { keySelector: p => p.cid }),
         ),
         characters: AsyncModule.merge(
           { namespaced: true },
-          AsyncModule.fromPromise('data', () => characters.getAll()),
+          AsyncModule.fromPromise('data', () => characters.getPage()()),
           AsyncModule.fromPromise('current', (_, { cid }: { cid: CombinedId }) => characters.getById(cid), { keySelector: p => p.cid }),
         ),
       },

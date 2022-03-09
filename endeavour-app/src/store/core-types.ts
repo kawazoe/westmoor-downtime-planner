@@ -1,6 +1,7 @@
 import type { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
 import type { Brand, Iron } from '@/lib/branding';
+import { _never } from '@/lib/_never';
 import { _throw } from '@/lib/_throw';
 import { brand } from '@/lib/branding';
 
@@ -135,17 +136,57 @@ export interface EntityMeta {
   metas: Record<string, unknown>;
 }
 
-export interface RestData<T> {
-  data: T[];
+export type AbsoluteBookmark = { offset: number, limit: number };
+export type RelativeBookmark = { page: number, pageSize: number };
+export type ProgressiveBookmark = { token: Uuid };
+export type Bookmark = AbsoluteBookmark | RelativeBookmark | ProgressiveBookmark;
+
+export const NullBookmark = { token: Uuid.cast('null') };
+Object.freeze(NullBookmark);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isAbsoluteBookmark(value: any): value is AbsoluteBookmark {
+  return value != null && typeof value.offset === 'number' && typeof value.limit === 'number';
 }
-export interface AbsoluteRestData<T> extends RestData<T> {
-  offset: number;
-  limit: number;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isRelativeBookmark(value: any): value is RelativeBookmark {
+  return value != null && typeof value.page === 'number' && typeof value.pageSize === 'number';
 }
-export interface RelativeRestData<T> extends RestData<T>  {
-  page: number;
-  pageSize: number;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isProgressiveBookmark(value: any): value is ProgressiveBookmark {
+  return value != null && typeof value.token === 'string';
 }
-export interface ProgressiveRestData<T> extends RestData<T>  {
-  token: Uuid;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isBookmark(value: any): value is Bookmark {
+  return isAbsoluteBookmark(value) || isRelativeBookmark(value) || isProgressiveBookmark(value);
+}
+
+export type Page<T> = [Bookmark, T[]];
+export type Binder<T> = Page<T>[];
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isPage<T>(value: any): value is Page<T> {
+  return value != null && Array.isArray(value) && value.length === 2 && isBookmark(value[0]) && Array.isArray(value[1]);
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isBinder<T>(value: any): value is Binder<T> {
+  return value != null && Array.isArray(value) && isPage(value[0]);
+}
+
+export type RestData<T> = { data: T[] };
+
+export function unwrapBookmark<T>(value: RestData<T> & Bookmark): Page<T> {
+  const data = value.data;
+
+  if (isAbsoluteBookmark(value)) {
+    return [{ offset: value.offset, limit: value.limit } as AbsoluteBookmark, data];
+  }
+  if (isRelativeBookmark(value)) {
+    return [{ page: value.page, pageSize: value.pageSize } as RelativeBookmark, data];
+  }
+  if (isProgressiveBookmark(value)) {
+    return [{ token: value.token } as ProgressiveBookmark, data];
+  }
+
+  return _never(value);
 }

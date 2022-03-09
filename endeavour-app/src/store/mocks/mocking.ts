@@ -1,11 +1,12 @@
 import type {
-  AbsoluteRestData,
+  AbsoluteBookmark,
   EntityMeta,
   EntityRef,
   EntityRights,
   OwnershipId,
-  ProgressiveRestData,
-  RelativeRestData,
+  ProgressiveBookmark,
+  RelativeBookmark,
+  RestData,
   Right,
 } from '@/store/core-types';
 import { makeRef, Uuid } from '@/store/core-types';
@@ -112,18 +113,18 @@ export const stampEpoch = <T>(selector: (v: T) => number) => (request: Request):
   return (d: T[]) => d.filter(v => selector(v) <= stamp);
 };
 
-export const absolutePager = <T>(request: Request): (d: T[]) => AbsoluteRestData<T> => {
+export const absolutePager = <T>(request: Request): (d: T[]) => RestData<T> & AbsoluteBookmark => {
   const offset = parseIntSafe(request.params.offset, 0);
   const limit = parseIntSafe(request.params.limit, 25);
 
   return (d: T[]) => ({ data: d.filter((_, index) => between(index, offset, limit)), offset, limit });
 };
-export const relativePager = <T>(pageSize: number) => (request: Request): (d: T[]) => RelativeRestData<T> => {
+export const relativePager = <T>(pageSize: number) => (request: Request): (d: T[]) => RestData<T> & RelativeBookmark => {
   const page = parseIntSafe(request.params.page, 0);
 
   return (d: T[]) => ({ data: d.filter((_, index) => between(index, page * pageSize, page * pageSize + pageSize)), page, pageSize });
 };
-export const progressivePager = <T>(storage: ProgressiveDataTokenStorage) => (request: Request): (d: T[]) => ProgressiveRestData<T> => {
+export const progressivePager = <T>(storage: ProgressiveDataTokenStorage) => (request: Request): (d: T[]) => RestData<T> & ProgressiveBookmark => {
   const token = storage.getOrCreate(request.params.token);
 
   return (d: T[]) => ({ data: d.filter((_, index) => between(index, token.offset, token.limit)), token: token.id });

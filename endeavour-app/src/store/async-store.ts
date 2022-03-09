@@ -1,5 +1,4 @@
-import type { ActionContext, ActionHandler, Getter, Module } from 'vuex';
-import { _throw } from '@/lib/_throw';
+import type { ActionContext, ActionHandler, Module } from 'vuex';
 
 import * as A from 'fp-ts/Array';
 import { flow, pipe } from 'fp-ts/function';
@@ -7,13 +6,9 @@ import { _never } from '@/lib/_never';
 
 // Concepts
 ///////////////////////////////////////////////////////////////////////////////
-function assertUndefined<T>(value: T | undefined): T {
-  return value === undefined ? _throw(new Error('Unexpected undefined value')) : value;
-}
-
-function unwrapFunction<T>(value: T | (() => T)): T {
+function unwrapFunction<T, TR = T>(value: T | (() => TR), argsSelector?: () => unknown[]): T | TR {
   return typeof value === 'function'
-    ? (value as () => T)()
+    ? (value as (...arg: unknown[]) => TR)(...argsSelector?.() ?? [])
     : value;
 }
 
@@ -26,13 +21,15 @@ const recordConcat = flow(
 export type AsyncStatus = 'initial' | 'loading' | 'content' | 'empty' | 'error' | 'refreshing' | 'retrying';
 
 /**
- * This type needs to be `any` to stay compatible with vuex's payload type.
+ * This type uses any to respect the vuex philosophy of using the any type for action payloads.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Payload = any;
+type ActionPayload = any;
+type MutationPayload = { queryKey: unknown | undefined };
+type TriggerPayload = MutationPayload & ActionPayload;
 
 export type AsyncValueOptions<V> = {
-  keySelector?: (payload: Payload) => unknown,
+  keySelector?: (payload?: ActionPayload) => unknown,
   emptyPredicate?: (value: V) => boolean,
 };
 
@@ -42,202 +39,104 @@ function defaultEmptyPredicate(value: unknown): boolean {
 
 // State
 ///////////////////////////////////////////////////////////////////////////////
-export type AsyncValueState<K extends string, V> =
-  & { [P in `${K}_queryKey`]: unknown; }
-  & { [P in `${K}_status`]: AsyncStatus; }
-  & { [P in `${K}_value`]: V | undefined; }
-  & { [P in `${K}_error`]: string | undefined; };
-
-function createAsyncValueState<K extends string, V>(propName: K, queryKey: unknown, status: AsyncStatus, value: V | undefined, error: string | undefined): AsyncValueState<K, V> {
-  return {
-    [`${propName}_queryKey`]: queryKey,
-    [`${propName}_status`]: status,
-    [`${propName}_value`]: value,
-    [`${propName}_error`]: error,
-  } as AsyncValueState<K, V>;
+interface KeyedStatus {
+  queryKey: unknown;
 }
-
-interface AsyncValueStateLens<V> {
-  queryKey: {
-    get(): unknown,
-    set(v: unknown): void,
-  };
-  status: {
-    get(): AsyncStatus,
-    set(v: AsyncStatus): void,
-  };
-  value: {
-    get(): V | undefined,
-    set(v: V | undefined): void,
-  };
-  error: {
-    get(): string | undefined,
-    set(v: string | undefined): void,
-  };
-}
-
-function createAsyncValueStateLens<K extends string, V>(propName: K): (state: AsyncValueState<K, V>) => AsyncValueStateLens<V> {
-  return (s: AsyncValueState<K, V>) => ({
-    queryKey: {
-      get: () => s[`${propName}_queryKey`] as unknown,
-      set: (v: unknown) => {
-        s[`${propName}_queryKey`] = v as unknown as AsyncValueState<K, V>[`${K}_queryKey`];
-      },
-    },
-    status: {
-      get: () => s[`${propName}_status`] as unknown as AsyncStatus,
-      set: (v: AsyncStatus) => {
-        s[`${propName}_status`] = v as unknown as AsyncValueState<K, V>[`${K}_status`];
-      },
-    },
-    value: {
-      get: () => s[`${propName}_value`] as unknown as V | undefined,
-      set: (v: V | undefined) => {
-        s[`${propName}_value`] = v as unknown as AsyncValueState<K, V>[`${K}_value`];
-      },
-    },
-    error: {
-      get: () => s[`${propName}_error`] as unknown as string | undefined,
-      set: (v: string | undefined) => {
-        s[`${propName}_error`] = v as unknown as AsyncValueState<K, V>[`${K}_error`];
-      },
-    },
-  }) as AsyncValueStateLens<V>;
-}
-
-// Getters
-///////////////////////////////////////////////////////////////////////////////
 export interface AsyncValueInitial {
   status: 'initial';
 }
-export interface AsyncValueLoading {
+export interface AsyncValueLoading extends KeyedStatus{
   status: 'loading';
 }
-export interface AsyncValueContent<V> {
+export interface AsyncValueContent<V> extends KeyedStatus {
   status: 'content';
   value: V;
 }
-export interface AsyncValueEmpty {
+export interface AsyncValueEmpty<V> extends KeyedStatus {
   status: 'empty';
+  value: V;
 }
-export interface AsyncValueError {
+export interface AsyncValueError extends KeyedStatus {
   status: 'error';
   error: string;
 }
-export interface AsyncValueRefreshing<V> {
+export interface AsyncValueRefreshing<V> extends KeyedStatus {
   status: 'refreshing';
   value: V;
 }
-export interface AsyncValueRetrying {
+export interface AsyncValueRetrying extends KeyedStatus {
   status: 'retrying';
   error: string;
 }
 
-export type AsyncValue<V> = AsyncValueInitial | AsyncValueLoading | AsyncValueContent<V> | AsyncValueEmpty | AsyncValueError | AsyncValueRefreshing<V> | AsyncValueRetrying;
-
-function createAsyncValue<K extends string, V, S extends AsyncValueState<K, V>>(
-  propName: K,
-  state: S,
-): AsyncValue<V> {
-  const lens = createAsyncValueStateLens<K, V>(propName)(state);
-
-  const status = lens.status.get();
-
-  switch (status) {
-    case 'initial':
-    case 'loading':
-    case 'empty':
-      return { status };
-    case 'content':
-    case 'refreshing':
-      return { status, value: assertUndefined(lens.value.get()) };
-    case 'error':
-    case 'retrying':
-      return { status, error: assertUndefined(lens.error.get()) };
-  }
-
-  throw new Error(`Unsupported AsyncStatus: ${lens.status.get()}`);
-}
-
-type AsyncValueGetter<K extends string, V, R> = (...args: Parameters<Getter<AsyncValueState<K, V>, R>>) => AsyncValue<V>;
-
-export type AsyncValueGetters<K extends string, V, R> =
-  & { [P in K]: AsyncValueGetter<K, V, R>; };
-
-function createAsyncValueGetters<K extends string, V, R>(propName: K): AsyncValueGetters<K, V, R> {
-  return { [propName]: ((state: AsyncValueState<K, V>) => createAsyncValue(propName, state)) as AsyncValueGetter<K, V, R> } as AsyncValueGetters<K, V, R>;
-}
+export type AsyncValuePresenting<V> = AsyncValueContent<V> | AsyncValueEmpty<V> | AsyncValueRefreshing<V>;
+export type AsyncValueFailed = AsyncValueError | AsyncValueRetrying;
+export type AsyncValueInitialized<V> = AsyncValueLoading | AsyncValuePresenting<V> | AsyncValueFailed;
+export type AsyncValue<V> = AsyncValueInitial | AsyncValueInitialized<V>;
 
 // Mutations
 ///////////////////////////////////////////////////////////////////////////////
-type AsyncValueMutations<K extends string, V, S extends AsyncValueState<K, V>> =
+type AsyncValueMutations<K extends string, V, S extends { [P in K]: AsyncValue<V> }> =
   & { [P in `${K}_load`]: (state: S) => void; }
   & { [P in `${K}_resolve`]: (state: S, payload: V) => void; }
   & { [P in `${K}_reject`]: (state: S, payload: string) => void; };
 
-function createAsyncValueMutations<K extends string, V, S extends AsyncValueState<K, V>>(
+function createAsyncValueMutations<K extends string, V, S extends { [P in K]: AsyncValue<V> }>(
   propName: K,
   options?: AsyncValueOptions<V>,
 ): AsyncValueMutations<K, V, S> {
-  const propLens = createAsyncValueStateLens(propName);
-
   return {
-    [`${propName}_load`]: (s: AsyncValueState<K, V>, { queryKey }: { queryKey: unknown }) => {
-      const l = propLens(s);
-      l.queryKey.set(queryKey);
-      l.status.set('loading');
-      l.value.set(undefined);
-      l.error.set(undefined);
+    [`${propName}_load`]: (s: { [P in K]: AsyncValue<V> }, { queryKey }: { queryKey: unknown }) => {
+      s[propName] = {
+        queryKey,
+        status: 'loading',
+      };
     },
-    [`${propName}_resolve`]: (s: AsyncValueState<K, V>, v: V) => {
-      const l = propLens(s);
-      l.status.set((options?.emptyPredicate || defaultEmptyPredicate)(v) && 'empty' || 'content');
-      l.value.set(v);
-      l.error.set(undefined);
+    [`${propName}_resolve`]: (s: { [P in K]: AsyncValueInitialized<V> }, v: V) => {
+      s[propName] = {
+        status: (options?.emptyPredicate || defaultEmptyPredicate)(v) && 'empty' || 'content',
+        queryKey: s[`${propName}`].queryKey,
+        value: v,
+      };
     },
-    [`${propName}_reject`]: (s: AsyncValueState<K, V>, e: string) => {
-      const l = propLens(s);
-      l.status.set('error');
-      l.value.set(undefined);
-      l.error.set(e);
+    [`${propName}_reject`]: (s: { [P in K]: AsyncValueInitialized<V> }, e: string) => {
+      s[propName] = {
+        status: 'error',
+        queryKey: s[`${propName}`].queryKey,
+        error: e,
+      };
     },
-    [`${propName}_refresh`]: (s: AsyncValueState<K, V>, { queryKey }: { queryKey: unknown }) => {
-      const l = propLens(s);
-      l.queryKey.set(queryKey);
-      l.status.set('refreshing');
-      l.error.set(undefined);
+    [`${propName}_refresh`]: (s: { [P in K]: AsyncValuePresenting<V> }, { queryKey }: { queryKey: unknown }) => {
+      s[propName].status = 'refreshing';
+      s[propName].queryKey = queryKey;
     },
-    [`${propName}_retry`]: (s: AsyncValueState<K, V>, { queryKey }: { queryKey: unknown }) => {
-      const l = propLens(s);
-      l.queryKey.set(queryKey);
-      l.status.set('retrying');
-      l.value.set(undefined);
+    [`${propName}_retry`]: (s: { [P in K]: AsyncValueFailed }, { queryKey }: { queryKey: unknown }) => {
+      s[propName].status = 'retrying';
+      s[propName].queryKey = queryKey;
     },
   } as AsyncValueMutations<K, V, S>;
 }
 
 // Actions
 ///////////////////////////////////////////////////////////////////////////////
-type AsyncValueActions<K extends string, V, S extends AsyncValueState<K, V>, R> =
+type AsyncValueActions<K extends string, V, S extends { [P in K]: AsyncValue<V> }, R> =
   & { [P in `${K}_trigger`]: ActionHandler<S, R>; };
 
-function createAsyncValueActions<K extends string, V, S extends AsyncValueState<K, V>, R>(
+function createAsyncValueActions<K extends string, V, S extends { [P in K]: AsyncValue<V> }, R>(
   propName: K,
-  trigger: (injectee: ActionContext<S, unknown>, payload?: Payload) => Promise<V>,
+  trigger: (injectee: ActionContext<S, unknown>, payload: TriggerPayload) => Promise<V>,
   options?: AsyncValueOptions<V>,
 ): AsyncValueActions<K, V, S, R> {
   function pickMutation(
-    state: AsyncValueStateLens<unknown>,
-    payload: { queryKey: unknown },
+    s: { [P in K]: AsyncValue<V> },
+    payload: MutationPayload,
   ): 'load' | 'refresh' | 'retry' | null {
-    const isSameQueryKey = state.queryKey.get() === payload.queryKey;
-    if (!isSameQueryKey) {
+    const state = s[propName];
+    if (state.status === 'initial' || state.queryKey === payload.queryKey) {
       return 'load';
     }
 
-    const status = state.status.get();
-    switch (status) {
-      case 'initial':
+    switch (state.status) {
       case 'empty':
         return 'load';
       case 'content':
@@ -250,29 +149,29 @@ function createAsyncValueActions<K extends string, V, S extends AsyncValueState<
         console.info(`[AsyncValueAction] [trigger] Batching ${propName} concurrent trigger.`);
         return null;
       default:
-        return _never(status);
+        return _never(state);
     }
   }
 
-  const propLens = createAsyncValueStateLens(propName);
-
   return {
-    [`${propName}_trigger`](ctx: ActionContext<S, R>, payload?: Payload): Promise<void> {
-      const state = propLens(ctx.state);
-
+    [`${propName}_trigger`](ctx: ActionContext<S, R>, payload?: ActionPayload): Promise<void> {
       const queryKey = options?.keySelector?.(payload) || undefined;
       const mutationPayload = { queryKey };
 
-      const mutation = pickMutation(state, mutationPayload);
+      const mutation = pickMutation(ctx.state, mutationPayload);
       if (!mutation) {
         return Promise.resolve();
       }
 
       ctx.commit(`${propName}_${mutation}`, mutationPayload);
 
-      return trigger(ctx, payload).then(
-        v => state.queryKey.get() === queryKey && ctx.commit(`${propName}_resolve`, v) || undefined,
-        e => state.queryKey.get() === queryKey && ctx.commit(`${propName}_error`, e) || undefined,
+      function isResultRelevant(): boolean {
+        return (ctx.state[propName] as KeyedStatus).queryKey === queryKey;
+      }
+
+      return trigger(ctx, { ...payload, queryKey }).then(
+        v => isResultRelevant() && ctx.commit(`${propName}_resolve`, v) || undefined,
+        e => isResultRelevant() && ctx.commit(`${propName}_error`, e) || undefined,
       );
     },
   } as AsyncValueActions<K, V, S, R>;
@@ -282,17 +181,22 @@ function createAsyncValueActions<K extends string, V, S extends AsyncValueState<
 ///////////////////////////////////////////////////////////////////////////////
 export function fromPromise<K extends string, V>(
   propName: K,
-  trigger: (injectee: ActionContext<AsyncValueState<K, V>, unknown>, payload?: Payload) => Promise<V>,
+  trigger: (injectee: ActionContext<{ [P in K]: AsyncValue<V> }, unknown>, payload: TriggerPayload) => Promise<V>,
   options?: AsyncValueOptions<V>,
-): Module<AsyncValueState<K, V>, unknown> {
+): Module<{ [P in K]: AsyncValue<V> }, unknown> {
   return {
     state() {
-      return createAsyncValueState(propName, {}, 'initial', undefined, undefined);
+      return {
+        [propName]: {
+          status: 'initial',
+          queryKey: {},
+        },
+      } as { [P in K]: AsyncValue<V> };
     },
-    getters: createAsyncValueGetters(propName),
+    getters: { [propName]: ((state: { [P in K]: AsyncValue<V> }) => state[propName]) },
     mutations: createAsyncValueMutations(propName, options),
     actions: createAsyncValueActions(propName, trigger, options),
-  } as Module<AsyncValueState<K, V>, unknown>;
+  } as Module<{ [P in K]: AsyncValue<V> }, unknown>;
 }
 
 export function merge<S1, R>(m1: Module<S1, R>): Module<S1, R>;
