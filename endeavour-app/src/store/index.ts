@@ -15,7 +15,7 @@ import type {
 } from '@/store/business-types';
 import { CombinedId, Uri } from '@/store/core-types';
 import type { AsyncValue } from '@/store/async-store';
-import type { Binder } from '@/store/core-types';
+import type { Binder } from '@/store/binder-store';
 import { RestRepository } from '@/store/rest-repository';
 
 const gameSystems = new RestRepository<GameSystemEntity>(Uri.cast('/api/v1/game-systems'));
