@@ -1,30 +1,30 @@
-import { CharacterId, NonFungibleResourceId } from '@/store/business-types';
-import { makeId, makeRef } from '@/store/core-types';
-import type { CharacterEntity } from '@/store/business-types';
+import { CharacterId, NonFungibleResourceId } from '@/stores/business-types';
+import { makeId, makeRef } from '@/stores/core-types';
+import type { CharacterEntity } from '@/stores/business-types';
 
 import {
   fungibleCurrencyCredits,
   fungibleCurrencyDollars,
   fungibleCurrencyGold,
   fungibleDownTimeDays,
-} from '@/store/mocks/fungibleResources';
+} from '@/mocks/fungibleResources';
 import {
   gameSystemDungeonAndDragons5e,
   gameSystemGeneric,
   gameSystemTravellers,
   gameSystemWorldOfDarkness,
-} from '@/store/mocks/gameSystems';
-import { mockEntity, mockMeta, mockRights } from '@/store/mocks/mocking';
+} from '@/mocks/gameSystems';
+import { mockEntity, mockMeta, mockRights } from '@/mocks/mocking';
 import {
   nonFungibleBandages, nonFungibleClothes, nonFungibleCreditCard, nonFungibleCreditChip,
   nonFungibleSmartphone, nonFungibleWeapon,
-} from '@/store/mocks/nonFungibleResources';
+} from '@/mocks/nonFungibleResources';
 import {
   ownerAbdelrahmanThornes, ownerAbdulSalamKowalowski, ownerEoloPonting,
   ownerHubertRossen, ownerMackaillynGunst, ownerOlesCarchidi, ownerRocklandHagemann,
   ownerRollandBasye, ownerSaarBoileau,
   ownerSpeeroHarriage,
-} from '@/store/mocks/owners';
+} from '@/mocks/owners';
 
 export const characterEldridge = mockEntity<CharacterEntity>(
   mockMeta('CharacterEntity', ownerSpeeroHarriage),

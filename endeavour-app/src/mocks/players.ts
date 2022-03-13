@@ -4,7 +4,7 @@ import {
   campaignGhostData, campaignNewGamePlus,
   campaignNoTaker,
   campaignTheMMachine, campaignTiltedTowers, campaignTristram,
-} from '@/store/mocks/campaigns';
+} from '@/mocks/campaigns';
 import {
   characterAltheaEckstrom,
   characterAnsley,
@@ -21,9 +21,9 @@ import {
   characterMarvinRevanoire,
   characterMaxHedgar,
   characterPimVindicar, characterRanaSmallwood, characterRyleeBelgrave,
-} from '@/store/mocks/characters';
-import { makeId, makeRef } from '@/store/core-types';
-import { mockEntity, mockMeta, mockRights } from '@/store/mocks/mocking';
+} from '@/mocks/characters';
+import { makeId, makeRef } from '@/stores/core-types';
+import { mockEntity, mockMeta, mockRights } from '@/mocks/mocking';
 import {
   ownerAbdelrahmanThornes,
   ownerAbdulSalamKowalowski,
@@ -36,9 +36,9 @@ import {
   ownerRollandBasye,
   ownerSaarBoileau,
   ownerSpeeroHarriage,
-} from '@/store/mocks/owners';
-import type { PlayerEntity, SubscriptionEntity } from '@/store/business-types';
-import { PlayerId, SubscriptionId } from '@/store/business-types';
+} from '@/mocks/owners';
+import type { PlayerEntity, SubscriptionEntity } from '@/stores/business-types';
+import { PlayerId, SubscriptionId } from '@/stores/business-types';
 
 const subscriptionHubertRossen = mockEntity<SubscriptionEntity>(
   mockMeta('SubscriptionEntity', ownerHubertRossen),

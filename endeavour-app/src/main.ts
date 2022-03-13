@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 
-import { key, store } from './store';
 import router from './router';
 
 import './app.css';
@@ -10,9 +10,11 @@ import { svgIconCache } from '@/components/TheSvgIconCache';
 
 import App from './App.vue';
 
+import './mocks';
+
 svgIconCache.add(faBars, faTimes);
 
 createApp(App)
-  .use(store, key)
+  .use(createPinia())
   .use(router)
   .mount('#app');

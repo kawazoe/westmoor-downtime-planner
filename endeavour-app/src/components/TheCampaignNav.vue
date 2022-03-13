@@ -5,7 +5,7 @@
       <app-icon v-else :icon="faBars" class="fa-w-16"></app-icon>
     </app-toggle-button>
 
-    <app-async-value :value="campaign">
+    <app-async-value :value="campaignStore">
       <template v-slot:content="{ value }">
         <div class="nav-menu" :class="{ expanded }">
           <router-link class="nav-link sz-2" :to="`${rel}/endeavours`">Endeavours</router-link>
@@ -22,16 +22,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps, ref, watch } from 'vue';
+import { defineProps, ref, watch } from 'vue';
 import type { PropType } from 'vue';
 
 import { faBars, faTimes } from '@fortawesome/pro-regular-svg-icons';
 
-import type { AsyncValue } from '@/store/async-store';
-import type { CampaignEntity } from '@/store/business-types';
-import type { CombinedId } from '@/store/core-types';
+import type { CombinedId } from '@/stores/core-types';
 import { useRelativeRoute } from '@/router/routes';
-import { useStore } from '@/store';
+
+import { useCampaignsCurrentStore } from '@/stores';
 
 import AppAsyncValue from '@/components/AppAsyncValue';
 import AppIcon from '@/components/AppIcon';
@@ -46,11 +45,11 @@ const props = defineProps({
 
 const rel = useRelativeRoute();
 
-const store = useStore();
-const campaign = computed(() => store.getters['campaigns/current'] as AsyncValue<CampaignEntity | null>);
+const campaignStore = useCampaignsCurrentStore();
+
 watch(
   () => props.campaignCid,
-  () => store.dispatch('campaigns/current_trigger', { cid: props.campaignCid }),
+  () => campaignStore.trigger(props.campaignCid),
   { immediate: true },
 );
 

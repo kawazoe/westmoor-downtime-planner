@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 
@@ -12,14 +14,14 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/campaigns',
     name: 'campaigns',
-    component: () => import(/* WebpackChunkName: "campaigns" */ '../views/TheCampaigns.vue'),
+    component: () => import('../views/TheCampaigns.vue'),
 
     children: [
       {
         path: ':campaignCid',
         name: 'campaign',
 
-        component: () => import(/* WebpackChunkName: "campaign" */ '../views/TheCampaign.vue'),
+        component: () => import('../views/TheCampaign.vue'),
         props: true,
 
         children: [
@@ -29,24 +31,24 @@ const routes: RouteRecordRaw[] = [
           },
           {
             path: 'activities',
-            component: () => import(/* WebpackChunkName: "activities" */ '../views/TheCampaignActivities.vue'),
+            component: () => import('../views/TheCampaignActivities.vue'),
           },
           {
             path: 'characters',
-            component: () => import(/* WebpackChunkName: "characters" */ '../views/TheCampaignCharacters.vue'),
+            component: () => import('../views/TheCampaignCharacters.vue'),
           },
           {
             path: 'endeavours',
             name: 'endeavours',
-            component: () => import(/* WebpackChunkName: "endeavours" */ '../views/TheCampaignEndeavours.vue'),
+            component: () => import('../views/TheCampaignEndeavours.vue'),
           },
           {
             path: 'resources',
-            component: () => import(/* WebpackChunkName: "resources" */ '../views/TheCampaignResources.vue'),
+            component: () => import('../views/TheCampaignResources.vue'),
           },
           {
             path: 'settings',
-            component: () => import(/* WebpackChunkName: "settings" */ '../views/TheCampaignSettings.vue'),
+            component: () => import('../views/TheCampaignSettings.vue'),
           },
         ],
       },
@@ -55,7 +57,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/player',
     name: 'player',
-    component: () => import(/* WebpackChunkName: "player" */ '../views/ThePlayer.vue'),
+    component: () => import('../views/ThePlayer.vue'),
   },
   {
     path: '/player/characters',
@@ -65,18 +67,18 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/player/characters/:characterCid',
 
-    component: () => import(/* WebpackChunkName: "endeavours" */ '../views/ThePlayerCharacter.vue'),
+    component: () => import('../views/ThePlayerCharacter.vue'),
     props: true,
   },
   {
     path: '/tos',
     name: 'tos',
-    component: () => import(/* WebpackChunkName: "tos" */ '../views/TheTermsOfService.vue'),
+    component: () => import('../views/TheTermsOfService.vue'),
   },
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 

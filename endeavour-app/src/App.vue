@@ -1,7 +1,7 @@
 <template>
   <the-svg-icon-cache></the-svg-icon-cache>
 
-  <app-async-value :value="ready">
+  <app-async-value :value="store">
     <template v-slot:content>
       <the-main-nav></the-main-nav>
       <router-view/>
@@ -11,9 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-
-import { useStore } from '@/store';
+import { useStore } from '@/stores';
 
 import AppAsyncValue from '@/components/AppAsyncValue';
 import TheFooter from '@/components/TheFooter.vue';
@@ -21,8 +19,7 @@ import TheMainNav from '@/components/TheMainNav.vue';
 import TheSvgIconCache from '@/components/TheSvgIconCache';
 
 const store = useStore();
-const ready = computed(() => store.getters['ready']);
-store.dispatch('ready_trigger');
+store.trigger();
 </script>
 
 <style>

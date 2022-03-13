@@ -2,10 +2,10 @@ import type {
   EntityMeta,
   EntityRef,
   EntityRights,
-} from '@/store/core-types';
+} from '@/stores/core-types';
 import { brand } from '@/lib/branding';
 import type { Brand } from '@/lib/branding';
-import { Uuid } from '@/store/core-types';
+import { Uuid } from '@/stores/core-types';
 
 export type SubscriptionId = Brand<string, 'SubscriptionId'>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare

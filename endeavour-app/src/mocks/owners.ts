@@ -1,6 +1,6 @@
-import { Email, makeId, OwnershipId, PartitionId, Uri } from '@/store/core-types';
-import type { EntityRef, EntityRights, OwnershipEntity, OwnershipMeta } from '@/store/core-types';
-import { mockRights } from '@/store/mocks/mocking';
+import { Email, makeId, OwnershipId, PartitionId, Uri } from '@/stores/core-types';
+import type { EntityRef, EntityRights, OwnershipEntity, OwnershipMeta } from '@/stores/core-types';
+import { mockRights } from '@/mocks/mocking';
 
 function mockMeta(): OwnershipMeta {
   return {

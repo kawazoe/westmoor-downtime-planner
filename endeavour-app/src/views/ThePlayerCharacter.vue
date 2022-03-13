@@ -1,6 +1,6 @@
 <template>
   <main class="container px-4">
-    <app-async-value :value="character">
+    <app-async-value :value="characterStore">
       <template v-slot:content="{ value }">
         <h2>
           {{value.fullName}}
@@ -35,13 +35,11 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps } from 'vue';
+import { defineProps } from 'vue';
 import type { PropType } from 'vue';
 
-import type { AsyncValue } from '@/store/async-store';
-import type { CharacterEntity } from '@/store/business-types';
-import type { CombinedId } from '@/store/core-types';
-import { useStore } from '@/store';
+import type { CombinedId } from '@/stores/core-types';
+import { useCharactersCurrentStore } from '@/stores';
 
 import AppAsyncValue from '@/components/AppAsyncValue';
 import AppFungibleResources from '@/containers/AppFungibleResources.vue';
@@ -54,10 +52,9 @@ const props = defineProps({
   },
 });
 
-const store = useStore();
+const characterStore = useCharactersCurrentStore();
 
-const character = computed(() => store.getters['characters/current'] as AsyncValue<CharacterEntity | null>);
-store.dispatch('characters/current_trigger', { cid: props.characterCid });
+characterStore.trigger(props.characterCid);
 </script>
 
 <style scoped>

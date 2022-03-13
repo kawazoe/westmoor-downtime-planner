@@ -3,16 +3,18 @@ import type { Request } from 'miragejs';
 
 import { pipe } from 'fp-ts/function';
 
-import type { EntityMeta, OwnershipMeta, RestData } from '@/store/core-types';
-import { relativePager, stampEpoch } from '@/store/mocks/mocking';
+import type { Page } from '@/stores/binder-store';
 
-import { campaigns } from '@/store/mocks/campaigns';
-import { characters } from '@/store/mocks/characters';
-import { fungibleResources } from '@/store/mocks/fungibleResources';
-import { gameSystems } from '@/store/mocks/gameSystems';
-import { nonFungibleResources } from '@/store/mocks/nonFungibleResources';
-import { owners } from '@/store/mocks/owners';
-import { players } from '@/store/mocks/players';
+import type { EntityMeta, OwnershipMeta } from '@/stores/core-types';
+import { relativePager, stampEpoch } from '@/mocks/mocking';
+
+import { campaigns } from '@/mocks/campaigns';
+import { characters } from '@/mocks/characters';
+import { fungibleResources } from '@/mocks/fungibleResources';
+import { gameSystems } from '@/mocks/gameSystems';
+import { nonFungibleResources } from '@/mocks/nonFungibleResources';
+import { owners } from '@/mocks/owners';
+import { players } from '@/mocks/players';
 
 createServer({
   timing: 1000,
@@ -27,7 +29,7 @@ createServer({
       data: T[],
       idSelector: (v: T) => unknown,
       epoch: (r: Request) => (d: T[]) => T[],
-      pager: (r: Request) => (d: T[]) => RestData<T>,
+      pager: (r: Request) => (d: T[]) => Omit<Page<T>, 'status'>,
     ): void {
       server.get(`/${endpoint}`, (_, request) => pipe(data, epoch(request), pager(request)));
       server.get(`/${endpoint}/:cid`, (_, request) => data.filter(v => idSelector(v) === request.params.cid)[0] || null);

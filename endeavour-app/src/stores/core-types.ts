@@ -1,7 +1,6 @@
 import type { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
 import type { Brand, Iron } from '@/lib/branding';
-import { _never } from '@/lib/_never';
 import { _throw } from '@/lib/_throw';
 import { brand } from '@/lib/branding';
 

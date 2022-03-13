@@ -4,7 +4,7 @@
       <router-link class="nav-brand sz-2" to="/">endeavour</router-link>
 
       <div class="nav-menu items-center">
-        <app-async-value :value="campaigns">
+        <app-async-value :value="campaignsStore">
           <template v-slot:content="{ value }">
             <router-link class="nav-link text-2xl sz-2"
                          v-for="campaign of value.data"
@@ -16,7 +16,7 @@
           </template>
         </app-async-value>
 
-        <app-async-value :value="player">
+        <app-async-value :value="playerStore">
           <template v-slot:content>
             <router-link class="nav-link text-2xl sz-2" to="/player">
               <app-icon :icon="faUser" />
@@ -33,24 +33,19 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-
-import type { CampaignEntity, PlayerEntity } from '@/store/business-types';
-import type { AsyncValue } from '@/store/async-store';
-import { makeCid } from '@/store/core-types';
-import type { RestData } from '@/store/core-types';
-import { useStore } from '@/store';
+import { useCampaignsDataStore, usePlayersCurrentStore } from '@/stores';
+import { makeCid } from '@/stores/core-types';
 
 import { faUser } from '@fortawesome/pro-solid-svg-icons';
 
 import AppAsyncValue from '@/components/AppAsyncValue';
 import AppIcon from '@/components/AppIcon';
 
-const store = useStore();
-const campaigns = computed(() => store.getters['campaigns/data'] as AsyncValue<RestData<CampaignEntity>>);
-const player = computed(() => store.getters['players/current'] as AsyncValue<PlayerEntity>);
-store.dispatch('campaigns/data_trigger');
-store.dispatch('players/current_trigger');
+const campaignsStore = useCampaignsDataStore();
+const playerStore = usePlayersCurrentStore();
+
+campaignsStore.trigger();
+playerStore.trigger();
 </script>
 
 <style scoped>

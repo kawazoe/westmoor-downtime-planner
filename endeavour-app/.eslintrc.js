@@ -1,6 +1,7 @@
+/* eslint-env node */
 module.exports = {
   root: true,
-  env: { node: true },
+  env: { es2021: true },
   extends: [
     'plugin:vue/vue3-essential',
     'eslint:recommended',
@@ -87,7 +88,7 @@ module.exports = {
     'space-in-parens': ['error', 'never'],
     'space-infix-ops': 'error',
     'space-unary-ops': 'error',
-    'spaced-comment': ['error', 'always', { line: { exceptions: ['/'], markers: ['<'] }, block: { exceptions: ['*'] } }],
+    'spaced-comment': ['error', 'always', { line: { exceptions: ['/'], markers: ['<', '/ <reference'] }, block: { exceptions: ['*'] } }],
     'switch-colon-spacing': 'error',
     'template-tag-spacing': ['error', 'never'],
     'unicode-bom': ['error', 'never'],

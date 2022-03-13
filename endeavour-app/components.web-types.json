@@ -12,20 +12,15 @@
           "name": "app-async-value",
           "priority": "highest",
           "source": {
-            "module": "./src/components/AppAsyncValue.ts",
-            "symbol": "default"
+            "file": "./src/components/AppAsyncValue.ts",
+            "offset": 0
           },
           "description": "Selects the right template to render an `AsyncValue` based on its status.",
           "props": [
             {
               "name": "value",
               "description": "An `AsyncValue` ref",
-              "type": ["AsyncValue<unknown>"]
-            },
-            {
-              "name": "empty-predicate",
-              "description": "A predicate that defines if a successful value has content, or is empty.",
-              "type": ["(value: AsyncValue<unknown>) => boolean"]
+              "type": ["AsyncValue<unknown> | Store<string, AsyncValue<unknown>, unknown, unknown>"]
             }
           ],
           "slots": [

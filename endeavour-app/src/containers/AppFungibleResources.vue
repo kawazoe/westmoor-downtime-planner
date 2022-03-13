@@ -11,8 +11,8 @@ import { computed, defineProps } from 'vue';
 import { pipe } from 'fp-ts/function';
 import type { PropType } from 'vue';
 
-import type { EntityRef } from '@/store/core-types';
-import type { FungibleResourceId } from '@/store/business-types';
+import type { EntityRef } from '@/stores/core-types';
+import type { FungibleResourceId } from '@/stores/business-types';
 
 import AppTable from '@/components/AppTable.vue';
 

@@ -7,8 +7,8 @@
 import { computed, defineProps } from 'vue';
 import type { PropType } from 'vue';
 
-import type { EntityRef } from '@/store/core-types';
-import type { NonFungibleResourceId } from '@/store/business-types';
+import type { EntityRef } from '@/stores/core-types';
+import type { NonFungibleResourceId } from '@/stores/business-types';
 
 import AppTable from '@/components/AppTable.vue';
 

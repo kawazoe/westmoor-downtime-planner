@@ -1,6 +1,6 @@
 <template>
   <main class="container px-4">
-    <app-async-value :value="player">
+    <app-async-value :value="playerStore">
       <template v-slot:content="{ value }">
         <h2>Welcome {{value.description}}</h2>
 
@@ -24,13 +24,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-
 import { faAtlas, faMoneyBill, faPortrait } from '@fortawesome/pro-regular-svg-icons';
 
-import type { AsyncValue } from '@/store/async-store';
-import type { PlayerEntity } from '@/store/business-types';
-import { useStore } from '@/store';
+import { usePlayersCurrentStore } from '@/stores';
 
 import AppAsyncValue from '@/components/AppAsyncValue';
 import AppCampaignCard from '@/containers/AppCampaignCard.vue';
@@ -38,9 +34,9 @@ import AppCharacterCard from '@/containers/AppCharacterCard.vue';
 import AppIcon from '@/components/AppIcon';
 import AppSubscriptionPresenter from '@/components/AppSubscriptionPresenter.vue';
 
-const store = useStore();
-const player = computed(() => store.getters['players/current'] as AsyncValue<PlayerEntity>);
-store.dispatch('players/current_trigger');
+const playerStore = usePlayersCurrentStore();
+
+playerStore.trigger();
 </script>
 
 <style scoped>

@@ -1,9 +1,9 @@
 import { _with } from '@/lib/_with';
 
-import { mockEntity, mockMeta } from '@/store/mocks/mocking';
-import { mockRightsPublic, ownerGenericPublisher } from '@/store/mocks/owners';
-import type { NonFungibleResourceEntity, NonFungibleResourceId } from '@/store/business-types';
-import { makeId } from '@/store/core-types';
+import { mockEntity, mockMeta } from '@/mocks/mocking';
+import { mockRightsPublic, ownerGenericPublisher } from '@/mocks/owners';
+import type { NonFungibleResourceEntity, NonFungibleResourceId } from '@/stores/business-types';
+import { makeId } from '@/stores/core-types';
 
 function capitalize(str: string): string {
   return str.length > 1 ? str.substring(0, 1).toLocaleUpperCase() + str.substring(1) : str.toLocaleLowerCase();

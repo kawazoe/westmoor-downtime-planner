@@ -1,15 +1,15 @@
-import type { FungibleResourceEntity } from '@/store/business-types';
-import { FungibleResourceId } from '@/store/business-types';
-import { makeId } from '@/store/core-types';
+import type { FungibleResourceEntity } from '@/stores/business-types';
+import { FungibleResourceId } from '@/stores/business-types';
+import { makeId } from '@/stores/core-types';
 
 import {
   gameSystemDungeonAndDragons5e,
   gameSystemGeneric,
   gameSystemTravellers,
   gameSystemWorldOfDarkness,
-} from '@/store/mocks/gameSystems';
-import { mockEntity, mockMeta } from '@/store/mocks/mocking';
-import { mockRightsPublic, ownerGenericPublisher } from '@/store/mocks/owners';
+} from '@/mocks/gameSystems';
+import { mockEntity, mockMeta } from '@/mocks/mocking';
+import { mockRightsPublic, ownerGenericPublisher } from '@/mocks/owners';
 
 export const fungibleDownTimeDays = mockEntity<FungibleResourceEntity>(
   mockMeta('FungibleResourceEntity', ownerGenericPublisher),

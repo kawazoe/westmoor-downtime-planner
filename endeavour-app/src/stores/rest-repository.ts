@@ -1,5 +1,5 @@
-import type { Bookmark, CombinedId, Page, Uri } from '@/store/core-types';
-import { unwrapBookmark } from '@/store/core-types';
+import type { Bookmark, Page } from '@/stores/binder-store';
+import type { CombinedId, Uri } from '@/stores/core-types';
 
 export class RestRepository<T> {
   public constructor(private endpoint: Uri) {
@@ -16,7 +16,7 @@ export class RestRepository<T> {
       }
 
       const request = await fetch(`${this.endpoint}${prepareQueryString()}`);
-      return unwrapBookmark<T>(await request.json());
+      return await request.json();
     };
   }
 

@@ -1,9 +1,9 @@
 import { faGlobeAfrica, faGlobeAmericas, faGlobeAsia, faGlobeEurope } from '@fortawesome/pro-solid-svg-icons';
 import type { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
-import { makeId, makeRef, PartitionId } from '@/store/core-types';
-import type { CampaignEntity } from '@/store/business-types';
-import { CampaignId } from '@/store/business-types';
+import { makeId, makeRef, PartitionId } from '@/stores/core-types';
+import type { CampaignEntity } from '@/stores/business-types';
+import { CampaignId } from '@/stores/business-types';
 
 import {
   characterAltheaEckstrom,
@@ -13,21 +13,21 @@ import {
   characterEldridge, characterErnesto, characterEsmeVance, characterFennel, characterGael,
   characterHarper, characterIrvin, characterKismet, characterLukaRush, characterMarvinRevanoire,
   characterMaxHedgar, characterPimVindicar, characterRanaSmallwood, characterRyleeBelgrave,
-} from '@/store/mocks/characters';
+} from '@/mocks/characters';
 import {
   gameSystemDungeonAndDragons5e,
   gameSystemGeneric,
   gameSystemTravellers,
   gameSystemWorldOfDarkness,
-} from '@/store/mocks/gameSystems';
-import { mockEntity, mockMeta, mockRights } from '@/store/mocks/mocking';
+} from '@/mocks/gameSystems';
+import { mockEntity, mockMeta, mockRights } from '@/mocks/mocking';
 import {
   mockRightsPublic,
   ownerEoloPonting,
   ownerHubertRossen,
   ownerMackaillynGunst,
   ownerRocklandHagemann,
-} from '@/store/mocks/owners';
+} from '@/mocks/owners';
 
 export function randomGlobeIcon(): IconDefinition {
   const rnd = Math.random() * 4;
