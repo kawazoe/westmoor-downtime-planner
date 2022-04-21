@@ -1,5 +1,6 @@
-import type { Bookmark, Page } from '@/stores/binder-store';
 import type { CombinedId, Uri } from '@/stores/core-types';
+import type { Bookmark } from '@/stores/bookmarks';
+import type { Page } from '@/stores/binder-store';
 
 export class RestRepository<T> {
   public constructor(private endpoint: Uri) {

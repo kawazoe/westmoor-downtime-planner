@@ -29,7 +29,7 @@ createServer({
       data: T[],
       idSelector: (v: T) => unknown,
       epoch: (r: Request) => (d: T[]) => T[],
-      pager: (r: Request) => (d: T[]) => Omit<Page<T>, 'status'>,
+      pager: (r: Request) => (d: T[]) => Page<T>,
     ): void {
       server.get(`/${endpoint}`, (_, request) => pipe(data, epoch(request), pager(request)));
       server.get(`/${endpoint}/:cid`, (_, request) => data.filter(v => idSelector(v) === request.params.cid)[0] || null);
@@ -42,7 +42,7 @@ createServer({
       const selector = (v: T): unknown => v.cid;
       const epoch = stampEpoch((v: T) => new Date(v.createdOn).getTime());
 
-      createShorthands(endpoint, data, selector, epoch, relativePager(25));
+      createShorthands(endpoint, data, selector, epoch, relativePager(3));
     }
 
     function createEntityShorthands<T extends { cid: unknown } & EntityMeta>(
@@ -52,7 +52,7 @@ createServer({
       const selector = (v: T): unknown => v.cid;
       const epoch = stampEpoch((v: T) => new Date(v.created.on).getTime());
 
-      createShorthands(endpoint, data, selector, epoch, relativePager(25));
+      createShorthands(endpoint, data, selector, epoch, relativePager(3));
     }
 
     createOwnershipShorthands('owners', owners);

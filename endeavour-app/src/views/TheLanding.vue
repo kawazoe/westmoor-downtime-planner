@@ -2,14 +2,65 @@
   <main class="container px-8 sm:px-4 pb-16 text-center sm:text-left">
     <h2>Play D&D, don't manage spreadsheets</h2>
 
-    <app-async-value :value="playersStore">
-      <template v-slot:content="{value}">
-        <h3>DEBUG</h3>
-        <ul>
-          <li v-for="player in value.data" :key="player.cid"><a class="nav-link" href="#" @click="setPlayer(player)">{{player.description}}</a></li>
-        </ul>
+    <!--
+    <app-binder-presenter :value="playersStore">
+      <template v-slot:initial>
+        Waiting...
       </template>
-    </app-async-value>
+      <template v-slot:nested="{pages}">
+        <div v-for="page in pages">
+          <app-binder-page-presenter :value="page">
+            <template v-slot:content="{value}">
+            </template>
+          </app-binder-page-presenter>
+        </div>
+        <div v-for="page in anyBookmarkKind.visible(pages)">
+          <app-binder-page-presenter :value="page">
+            <template v-slot:content="{value}">
+            </template>
+          </app-binder-page-presenter>
+        </div>
+
+        <div id="progressive">
+          <button @click="progressive.trigger()"></button>
+          <app-scroll-detector @reached="progressive.trigger()"></app-scroll-detector>
+        </div>
+
+        <div id="relative">
+          <button @click="relative.go(relative.previous)">Previous</button>
+          <button v-for="bookmark in relative" @click="relative.go(bookmark)" :class="bookmark === relative.current ? 'current' : ''">
+            {{bookmark.title}}
+          </button>
+          <button @click="relative.go(relative.next)">Next</button>
+        </div>
+
+        <div id="absolute">
+          <label>Offset:</label>
+          <input type="number" @change="absolute.load($value, absolute.limit)" :value="absolute.offset">
+          <label>Limit:</label>
+          <input type="number" @change="absolute.load(absolute.offset, $value)" :value="absolute.limit">
+        </div>
+      </template>
+    </app-binder-presenter>
+    -->
+
+    <app-binder-presenter :value="progressivePlayers.store">
+      <template #initial>
+        <div ref="playersLoader">...</div>
+      </template>
+      <template #nested>
+        <p>binder</p>
+        <ul class="text-4xl">
+          <app-binder-page-presenter v-for="page in progressivePlayers.store.pages" :value="page" :key="page.key">
+            <template #content>
+              <li>page {{page.bookmark?.page}}</li>
+              <li v-for="player in page.value" :key="player.cid"><a class="nav-link" href="#" @click="setPlayer(player)">{{player.description}}</a></li>
+            </template>
+          </app-binder-page-presenter>
+        </ul>
+        <div ref="playersLoader">...</div>
+      </template>
+    </app-binder-presenter>
 
     <div class="hero hero-left">
       <img src="../assets/placeholder.png" alt="placeholder">
@@ -90,16 +141,23 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue';
+
 import { usePlayersCurrentStore, usePlayersDataStore } from '@/stores';
+import { useIntersectionObserver } from '@/components/intersectionObserverComposable';
+import { useProgressiveBinder } from '@/components/binderComposables';
 
 import type { PlayerEntity } from '@/stores/business-types';
 
-import AppAsyncValue from '@/components/AppAsyncValue';
+import AppBinderPagePresenter from '@/components/AppBinderPagePresenter';
+import AppBinderPresenter from '@/components/AppBinderPresenter';
 
-const playersStore = usePlayersDataStore();
+const useProgressivePlayers = useProgressiveBinder(usePlayersDataStore);
+const progressivePlayers = useProgressivePlayers();
 const playerStore = usePlayersCurrentStore();
 
-playersStore.trigger();
+const playersLoader = ref<HTMLElement | null>(null);
+useIntersectionObserver(playersLoader, e => e.isIntersecting && progressivePlayers.trigger().then(() => !progressivePlayers.currentPage?.metadata.last));
 
 function setPlayer(player: PlayerEntity): void {
   sessionStorage.setItem('current-player', player.cid);

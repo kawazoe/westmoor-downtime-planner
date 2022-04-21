@@ -24,7 +24,7 @@ export function defaultEmptyPredicate(value: unknown): boolean {
 export type AsyncStatus = 'initial' | 'loading' | 'content' | 'empty' | 'error' | 'refreshing' | 'retrying';
 export interface AsyncValueInitial {
   status: 'initial';
-  cacheKey: undefined;
+  cacheKey: CacheKey;
 }
 export interface AsyncValueLoading {
   status: 'loading';
@@ -74,13 +74,13 @@ export function definePromiseStore<P extends unknown[], V>(
     id,
     state: () => ({
       status: 'initial',
-      cacheKey: undefined,
+      cacheKey: '',
       value: undefined,
       error: undefined,
     } as AsyncValue<V>),
     actions: {
       _pickProcessingStatus(cacheKey: CacheKey): 'loading' | 'refreshing' | 'retrying' | null {
-        if (toRaw(this.cacheKey) != null && toRaw(this.cacheKey) !== cacheKey) {
+        if (toRaw(this.cacheKey) !== cacheKey) {
           return 'loading';
         }
 
@@ -103,6 +103,8 @@ export function definePromiseStore<P extends unknown[], V>(
       },
       trigger(...args: P) {
         const cacheKey = (options?.keySelector ?? defaultKeySelector)(...args);
+        const cacheCheck = (match: () => void): void => (toRaw(this.cacheKey) === cacheKey ? match() : undefined);
+
         const processingStatus = this._pickProcessingStatus(cacheKey);
         if (!processingStatus) {
           return Promise.resolve();
@@ -110,21 +112,17 @@ export function definePromiseStore<P extends unknown[], V>(
 
         this.$patch({ status: processingStatus, cacheKey });
 
-        const whenRelevant = (callback: () => void): void => (toRaw(this.cacheKey) === cacheKey ? callback() : undefined);
-
         return trigger(...args)
-          .then(
-            value => whenRelevant(() => this.$patch({
-              status: (options?.emptyPredicate ?? defaultEmptyPredicate)(value)
-                ? 'empty'
-                : 'content',
-              value,
-            })),
-            error => whenRelevant(() => this.$patch({
-              status: 'error',
-              error,
-            })),
-          );
+          .then(value => cacheCheck(() => this.$patch({
+            status: (options?.emptyPredicate ?? defaultEmptyPredicate)(value)
+              ? 'empty'
+              : 'content',
+            value,
+          })))
+          .catch(error => cacheCheck(() => this.$patch({
+            status: 'error',
+            error,
+          })));
       },
     },
   });
