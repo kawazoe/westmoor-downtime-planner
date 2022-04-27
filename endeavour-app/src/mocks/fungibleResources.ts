@@ -1,6 +1,6 @@
-import type { FungibleResourceEntity } from '@/stores/business-types';
-import { FungibleResourceId } from '@/stores/business-types';
-import { makeId } from '@/stores/core-types';
+import type { FungibleResourceEntity } from '@/stores/businessTypes';
+import { FungibleResourceId } from '@/stores/businessTypes';
+import { makeId } from '@/stores/coreTypes';
 
 import {
   gameSystemDungeonAndDragons5e,

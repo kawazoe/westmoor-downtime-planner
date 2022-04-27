@@ -34,7 +34,7 @@
 
 <script lang="ts" setup>
 import { useCampaignsDataStore, usePlayersCurrentStore } from '@/stores';
-import { makeCid } from '@/stores/core-types';
+import { makeCid } from '@/stores/coreTypes';
 
 import { faUser } from '@fortawesome/pro-solid-svg-icons';
 

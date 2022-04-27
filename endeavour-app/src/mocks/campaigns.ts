@@ -1,9 +1,9 @@
 import { faGlobeAfrica, faGlobeAmericas, faGlobeAsia, faGlobeEurope } from '@fortawesome/pro-solid-svg-icons';
 import type { IconDefinition } from '@fortawesome/fontawesome-common-types';
 
-import { makeId, makeRef, PartitionId } from '@/stores/core-types';
-import type { CampaignEntity } from '@/stores/business-types';
-import { CampaignId } from '@/stores/business-types';
+import { makeId, makeRef, PartitionId } from '@/stores/coreTypes';
+import type { CampaignEntity } from '@/stores/businessTypes';
+import { CampaignId } from '@/stores/businessTypes';
 
 import {
   characterAltheaEckstrom,

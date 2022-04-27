@@ -1,5 +1,5 @@
-import { defineBinderStore } from '@/stores/binder-store';
-import { definePromiseStore } from '@/stores/promise-store';
+import { defineBinderStore } from '@/stores/binderStore';
+import { definePromiseStore } from '@/stores/promiseStore';
 
 import type {
   CampaignEntity,
@@ -8,9 +8,9 @@ import type {
   GameSystemEntity,
   NonFungibleResourceEntity,
   PlayerEntity,
-} from '@/stores/business-types';
-import { CombinedId, Uri } from '@/stores/core-types';
-import { RestRepository } from '@/stores/rest-repository';
+} from '@/stores/businessTypes';
+import { CombinedId, Uri } from '@/stores/coreTypes';
+import { RestRepository } from '@/stores/restRepository';
 
 const gameSystemsRepository = new RestRepository<GameSystemEntity>(Uri.cast('/api/v1/game-systems'));
 const fungibleResourcesRepository = new RestRepository<FungibleResourceEntity>(Uri.cast('/api/v1/fungible-resources'));

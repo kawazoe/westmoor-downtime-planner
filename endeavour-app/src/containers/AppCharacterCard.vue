@@ -8,8 +8,8 @@
 import { defineProps } from 'vue';
 import type { PropType } from 'vue';
 
-import type { CharacterEntity } from '@/stores/business-types';
-import { makeCid } from '@/stores/core-types';
+import type { CharacterEntity } from '@/stores/businessTypes';
+import { makeCid } from '@/stores/coreTypes';
 import { useRelativeRoute } from '@/router/routes';
 
 import AppEntityCard from '@/components/AppEntityCard.vue';

@@ -1,6 +1,6 @@
-import { CharacterId, NonFungibleResourceId } from '@/stores/business-types';
-import { makeId, makeRef } from '@/stores/core-types';
-import type { CharacterEntity } from '@/stores/business-types';
+import { CharacterId, NonFungibleResourceId } from '@/stores/businessTypes';
+import { makeId, makeRef } from '@/stores/coreTypes';
+import type { CharacterEntity } from '@/stores/businessTypes';
 
 import {
   fungibleCurrencyCredits,

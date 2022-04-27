@@ -22,7 +22,7 @@ import {
   characterMaxHedgar,
   characterPimVindicar, characterRanaSmallwood, characterRyleeBelgrave,
 } from '@/mocks/characters';
-import { makeId, makeRef } from '@/stores/core-types';
+import { makeId, makeRef } from '@/stores/coreTypes';
 import { mockEntity, mockMeta, mockRights } from '@/mocks/mocking';
 import {
   ownerAbdelrahmanThornes,
@@ -37,8 +37,8 @@ import {
   ownerSaarBoileau,
   ownerSpeeroHarriage,
 } from '@/mocks/owners';
-import type { PlayerEntity, SubscriptionEntity } from '@/stores/business-types';
-import { PlayerId, SubscriptionId } from '@/stores/business-types';
+import type { PlayerEntity, SubscriptionEntity } from '@/stores/businessTypes';
+import { PlayerId, SubscriptionId } from '@/stores/businessTypes';
 
 const subscriptionHubertRossen = mockEntity<SubscriptionEntity>(
   mockMeta('SubscriptionEntity', ownerHubertRossen),

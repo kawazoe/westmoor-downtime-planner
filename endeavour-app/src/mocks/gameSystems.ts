@@ -1,8 +1,8 @@
-import { makeId, PartitionId } from '@/stores/core-types';
+import { makeId, PartitionId } from '@/stores/coreTypes';
 import { mockEntity, mockMeta } from '@/mocks/mocking';
 import { mockRightsPublic, ownerGenericPublisher } from '@/mocks/owners';
-import type { GameSystemEntity } from '@/stores/business-types';
-import { GameSystemId } from '@/stores/business-types';
+import type { GameSystemEntity } from '@/stores/businessTypes';
+import { GameSystemId } from '@/stores/businessTypes';
 
 export const gameSystemGeneric = mockEntity<GameSystemEntity>(
   mockMeta('GameSystemEntity', ownerGenericPublisher),

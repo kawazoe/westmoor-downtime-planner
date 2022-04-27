@@ -147,7 +147,7 @@ import { usePlayersCurrentStore, usePlayersDataStore } from '@/stores';
 import { useIntersectionObserver } from '@/components/intersectionObserverComposable';
 import { useProgressiveBinder } from '@/components/binderComposables';
 
-import type { PlayerEntity } from '@/stores/business-types';
+import type { PlayerEntity } from '@/stores/businessTypes';
 
 import AppBinderPagePresenter from '@/components/AppBinderPagePresenter';
 import AppBinderPresenter from '@/components/AppBinderPresenter';

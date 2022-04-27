@@ -3,9 +3,9 @@ import type { Request } from 'miragejs';
 
 import { pipe } from 'fp-ts/function';
 
-import type { Page } from '@/stores/binder-store';
+import type { Page } from '@/stores/binderStore';
 
-import type { EntityMeta, OwnershipMeta } from '@/stores/core-types';
+import type { EntityMeta, OwnershipMeta } from '@/stores/coreTypes';
 import { relativePager, stampEpoch } from '@/mocks/mocking';
 
 import { campaigns } from '@/mocks/campaigns';

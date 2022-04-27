@@ -3,7 +3,7 @@ import type { PropType, Slot, Slots, VNode } from 'vue';
 
 import type { Store } from 'pinia';
 
-import type { AsyncStatus, AsyncValue } from '@/stores/promise-store';
+import type { AsyncStatus, AsyncValue } from '@/stores/promiseStore';
 
 const undefinedSlot = (status: AsyncStatus) => (): VNode[] => [createCommentVNode(`app-async-value:unresolved-slot-mapping:${status}`)];
 const pickSlot = (status: AsyncStatus, slots: Slots): Slot => {

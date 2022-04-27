@@ -8,8 +8,8 @@
 import { defineProps } from 'vue';
 import type { PropType } from 'vue';
 
-import type { CampaignEntity } from '@/stores/business-types';
-import { makeCid } from '@/stores/core-types';
+import type { CampaignEntity } from '@/stores/businessTypes';
+import { makeCid } from '@/stores/coreTypes';
 
 import AppEntityCard from '@/components/AppEntityCard.vue';
 

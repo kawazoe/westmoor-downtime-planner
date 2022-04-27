@@ -38,7 +38,7 @@
 import { defineProps } from 'vue';
 import type { PropType } from 'vue';
 
-import type { CombinedId } from '@/stores/core-types';
+import type { CombinedId } from '@/stores/coreTypes';
 import { useCharactersCurrentStore } from '@/stores';
 
 import AppAsyncValue from '@/components/AppAsyncValue';

@@ -5,7 +5,7 @@ import type { Pinia, StoreGeneric } from 'pinia';
 
 import { _never } from '@/lib/_never';
 
-import type { AsyncPage, BinderStore, BinderStoreDefinition } from '@/stores/binder-store';
+import type { AsyncPage, BinderStore, BinderStoreDefinition } from '@/stores/binderStore';
 
 export interface ProgressiveBinder<P extends unknown[], V> {
   store: BinderStore<P, V>;

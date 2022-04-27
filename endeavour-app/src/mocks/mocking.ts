@@ -10,13 +10,13 @@ import type {
   EntityRights,
   OwnershipId,
   Right,
-} from '@/stores/core-types';
-import { makeRef, Uuid } from '@/stores/core-types';
+} from '@/stores/coreTypes';
+import { makeRef, Uuid } from '@/stores/coreTypes';
 
 import type { AbsoluteBookmark, ProgressiveBookmark, RelativeBookmark } from '@/stores/bookmarks';
 import { toBookmark } from '@/stores/bookmarks';
 
-import type { Page } from '@/stores/binder-store';
+import type { Page } from '@/stores/binderStore';
 
 export function mockMeta(schema: string, creator: EntityRef<OwnershipId>): EntityMeta {
   return {

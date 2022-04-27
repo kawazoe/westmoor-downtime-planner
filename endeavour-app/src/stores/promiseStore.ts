@@ -1,8 +1,9 @@
 import { toRaw } from 'vue';
+import type { UnwrapRef } from 'vue';
 
+import type { _DeepPartial, StoreDefinition } from 'pinia';
 import { defineStore } from 'pinia';
 import { nanoid } from 'nanoid';
-import type { StoreDefinition } from 'pinia';
 
 import { _never } from '@/lib/_never';
 
@@ -25,10 +26,14 @@ export type AsyncStatus = 'initial' | 'loading' | 'content' | 'empty' | 'error' 
 export interface AsyncValueInitial {
   status: 'initial';
   cacheKey: CacheKey;
+  value: undefined;
+  error: undefined;
 }
 export interface AsyncValueLoading {
   status: 'loading';
   cacheKey: CacheKey;
+  value: undefined;
+  error: undefined;
 }
 export interface AsyncValueContent<V> {
   status: 'content';
@@ -62,7 +67,6 @@ export type AsyncValueInitialized<V> = AsyncValueLoading | AsyncValuePresenting<
 export type AsyncValue<V> = AsyncValueInitial | AsyncValueInitialized<V>;
 
 type PromiseStoreActions<P extends unknown[]> = {
-  _pickProcessingStatus(cacheKey: CacheKey): 'loading' | 'refreshing' | 'retrying' | null,
   trigger: (...args: P) => Promise<void>,
 };
 export function definePromiseStore<P extends unknown[], V>(
@@ -70,6 +74,25 @@ export function definePromiseStore<P extends unknown[], V>(
   trigger: (...args: P) => Promise<V>,
   options?: PromiseStoreOptions<P, V>,
 ): StoreDefinition<string, AsyncValue<V>, Record<string, string>, PromiseStoreActions<P>> {
+  const pickProcessingState = (stateStatus: AsyncStatus, cacheKey: CacheKey): _DeepPartial<UnwrapRef<AsyncValue<V>>> | null => {
+    switch (stateStatus) {
+      case 'initial':
+      case 'empty':
+        return { status: 'loading', cacheKey, value: undefined, error: undefined };
+      case 'content':
+        return { status: 'refreshing', cacheKey };
+      case 'error':
+        return { status: 'retrying', cacheKey };
+      case 'loading':
+      case 'refreshing':
+      case 'retrying':
+        console.info(`[AsyncValueAction] [trigger] Batching ${id} concurrent trigger.`);
+        return null;
+      default:
+        return _never(stateStatus);
+    }
+  };
+
   return defineStore({
     id,
     state: () => ({
@@ -79,50 +102,38 @@ export function definePromiseStore<P extends unknown[], V>(
       error: undefined,
     } as AsyncValue<V>),
     actions: {
-      _pickProcessingStatus(cacheKey: CacheKey): 'loading' | 'refreshing' | 'retrying' | null {
-        if (toRaw(this.cacheKey) !== cacheKey) {
-          return 'loading';
-        }
-
-        switch (this.status) {
-          case 'initial':
-          case 'empty':
-            return 'loading';
-          case 'content':
-            return 'refreshing';
-          case 'error':
-            return 'retrying';
-          case 'loading':
-          case 'refreshing':
-          case 'retrying':
-            console.info(`[AsyncValueAction] [trigger] Batching ${id} concurrent trigger.`);
-            return null;
-          default:
-            return _never(this);
-        }
-      },
       trigger(...args: P) {
         const cacheKey = (options?.keySelector ?? defaultKeySelector)(...args);
-        const cacheCheck = (match: () => void): void => (toRaw(this.cacheKey) === cacheKey ? match() : undefined);
+        const cacheKeyMatches = (): boolean => toRaw(this.cacheKey) === cacheKey;
 
-        const processingStatus = this._pickProcessingStatus(cacheKey);
-        if (!processingStatus) {
+        const processingState: _DeepPartial<UnwrapRef<AsyncValue<V>>> | null = cacheKeyMatches()
+          ? pickProcessingState(this.status, cacheKey)
+          : ({ status: 'loading', cacheKey, value: undefined, error: undefined });
+
+        if (!processingState) {
           return Promise.resolve();
         }
-
-        this.$patch({ status: processingStatus, cacheKey });
+        this.$patch(processingState);
 
         return trigger(...args)
-          .then(value => cacheCheck(() => this.$patch({
-            status: (options?.emptyPredicate ?? defaultEmptyPredicate)(value)
-              ? 'empty'
-              : 'content',
-            value,
-          })))
-          .catch(error => cacheCheck(() => this.$patch({
-            status: 'error',
-            error,
-          })));
+          .then(value => {
+            if (cacheKeyMatches()) {
+              this.$patch({
+                status: (options?.emptyPredicate ?? defaultEmptyPredicate)(value)
+                  ? 'empty'
+                  : 'content',
+                value,
+              });
+            }
+          })
+          .catch(error => {
+            if (cacheKeyMatches()) {
+              this.$patch({
+                status: 'error',
+                error,
+              });
+            }
+          });
       },
     },
   });

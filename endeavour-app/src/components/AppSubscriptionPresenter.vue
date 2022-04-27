@@ -8,7 +8,7 @@
 import { defineProps } from 'vue';
 import type { PropType } from 'vue';
 
-import type { SubscriptionEntity } from '@/stores/business-types';
+import type { SubscriptionEntity } from '@/stores/businessTypes';
 
 defineProps({
   subscription: {
