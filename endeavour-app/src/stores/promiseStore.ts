@@ -2,7 +2,7 @@ import { toRaw } from 'vue';
 import type { UnwrapRef } from 'vue';
 
 import type { _DeepPartial, StoreDefinition } from 'pinia';
-import { defineStore } from 'pinia';
+import { acceptHMRUpdate, defineStore } from 'pinia';
 import { nanoid } from 'nanoid';
 
 import { _never } from '@/lib/_never';
@@ -93,7 +93,7 @@ export function definePromiseStore<P extends unknown[], V>(
     }
   };
 
-  return defineStore({
+  const useStore = defineStore({
     id,
     state: () => ({
       status: 'initial',
@@ -137,4 +137,10 @@ export function definePromiseStore<P extends unknown[], V>(
       },
     },
   });
+
+  if (import.meta.hot) {
+    import.meta.hot.accept(acceptHMRUpdate(useStore, import.meta.hot));
+  }
+
+  return useStore;
 }

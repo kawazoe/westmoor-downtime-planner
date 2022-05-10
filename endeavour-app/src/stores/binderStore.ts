@@ -1,7 +1,7 @@
 import { reactive, toRaw } from 'vue';
 import type { UnwrapNestedRefs } from 'vue';
 
-import { defineStore } from 'pinia';
+import { acceptHMRUpdate, defineStore } from 'pinia';
 import type { StoreDefinition } from 'pinia';
 
 import { nanoid } from 'nanoid';
@@ -67,7 +67,7 @@ export function defineBinderStore<P extends unknown[], V>(
   trigger: (...args: P) => (bookmark?: B.Bookmark) => Promise<Page<V>>,
   options?: BinderStoreOptions<P, V>,
 ): BinderStoreDefinition<P, V> {
-  return defineStore({
+  const useStore = defineStore({
     id,
     state: () => ({
       status: 'initial',
@@ -245,4 +245,10 @@ export function defineBinderStore<P extends unknown[], V>(
       },
     },
   });
+
+  if (import.meta.hot) {
+    import.meta.hot.accept(acceptHMRUpdate(useStore, import.meta.hot));
+  }
+
+  return useStore;
 }
