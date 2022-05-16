@@ -10,7 +10,7 @@ import { defineProps } from 'vue';
 import type { PropType } from 'vue';
 
 import type { CombinedId } from '@/stores/coreTypes';
-import TheCampaignNav from '@/components/TheCampaignNav.vue';
+import TheCampaignNav from '@/containers/TheCampaignNav.vue';
 
 defineProps({
   campaignCid: {

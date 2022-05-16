@@ -9,7 +9,7 @@
       <template v-slot:content="{ value }">
         <div class="nav-menu" :class="{ expanded }">
           <router-link class="nav-link sz-2" :to="`${rel}/endeavours`">Endeavours</router-link>
-          <router-link class="nav-link sz-2" :to="`${rel}/activities`">Activities</router-link>
+          <router-link class="nav-link sz-2" :to="`${rel}/actions`">Actions</router-link>
           <router-link class="nav-link sz-2" :to="`${rel}/resources`">Resources</router-link>
           <router-link class="nav-link sz-2" :to="`${rel}/characters`">Characters</router-link>
           <router-link class="nav-link sz-2" :to="`${rel}/settings`">Settings</router-link>

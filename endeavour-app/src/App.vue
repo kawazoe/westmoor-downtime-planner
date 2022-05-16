@@ -14,8 +14,8 @@
 import { useStore } from '@/stores';
 
 import AppAsyncValue from '@/components/AppAsyncValue';
-import TheFooter from '@/components/TheFooter.vue';
-import TheMainNav from '@/components/TheMainNav.vue';
+import TheFooter from '@/containers/TheFooter.vue';
+import TheMainNav from '@/containers/TheMainNav.vue';
 import TheSvgIconCache from '@/components/TheSvgIconCache';
 
 const store = useStore();

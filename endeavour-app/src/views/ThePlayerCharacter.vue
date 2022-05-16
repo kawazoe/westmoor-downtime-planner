@@ -5,6 +5,7 @@
         <h2>
           {{value.fullName}}
           <span class="text-base font-light tracking-tight italic text-gray-600">by {{value.owner.description}}</span>
+          <span class="text-base font-light tracking-tight italic text-gray-600">, for {{value.gameSystem.description}}</span>
         </h2>
 
         <p>{{value.bio}}</p>
@@ -18,14 +19,19 @@
           </div>
 
           <div>
-            <h3>Items</h3>
+            <h3>Inventory</h3>
             <section>
               <app-non-fungible-resources :non-fungible-resources="value.resources.nonFungibles" />
             </section>
           </div>
         </div>
 
-        <h3>Cards</h3>
+        <h3>Action Cards</h3>
+        <section>
+          <app-action-list></app-action-list>
+        </section>
+
+        <h3>Modifier Cards</h3>
         <section>
           <app-modifier-list></app-modifier-list>
         </section>
@@ -42,8 +48,8 @@ import type { CombinedId } from '@/stores/coreTypes';
 import { useCharactersCurrentStore } from '@/stores';
 
 import AppAsyncValue from '@/components/AppAsyncValue';
-import AppFungibleResources from '@/containers/AppFungibleResources.vue';
-import AppNonFungibleResources from '@/containers/AppNonFungibleResources.vue';
+import AppFungibleResources from '@/components/AppFungibleResources.vue';
+import AppNonFungibleResources from '@/components/AppNonFungibleResources.vue';
 
 const props = defineProps({
   characterCid: {

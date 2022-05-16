@@ -30,8 +30,8 @@ const routes: RouteRecordRaw[] = [
             redirect: to => ({ name: 'endeavours', params: to.params, replace: true }),
           },
           {
-            path: 'activities',
-            component: () => import('../views/TheCampaignActivities.vue'),
+            path: 'actions',
+            component: () => import('../views/TheCampaignActions.vue'),
           },
           {
             path: 'characters',

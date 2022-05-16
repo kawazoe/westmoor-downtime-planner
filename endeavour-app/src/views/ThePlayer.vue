@@ -29,8 +29,8 @@ import { faAtlas, faMoneyBill, faPortrait } from '@fortawesome/pro-regular-svg-i
 import { usePlayersCurrentStore } from '@/stores';
 
 import AppAsyncValue from '@/components/AppAsyncValue';
-import AppCampaignCard from '@/containers/AppCampaignCard.vue';
-import AppCharacterCard from '@/containers/AppCharacterCard.vue';
+import AppCampaignCard from '@/components/AppCampaignCard.vue';
+import AppCharacterCard from '@/components/AppCharacterCard.vue';
 import AppIcon from '@/components/AppIcon';
 import AppSubscriptionPresenter from '@/components/AppSubscriptionPresenter.vue';
 
