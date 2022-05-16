@@ -26,9 +26,9 @@ export const usePlayersDataStore = defineBinderStore('players-data', () => playe
 // TODO: default id is only there temporarily. This call shouldn't trigger if there isn't an id.
 const getCurrentPlayerCid = (): CombinedId => CombinedId.cast(sessionStorage.getItem('current-player') ?? 'mismis');
 export const usePlayersCurrentStore = definePromiseStore('players-current', () => playersRepository.getById(getCurrentPlayerCid()), { keySelector: getCurrentPlayerCid });
-export const useCampaignsDataStore = definePromiseStore('campaigns-current', () => campaignsRepository.getPage()());
+export const useCampaignsDataStore = definePromiseStore('campaigns-data', () => campaignsRepository.getPage()());
 export const useCampaignsCurrentStore = definePromiseStore('campaigns-current', (cid: CombinedId) => campaignsRepository.getById(cid));
-export const useCharactersDataStore = definePromiseStore('characters-current', () => charactersRepository.getPage()());
+export const useCharactersDataStore = definePromiseStore('characters-data', () => charactersRepository.getPage()());
 export const useCharactersCurrentStore = definePromiseStore('characters-current', (cid: CombinedId) => charactersRepository.getById(cid));
 
 export const useStore = definePromiseStore('main', async () => {
