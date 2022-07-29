@@ -2,8 +2,8 @@ import { createServer } from 'miragejs';
 
 import { pipe } from 'fp-ts/function';
 
-import type { EntityMeta } from '@/stores/coreTypes';
 import { relativePager, searchFakePager, stampEpoch } from '@/mocks/mocking';
+import type { EntityMeta } from '@/stores/coreTypes';
 
 import { actionCards } from '@/mocks/actionCards';
 import { campaigns } from '@/mocks/campaigns';
@@ -44,6 +44,14 @@ createServer({
       source: e => `${e.metas['source']}`,
     });
     createEntityShorthands('non-fungible-resources', nonFungibleResources, {
+      tag: e => `${e.metas['tag']}`,
+      source: e => `${e.metas['source']}`,
+    });
+    createEntityShorthands('action-cards', actionCards, {
+      tag: e => `${e.metas['tag']}`,
+      source: e => `${e.metas['source']}`,
+    });
+    createEntityShorthands('modifier-cards', modifierCards, {
       tag: e => `${e.metas['tag']}`,
       source: e => `${e.metas['source']}`,
     });

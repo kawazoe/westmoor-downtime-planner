@@ -32,6 +32,9 @@ export const NonFungibleResourceId = brand((v: string): v is NonFungibleResource
 export type NonFungibleResourceEntity = EntityRef<NonFungibleResourceId> & EntityMeta & EntityRights;
 
 export interface CardBase<TId> extends EntityRef<TId>, EntityMeta, EntityRights {
+  title: string;
+  description: string;
+  artwork: string;
   canApply: (context: unknown) => boolean | number; //< JEXL Expression
   apply: (context: unknown) => unknown; //< JEXL Expression
 }
