@@ -10,6 +10,7 @@ import type {
   EntityRights,
   OwnershipId,
   Right,
+  SearchDocumentsPageResult,
 } from '@/stores/coreTypes';
 import { makeRef, Uuid } from '@/stores/coreTypes';
 
@@ -17,8 +18,12 @@ import type { AbsoluteBookmark, ProgressiveBookmark, RelativeBookmark } from '@/
 import { toBookmark } from '@/stores/bookmarks';
 
 import type { Page } from '@/stores/binderStore';
+import * as NEA from 'fp-ts/NonEmptyArray';
+import * as A from 'fp-ts/Array';
+import * as R from 'fp-ts/Record';
+import { pipe } from 'fp-ts/function';
 
-export function mockMeta(schema: string, creator: EntityRef<OwnershipId>): EntityMeta {
+export function mockMeta(schema: string, creator: EntityRef<OwnershipId>, metas: Record<string, unknown> = {}): EntityMeta {
   return {
     schema,
     schemaVersion: 1,
@@ -30,7 +35,7 @@ export function mockMeta(schema: string, creator: EntityRef<OwnershipId>): Entit
       on: new Date().toJSON(),
       by: makeRef(creator),
     },
-    metas: {},
+    metas,
   };
 }
 
@@ -126,8 +131,8 @@ export const absolutePager = <T>(request: Request): (d: T[]) => Omit<Page<T>, 's
       bookmark,
       value,
       metadata: {
-        full: value.length === bookmark.limit,
-        last: d.length <= bookmark.offset + bookmark.limit,
+        full: value.length === bookmark.limit ? true : undefined,
+        last: d.length <= bookmark.offset + bookmark.limit ? true : undefined,
       },
     };
   };
@@ -144,8 +149,8 @@ export const relativePager = <T>(pageSize: number) => (request: Request): (d: T[
       bookmark,
       value,
       metadata: {
-        full: value.length === pageSize,
-        last: d.length <= bookmark.page * pageSize + pageSize,
+        full: value.length === pageSize ? true : undefined,
+        last: d.length <= bookmark.page * pageSize + pageSize ? true : undefined,
       },
     };
   };
@@ -160,9 +165,37 @@ export const progressivePager = <T>(storage: ProgressiveDataTokenStorage) => (re
       bookmark,
       value,
       metadata: {
-        full: value.length === token.limit,
-        last: d.length <= token.offset + token.limit,
+        full: value.length === token.limit ? true : undefined,
+        last: d.length <= token.offset + token.limit ? true : undefined,
       },
     };
+  };
+};
+export const searchFakePager = <T>(facets: Record<string, (e: T) => string>) => (request: Request): (d: T[]) => SearchDocumentsPageResult<T> => (d: T[]) => {
+  if (request.queryParams.token) {
+    return { results: [] };
+  }
+
+  return {
+    count: d.length,
+    coverage: Math.random(),
+    facets: pipe(
+      facets,
+      R.map(f => pipe(
+        d,
+        NEA.groupBy(f),
+        R.mapWithIndex((k, group) => ({ value: k, count: group.length })),
+        R.toArray,
+        A.map(([,v]) => v),
+      )),
+    ),
+    results: pipe(
+      d,
+      A.mapWithIndex((i, e) => ({
+        score: d.length - i,
+        document: e,
+      })),
+    ),
+    continuationToken: undefined,
   };
 };

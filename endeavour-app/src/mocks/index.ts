@@ -1,17 +1,16 @@
 import { createServer } from 'miragejs';
-import type { Request } from 'miragejs';
 
 import { pipe } from 'fp-ts/function';
 
-import type { Page } from '@/stores/binderStore';
+import type { EntityMeta } from '@/stores/coreTypes';
+import { relativePager, searchFakePager, stampEpoch } from '@/mocks/mocking';
 
-import type { EntityMeta, OwnershipMeta } from '@/stores/coreTypes';
-import { relativePager, stampEpoch } from '@/mocks/mocking';
-
+import { actionCards } from '@/mocks/actionCards';
 import { campaigns } from '@/mocks/campaigns';
 import { characters } from '@/mocks/characters';
 import { fungibleResources } from '@/mocks/fungibleResources';
 import { gameSystems } from '@/mocks/gameSystems';
+import { modifierCards } from '@/mocks/modifierCards';
 import { nonFungibleResources } from '@/mocks/nonFungibleResources';
 import { owners } from '@/mocks/owners';
 import { players } from '@/mocks/players';
@@ -24,44 +23,32 @@ createServer({
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const server = this;
 
-    function createShorthands<T>(
-      endpoint: string,
-      data: T[],
-      idSelector: (v: T) => unknown,
-      epoch: (r: Request) => (d: T[]) => T[],
-      pager: (r: Request) => (d: T[]) => Page<T>,
-    ): void {
-      server.get(`/${endpoint}`, (_, request) => pipe(data, epoch(request), pager(request)));
-      server.get(`/${endpoint}/:cid`, (_, request) => data.filter(v => idSelector(v) === request.params.cid)[0] || null);
-    }
-
-    function createOwnershipShorthands<T extends { cid: unknown } & OwnershipMeta>(
-      endpoint: string,
-      data: T[],
-    ): void {
-      const selector = (v: T): unknown => v.cid;
-      const epoch = stampEpoch((v: T) => new Date(v.createdOn).getTime());
-
-      createShorthands(endpoint, data, selector, epoch, relativePager(3));
-    }
-
     function createEntityShorthands<T extends { cid: unknown } & EntityMeta>(
       endpoint: string,
       data: T[],
+      facets: Record<string, (v: T) => string>,
     ): void {
-      const selector = (v: T): unknown => v.cid;
+      const idSelector = (v: T): unknown => v.cid;
       const epoch = stampEpoch((v: T) => new Date(v.created.on).getTime());
 
-      createShorthands(endpoint, data, selector, epoch, relativePager(3));
+      server.get(`/${endpoint}`, (_, request) => pipe(data, epoch(request), relativePager(3)(request)));
+      server.get(`/${endpoint}/search`, (_, request) => pipe(data, epoch(request), searchFakePager(facets)(request)));
+      server.get(`/${endpoint}/:cid`, (_, request) => data.filter(v => idSelector(v) === request.params.cid)[0] || null);
     }
 
-    createOwnershipShorthands('owners', owners);
+    createEntityShorthands('owners', owners, {});
 
-    createEntityShorthands('game-systems', gameSystems);
-    createEntityShorthands('fungible-resources', fungibleResources);
-    createEntityShorthands('non-fungible-resources', nonFungibleResources);
-    createEntityShorthands('characters', characters);
-    createEntityShorthands('campaigns', campaigns);
-    createEntityShorthands('players', players);
+    createEntityShorthands('game-systems', gameSystems, {});
+    createEntityShorthands('fungible-resources', fungibleResources, {
+      tag: e => `${e.metas['tag']}`,
+      source: e => `${e.metas['source']}`,
+    });
+    createEntityShorthands('non-fungible-resources', nonFungibleResources, {
+      tag: e => `${e.metas['tag']}`,
+      source: e => `${e.metas['source']}`,
+    });
+    createEntityShorthands('characters', characters, {});
+    createEntityShorthands('campaigns', campaigns, {});
+    createEntityShorthands('players', players, {});
   },
 });

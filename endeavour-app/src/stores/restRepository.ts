@@ -1,4 +1,4 @@
-import type { CombinedId, Uri } from '@/stores/coreTypes';
+import type { CombinedId, SearchDocumentsPageResult, SearchMeta, SearchResult, Uri } from '@/stores/coreTypes';
 import type { Bookmark } from '@/stores/bookmarks';
 import type { Page } from '@/stores/binderStore';
 
@@ -18,6 +18,30 @@ export class RestRepository<T> {
 
       const request = await fetch(`${this.endpoint}${prepareQueryString()}`);
       return await request.json();
+    };
+  }
+
+  public search(): (bookmark?: Bookmark) => Promise<Page<SearchResult<T>, SearchMeta<T>>> {
+    return async bookmark => {
+      if (bookmark && bookmark.kind !== 'progressive') {
+        throw new Error('Unsupported bookmark kind');
+      }
+
+      const params = new URLSearchParams({ token: bookmark?.token ?? '' });
+      const request = await fetch(`${this.endpoint}/search?${params}`);
+      const response = await request.json() as SearchDocumentsPageResult<T>;
+
+      const { results, continuationToken, ...rest } = response;
+
+      return {
+        bookmark: { kind: 'progressive', token: continuationToken ?? '' },
+        value: results,
+        metadata: {
+          full: true,
+          last: !continuationToken ? true : undefined,
+          ...rest,
+        },
+      };
     };
   }
 
