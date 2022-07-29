@@ -1,5 +1,5 @@
 <template>
-  <app-table :header="[['Description']]"
+  <app-table :header="[['Summary']]"
              :content="content" />
 </template>
 
@@ -19,7 +19,7 @@ const props = defineProps({
   },
 });
 
-const content = computed(() => props.nonFungibleResources.map(r => [r.description]));
+const content = computed(() => props.nonFungibleResources.map(r => [r.summary]));
 </script>
 
 <style scoped></style>

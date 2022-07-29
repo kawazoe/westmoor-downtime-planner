@@ -47,7 +47,7 @@ const subscriptionHubertRossen = mockEntity<SubscriptionEntity>(
       id: SubscriptionId.cast('D6'),
       idp: ownerHubertRossen.idp,
     }),
-    description: 'Annual Subscription',
+    summary: 'Annual Subscription',
   },
 );
 
@@ -58,7 +58,7 @@ const subscriptionRocklandHagemann = mockEntity<SubscriptionEntity>(
       id: SubscriptionId.cast('4z'),
       idp: ownerRocklandHagemann.idp,
     }),
-    description: 'Annual Subscription',
+    summary: 'Annual Subscription',
   },
 );
 
@@ -69,7 +69,7 @@ const subscriptionAbdulSalamKowalowski = mockEntity<SubscriptionEntity>(
       id: SubscriptionId.cast('PL'),
       idp: ownerAbdulSalamKowalowski.idp,
     }),
-    description: 'Annual Subscription',
+    summary: 'Annual Subscription',
   },
 );
 
@@ -80,7 +80,7 @@ const subscriptionSpeeroHarriage = mockEntity<SubscriptionEntity>(
       id: SubscriptionId.cast('-Y'),
       idp: ownerSpeeroHarriage.idp,
     }),
-    description: 'Annual Subscription',
+    summary: 'Annual Subscription',
   },
 );
 
@@ -91,7 +91,7 @@ const subscriptionEoloPonting = mockEntity<SubscriptionEntity>(
       id: SubscriptionId.cast('AB'),
       idp: ownerEoloPonting.idp,
     }),
-    description: 'Annual Subscription',
+    summary: 'Annual Subscription',
   },
 );
 
@@ -102,7 +102,7 @@ const subscriptionRollandBasye = mockEntity<SubscriptionEntity>(
       id: SubscriptionId.cast('7C'),
       idp: ownerRollandBasye.idp,
     }),
-    description: 'Annual Subscription',
+    summary: 'Annual Subscription',
   },
 );
 
@@ -113,7 +113,7 @@ const subscriptionAbdelrahmanThornes = mockEntity<SubscriptionEntity>(
       id: SubscriptionId.cast('x3'),
       idp: ownerAbdelrahmanThornes.idp,
     }),
-    description: 'Annual Subscription',
+    summary: 'Annual Subscription',
   },
 );
 
@@ -124,7 +124,7 @@ const subscriptionSaarBoileau = mockEntity<SubscriptionEntity>(
       id: SubscriptionId.cast('E7'),
       idp: ownerSaarBoileau.idp,
     }),
-    description: 'Annual Subscription',
+    summary: 'Annual Subscription',
   },
 );
 
@@ -135,7 +135,7 @@ const subscriptionMackaillynGunst = mockEntity<SubscriptionEntity>(
       id: SubscriptionId.cast('Ma'),
       idp: ownerMackaillynGunst.idp,
     }),
-    description: 'Annual Subscription',
+    summary: 'Annual Subscription',
   },
 );
 
@@ -146,7 +146,7 @@ const subscriptionBartelMaldenado = mockEntity<SubscriptionEntity>(
       id: SubscriptionId.cast('vm'),
       idp: ownerBartelMaldenado.idp,
     }),
-    description: 'Annual Subscription',
+    summary: 'Annual Subscription',
   },
 );
 
@@ -157,7 +157,7 @@ const subscriptionOlesCarchidi = mockEntity<SubscriptionEntity>(
       id: SubscriptionId.cast('JZ'),
       idp: ownerOlesCarchidi.idp,
     }),
-    description: 'Annual Subscription',
+    summary: 'Annual Subscription',
   },
 );
 
@@ -169,7 +169,7 @@ export const playerHubertRossen = mockEntity<PlayerEntity>(
       id: PlayerId.cast(ownerHubertRossen.id),
       idp: ownerHubertRossen.idp,
     }),
-    description: ownerHubertRossen.description,
+    summary: ownerHubertRossen.summary,
     icon: ownerHubertRossen.icon,
     characters: [makeRef(characterKismet)],
     campaigns: [
@@ -188,7 +188,7 @@ export const playerRocklandHagemann = mockEntity<PlayerEntity>(
       id: PlayerId.cast(ownerRocklandHagemann.id),
       idp: ownerRocklandHagemann.idp,
     }),
-    description: ownerRocklandHagemann.description,
+    summary: ownerRocklandHagemann.summary,
     icon: ownerRocklandHagemann.icon,
     characters: [
       makeRef(characterLukaRush),
@@ -213,7 +213,7 @@ export const playerAbdulSalamKowalowski = mockEntity<PlayerEntity>(
       id: PlayerId.cast(ownerAbdulSalamKowalowski.id),
       idp: ownerAbdulSalamKowalowski.idp,
     }),
-    description: ownerAbdulSalamKowalowski.description,
+    summary: ownerAbdulSalamKowalowski.summary,
     icon: ownerAbdulSalamKowalowski.icon,
     characters: [
       makeRef(characterPimVindicar),
@@ -232,7 +232,7 @@ export const playerSpeeroHarriage = mockEntity<PlayerEntity>(
       id: PlayerId.cast(ownerSpeeroHarriage.id),
       idp: ownerSpeeroHarriage.idp,
     }),
-    description: ownerSpeeroHarriage.description,
+    summary: ownerSpeeroHarriage.summary,
     icon: ownerSpeeroHarriage.icon,
     characters: [
       makeRef(characterEldridge),
@@ -251,7 +251,7 @@ export const playerEoloPonting = mockEntity<PlayerEntity>(
       id: PlayerId.cast(ownerEoloPonting.id),
       idp: ownerEoloPonting.idp,
     }),
-    description: ownerEoloPonting.description,
+    summary: ownerEoloPonting.summary,
     icon: ownerEoloPonting.icon,
     characters: [
       makeRef(characterMaxHedgar),
@@ -271,7 +271,7 @@ export const playerRollandBasye = mockEntity<PlayerEntity>(
       id: PlayerId.cast(ownerRollandBasye.id),
       idp: ownerRollandBasye.idp,
     }),
-    description: ownerRollandBasye.description,
+    summary: ownerRollandBasye.summary,
     icon: ownerRollandBasye.icon,
     characters: [
       makeRef(characterHarper),
@@ -290,7 +290,7 @@ export const playerAbdelrahmanThornes = mockEntity<PlayerEntity>(
       id: PlayerId.cast(ownerAbdelrahmanThornes.id),
       idp: ownerAbdelrahmanThornes.idp,
     }),
-    description: ownerAbdelrahmanThornes.description,
+    summary: ownerAbdelrahmanThornes.summary,
     icon: ownerAbdelrahmanThornes.icon,
     characters: [
       makeRef(characterDexterNibley),
@@ -312,7 +312,7 @@ export const playerSaarBoileau = mockEntity<PlayerEntity>(
       id: PlayerId.cast(ownerSaarBoileau.id),
       idp: ownerSaarBoileau.idp,
     }),
-    description: ownerSaarBoileau.description,
+    summary: ownerSaarBoileau.summary,
     icon: ownerSaarBoileau.icon,
     characters: [makeRef(characterMarvinRevanoire)],
     campaigns: [],
@@ -328,7 +328,7 @@ export const playerMackaillynGunst = mockEntity<PlayerEntity>(
       id: PlayerId.cast(ownerMackaillynGunst.id),
       idp: ownerMackaillynGunst.idp,
     }),
-    description: ownerMackaillynGunst.description,
+    summary: ownerMackaillynGunst.summary,
     icon: ownerMackaillynGunst.icon,
     characters: [
       makeRef(characterEsmeVance),
@@ -350,7 +350,7 @@ export const playerBartelMaldenado = mockEntity<PlayerEntity>(
       id: PlayerId.cast(ownerBartelMaldenado.id),
       idp: ownerBartelMaldenado.idp,
     }),
-    description: ownerBartelMaldenado.description,
+    summary: ownerBartelMaldenado.summary,
     icon: ownerBartelMaldenado.icon,
     characters: [],
     campaigns: [],
@@ -366,7 +366,7 @@ export const playerOlesCarchidi = mockEntity<PlayerEntity>(
       id: PlayerId.cast(ownerOlesCarchidi.id),
       idp: ownerOlesCarchidi.idp,
     }),
-    description: ownerOlesCarchidi.description,
+    summary: ownerOlesCarchidi.summary,
     icon: ownerOlesCarchidi.icon,
     characters: [
       makeRef(characterRyleeBelgrave),

@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-between items-baseline p-2 border border-primary rounded-md shadow">
-    <h4 class="p-2 overflow-hidden overflow-ellipsis whitespace-nowrap">{{description}}</h4>
+    <h4 class="p-2 overflow-hidden overflow-ellipsis whitespace-nowrap">{{summary}}</h4>
     <div class="flex-shrink-0">
       <app-button class="button" @click.prevent="">
         <app-icon :icon="faTrash" />
@@ -18,7 +18,7 @@ import AppButton from '@/components/AppButton.vue';
 import AppIcon from '@/components/AppIcon';
 
 defineProps({
-  description: {
+  summary: {
     type: String,
     required: true,
   },

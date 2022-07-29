@@ -1,6 +1,6 @@
 <template>
   <router-link :to="`${rel}/characters/${makeCid(character)}`">
-    <app-entity-card :description="character.description" />
+    <app-entity-card :summary="character.summary" />
   </router-link>
 </template>
 

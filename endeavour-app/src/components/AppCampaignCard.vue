@@ -1,6 +1,6 @@
 <template>
   <router-link :to="`/campaigns/${makeCid(campaign)}`">
-    <app-entity-card :description="campaign.description" />
+    <app-entity-card :summary="campaign.summary" />
   </router-link>
 </template>
 

@@ -25,7 +25,7 @@ const props = defineProps({
 
 const content = computed(() => pipe(
   props.fungibleResources,
-  A.map(([resource, amount]) => [resource.description, `${amount}`]),
+  A.map(([resource, amount]) => [resource.summary, `${amount}`]),
 ));
 </script>
 

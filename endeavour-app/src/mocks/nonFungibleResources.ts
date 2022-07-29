@@ -25,7 +25,7 @@ export function nonFungibleClothes(
         id,
         idp: ownerGenericPublisher.idp,
       }),
-      description: `${capitalize(era)} Clothes (${capitalize(grade)})`,
+      summary: `${capitalize(era)} Clothes (${capitalize(grade)})`,
     },
   ));
 }
@@ -38,7 +38,7 @@ export function nonFungibleSmartphone(id: NonFungibleResourceId): NonFungibleRes
         id,
         idp: ownerGenericPublisher.idp,
       }),
-      description: 'Smartphone',
+      summary: 'Smartphone',
     },
   ));
 }
@@ -51,7 +51,7 @@ export function nonFungibleCreditCard(id: NonFungibleResourceId): NonFungibleRes
         id,
         idp: ownerGenericPublisher.idp,
       }),
-      description: 'Credit Card',
+      summary: 'Credit Card',
     },
   ));
 }
@@ -64,7 +64,7 @@ export function nonFungibleCreditChip(id: NonFungibleResourceId): NonFungibleRes
         id,
         idp: ownerGenericPublisher.idp,
       }),
-      description: 'Credit Chip',
+      summary: 'Credit Chip',
     },
   ));
 }
@@ -77,7 +77,7 @@ export function nonFungibleBandages(id: NonFungibleResourceId): NonFungibleResou
         id,
         idp: ownerGenericPublisher.idp,
       }),
-      description: 'Bandages',
+      summary: 'Bandages',
     },
   ));
 }
@@ -95,7 +95,7 @@ export function nonFungibleWeapon(
         id,
         idp: ownerGenericPublisher.idp,
       }),
-      description: `${capitalize(era)} ${capitalize(kind)} ${capitalize(rate)} Weapon`,
+      summary: `${capitalize(era)} ${capitalize(kind)} ${capitalize(rate)} Weapon`,
     },
   ));
 }

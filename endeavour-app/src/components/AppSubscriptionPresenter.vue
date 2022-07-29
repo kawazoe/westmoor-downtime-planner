@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h4>{{subscription.description}}</h4>
+    <h4>{{subscription.summary}}</h4>
   </div>
 </template>
 

@@ -54,7 +54,7 @@
           <app-binder-page-presenter v-for="page in progressivePlayers.store.pages" :value="page" :key="page.key">
             <template #content>
               <li>page {{page.bookmark?.page}}</li>
-              <li v-for="player in page.value" :key="player.cid"><a class="nav-link" href="#" @click="setPlayer(player)">{{player.description}}</a></li>
+              <li v-for="player in page.value" :key="player.cid"><a class="nav-link" href="#" @click="setPlayer(player)">{{player.summary}}</a></li>
             </template>
           </app-binder-page-presenter>
         </ul>

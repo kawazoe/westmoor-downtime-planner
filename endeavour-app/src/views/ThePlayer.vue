@@ -2,7 +2,7 @@
   <main class="container px-4">
     <app-async-value :value="playerStore">
       <template v-slot:content="{ value }">
-        <h2>Welcome {{value.description}}</h2>
+        <h2>Welcome {{value.summary}}</h2>
 
         <h3><app-icon :icon="faPortrait" /> Characters</h3>
         <section>

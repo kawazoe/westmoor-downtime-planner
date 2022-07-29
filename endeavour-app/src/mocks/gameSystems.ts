@@ -12,7 +12,7 @@ export const gameSystemGeneric = mockEntity<GameSystemEntity>(
       id: GameSystemId.cast('1Fe'),
       idp: PartitionId.cast('1Fe'),
     }),
-    description: 'Generic Game System',
+    summary: 'Generic Game System',
   },
 );
 
@@ -24,7 +24,7 @@ export const gameSystemDungeonAndDragons5e = mockEntity<GameSystemEntity>(
       id: GameSystemId.cast('R02'),
       idp: PartitionId.cast('R02'),
     }),
-    description: 'Dungeon & Dragons (5e)',
+    summary: 'Dungeon & Dragons (5e)',
   },
 );
 
@@ -36,7 +36,7 @@ export const gameSystemWorldOfDarkness = mockEntity<GameSystemEntity>(
       id: GameSystemId.cast('Klw'),
       idp: PartitionId.cast('Klw'),
     }),
-    description: 'Wold of Darkness',
+    summary: 'Wold of Darkness',
   },
 );
 
@@ -48,7 +48,7 @@ export const gameSystemTravellers = mockEntity<GameSystemEntity>(
       id: GameSystemId.cast('G4f'),
       idp: PartitionId.cast('G4f'),
     }),
-    description: 'Travellers',
+    summary: 'Travellers',
   },
 );
 

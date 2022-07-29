@@ -4,8 +4,8 @@
       <template v-slot:content="{ value }">
         <h2>
           {{value.fullName}}
-          <span class="text-base font-light tracking-tight italic text-gray-600">by {{value.owner.description}}</span>
-          <span class="text-base font-light tracking-tight italic text-gray-600">, for {{value.gameSystem.description}}</span>
+          <span class="text-base font-light tracking-tight italic text-gray-600">by {{value.owner.summary}}</span>
+          <span class="text-base font-light tracking-tight italic text-gray-600">, for {{value.gameSystem.summary}}</span>
         </h2>
 
         <p>{{value.bio}}</p>

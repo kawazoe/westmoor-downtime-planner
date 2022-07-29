@@ -80,7 +80,7 @@ export function makeId<TId>(rawId: RawEntityId<TId>): EntityId<TId> {
 }
 
 export interface EntityRef<TId> extends EntityId<TId> {
-  description: string;
+  summary: string;
   icon?: string | [string, string] | IconDefinition;
 }
 
@@ -89,34 +89,9 @@ export function makeRef<TId>(entity: EntityRef<TId>): EntityRef<TId> {
     idp: entity.idp,
     id: entity.id,
     cid: entity.cid,
-    description: entity.description,
+    summary: entity.summary,
     icon: entity.icon,
   };
-}
-
-export interface OwnershipMeta {
-  schemaVersion: number;
-
-  createdOn: string;
-  modifiedOn: string;
-}
-
-export type OwnershipEntity = EntityRef<OwnershipId> & OwnershipMeta & {
-  fullName: string,
-  picture?: Uri,
-  email?: Email,
-};
-
-export const allRights = Object.freeze(['read', 'write', 'share', 'delete'] as const);
-export type Right = typeof allRights[number];
-
-export interface AccessControl {
-  rights: readonly Right[];
-}
-
-export interface EntityRights {
-  owner: EntityRef<OwnershipId>;
-  sharedWith: (EntityRef<OwnershipId> & AccessControl)[];
 }
 
 export interface EntityMeta {
@@ -133,4 +108,22 @@ export interface EntityMeta {
   };
 
   metas: Record<string, unknown>;
+}
+
+export type OwnershipEntity = EntityRef<OwnershipId> & EntityMeta & {
+  fullName: string,
+  picture?: Uri,
+  email?: Email,
+};
+
+export const allRights = Object.freeze(['read', 'write', 'share', 'delete'] as const);
+export type Right = typeof allRights[number];
+
+export interface AccessControl {
+  rights: readonly Right[];
+}
+
+export interface EntityRights {
+  owner: EntityRef<OwnershipId>;
+  sharedWith: (EntityRef<OwnershipId> & AccessControl)[];
 }

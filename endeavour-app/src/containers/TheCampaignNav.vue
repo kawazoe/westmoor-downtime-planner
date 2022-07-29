@@ -15,7 +15,7 @@
           <router-link class="nav-link sz-2" :to="`${rel}/settings`">Settings</router-link>
         </div>
 
-        <h2 class="nav-brand sz-2" :title="value.description">{{value.description}}</h2>
+        <h2 class="nav-brand sz-2" :title="value.summary">{{value.summary}}</h2>
       </template>
     </app-async-value>
   </nav>

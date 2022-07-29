@@ -9,7 +9,7 @@
             <router-link class="nav-link text-2xl sz-2"
                          v-for="campaign of value.data"
                          :to="`/campaigns/${makeCid(campaign)}`"
-                         :title="campaign.description"
+                         :title="campaign.summary"
                          :key="campaign.id">
               <app-icon :icon="campaign.icon" />
             </router-link>
