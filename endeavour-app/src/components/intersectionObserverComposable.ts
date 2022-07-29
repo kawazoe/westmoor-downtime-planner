@@ -20,17 +20,32 @@ export function useIntersectionObserver(
     callback(createDefaultIntersectionEvent());
   }
 
-  const isIntersecting = ref<boolean>(false);
-  const repeater = async (entry: IntersectionObserverEntry): Promise<void> => {
-    if (isIntersecting.value && await callback(entry)) {
-      setTimeout(() => repeater(entry));
+  let isRunning = false;
+  const repeater = async (action: () => Promise<unknown> | unknown): Promise<void> => {
+    if (!isRunning) {
+      return;
+    }
+
+    const isStillRunning = !!await action();
+    isRunning = isRunning && isStillRunning;
+
+    if (isRunning) {
+      setTimeout(() => repeater(action));
     }
   };
+
+  const isIntersecting = ref<boolean>(false);
   const observer = new IntersectionObserver(
     async entries => {
       const entry = entries[0] ?? createDefaultIntersectionEvent();
       isIntersecting.value = entry.isIntersecting;
-      await repeater(entry);
+
+      if (isRunning) {
+        isRunning = entry.isIntersecting;
+      } else {
+        isRunning = entry.isIntersecting;
+        await repeater(() => callback(entry));
+      }
     },
     options,
   );
