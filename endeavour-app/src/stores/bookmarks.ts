@@ -13,9 +13,9 @@ function parsePositiveSafe(value: unknown, defaultValue: number): number {
   return parsed <= 0 ? defaultValue : parsed;
 }
 
-export function toBookmark(candidate: { offset?: unknown, limit?: unknown }): AbsoluteBookmark;
-export function toBookmark(candidate: { page?: unknown, pageSize?: unknown }): RelativeBookmark;
-export function toBookmark(candidate: { token?: unknown }): ProgressiveBookmark;
+export function toBookmark(candidate: { limit: unknown } | { offset: unknown } | { offset: unknown, limit: unknown }): AbsoluteBookmark;
+export function toBookmark(candidate: { page: unknown } | { pageSize: unknown } | { page: unknown, pageSize: unknown }): RelativeBookmark;
+export function toBookmark(candidate: { token: unknown }): ProgressiveBookmark;
 export function toBookmark(candidate: Record<string, unknown>): Bookmark {
   if ('offset' in candidate || 'limit' in candidate) {
     return { kind: 'absolute', offset: parsePositiveSafe(candidate.offset, 0), limit: parsePositiveSafe(candidate.limit, 25) };
@@ -40,36 +40,15 @@ export function equalsProgressive(left: ProgressiveBookmark, right: ProgressiveB
   return left.token === right.token;
 }
 
-export function equals(left: Bookmark, right: Bookmark): boolean {
+export function equals(left: Bookmark | null, right: Bookmark | null): boolean {
   return (
-    (left.kind === 'absolute' && right.kind === 'absolute' && equalsAbsolute(left, right)) ||
-    (left.kind === 'relative' && right.kind === 'relative' && equalsRelative(left, right)) ||
-    (left.kind === 'progressive' && right.kind === 'progressive' && equalsProgressive(left, right))
+    left == null && right == null ||
+    left != null && right != null && (
+      (left.kind === 'absolute' && right.kind === 'absolute' && equalsAbsolute(left, right)) ||
+      (left.kind === 'relative' && right.kind === 'relative' && equalsRelative(left, right)) ||
+      (left.kind === 'progressive' && right.kind === 'progressive' && equalsProgressive(left, right))
+    )
   );
-}
-
-export type Comparator<T> = (left: T, right: T) => boolean;
-export function skipNull<T>(comparator: Comparator<T>): Comparator<T | null | undefined> {
-  return (l, r) => l === r || (l != null && r != null && comparator(l, r));
-}
-
-const nullComparator = skipNull(equals);
-const absoluteComparator = skipNull((l: Bookmark, r: Bookmark) => equalsAbsolute(l as AbsoluteBookmark, r as AbsoluteBookmark));
-const relativeComparator = skipNull((l: Bookmark, r: Bookmark) => equalsRelative(l as RelativeBookmark, r as RelativeBookmark));
-const progressiveComparator = skipNull((l: Bookmark, r: Bookmark) => equalsProgressive(l as ProgressiveBookmark, r as ProgressiveBookmark));
-export function getComparator(kind: BookmarkKind | null): Comparator<Bookmark | null | undefined> {
-  switch (kind) {
-    case null:
-      return nullComparator;
-    case 'absolute':
-      return absoluteComparator;
-    case 'relative':
-      return relativeComparator;
-    case 'progressive':
-      return progressiveComparator;
-    default:
-      return _never(kind);
-  }
 }
 
 export function indexOfAbsolute(value: AbsoluteBookmark): number {
@@ -78,11 +57,10 @@ export function indexOfAbsolute(value: AbsoluteBookmark): number {
 export function indexOfRelative(value: RelativeBookmark): number {
   return value.page * value.pageSize;
 }
-export function indexOfProgressive(): 0 {
-  return 0;
+export function indexOfProgressive(value: ProgressiveBookmark): number {
+  // TODO: clarify how to represent "the last page"
+  return value.token === '' ? Number.MAX_SAFE_INTEGER : 0;
 }
-export function indexOf(value: ProgressiveBookmark): 0;
-export function indexOf(value: Bookmark): number;
 export function indexOf(value: Bookmark): number {
   switch (value.kind) {
     case 'absolute':
@@ -90,7 +68,7 @@ export function indexOf(value: Bookmark): number {
     case 'relative':
       return indexOfRelative(value);
     case 'progressive':
-      return indexOfProgressive();
+      return indexOfProgressive(value);
     default:
       return _never(value);
   }
@@ -103,7 +81,7 @@ export function isAfterOrAtRelative(value: RelativeBookmark, index: number): boo
   return indexOfRelative(value) >= index && value.pageSize > 0;
 }
 export function isAfterOrAtProgressive(value: ProgressiveBookmark, index: number): boolean {
-  return indexOfProgressive() >= index;
+  return indexOfProgressive(value) >= index;
 }
 export function isAfterOrAt(value: Bookmark, index: number): boolean {
   switch (value.kind) {

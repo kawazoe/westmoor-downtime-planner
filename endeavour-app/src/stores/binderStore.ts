@@ -13,18 +13,20 @@ import * as B from '@/stores/bookmarks';
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type CacheKey = {};
 
+export type Metadata = Record<string, unknown>;
+
 export function defaultKeySelector<P extends unknown[]>(...args: P): CacheKey {
   // HACK: Temporary workaround since objects aren't stable in pinia: https://github.com/vuejs/pinia/discussions/1146
   return args[0] as CacheKey ?? /* {} */ nanoid(16);
 }
 
-export type Page<V> = {
+export type Page<V, Meta extends Metadata = Metadata> = {
   bookmark: B.Bookmark,
   value: V[],
   metadata: {
-    full: boolean,
-    last: boolean,
-  },
+    full?: true,
+    last?: true,
+  } & Meta,
 };
 
 export type AsyncPageStatus = 'loading' | 'content' | 'empty' | 'error' | 'refreshing' | 'retrying';
@@ -35,14 +37,14 @@ export type AsyncPage<V> = {
   error: unknown,
   value: V[],
   metadata: {
-    full: boolean,
-    last: boolean,
+    full?: true,
+    last?: true,
   },
 };
 
-export type BinderStoreOptions<P extends unknown[], V> = {
+export type BinderStoreOptions<P extends unknown[], V, Meta extends Metadata = Metadata> = {
   keySelector?: (...args: P) => CacheKey,
-  emptyPredicate?: (page: Page<V>) => boolean,
+  emptyPredicate?: (page: Page<V, Meta>) => boolean,
 };
 
 export function defaultEmptyPredicate(page: Page<unknown>): boolean {
@@ -50,23 +52,24 @@ export function defaultEmptyPredicate(page: Page<unknown>): boolean {
 }
 
 export type BinderStatus = 'initial' | 'nested' | 'error' | 'retrying';
-export interface Binder<V> {
+export interface Binder<V, Meta extends Metadata = Metadata> {
   status: BinderStatus;
   cacheKey: CacheKey;
   pages: AsyncPage<V>[];
   error: unknown;
   metadata: {
     nullBookmark: B.Bookmark | null,
-  };
+    nextBookmark: B.Bookmark | null,
+  } & Meta;
 }
 
-export type BinderStoreDefinition<P extends unknown[], V> = StoreDefinition<string, Binder<V>, Record<string, never>, { bind: (...args: P) => (bookmark?: B.Bookmark) => Promise<void> }>;
-export type BinderStore<P extends unknown[], V> = ReturnType<BinderStoreDefinition<P, V>>;
-export function defineBinderStore<P extends unknown[], V>(
+export type BinderStoreDefinition<P extends unknown[], V, Meta extends Metadata = Metadata> = StoreDefinition<string, Binder<V, Meta>, Record<string, never>, { bind: (...args: P) => (bookmark?: B.Bookmark) => Promise<void> }>;
+export type BinderStore<P extends unknown[], V, Meta extends Metadata = Metadata> = ReturnType<BinderStoreDefinition<P, V, Meta>>;
+export function defineBinderStore<P extends unknown[], V, Meta extends Metadata = Metadata>(
   id: string,
-  trigger: (...args: P) => (bookmark?: B.Bookmark) => Promise<Page<V>>,
-  options?: BinderStoreOptions<P, V>,
-): BinderStoreDefinition<P, V> {
+  trigger: (...args: P) => (bookmark?: B.Bookmark) => Promise<Page<V, Meta>>,
+  options?: BinderStoreOptions<P, V, Meta>,
+): BinderStoreDefinition<P, V, Meta> {
   const useStore = defineStore({
     id,
     state: () => ({
@@ -74,8 +77,8 @@ export function defineBinderStore<P extends unknown[], V>(
       cacheKey: {},
       pages: [],
       error: undefined,
-      metadata: { nullBookmark: null },
-    } as Binder<V>),
+      metadata: { nullBookmark: null, nextBookmark: null } as Binder<V, Meta>['metadata'],
+    } as Binder<V, Meta>),
     actions: {
       bind(...args: P) {
         const cacheKey = (options?.keySelector ?? defaultKeySelector)(...args);
@@ -87,7 +90,7 @@ export function defineBinderStore<P extends unknown[], V>(
           const lastBookmark = this.pages.find(p => p.metadata.last)?.bookmark;
           return lastBookmark && B.isAfterOrAt(bookmark, B.indexOf(lastBookmark)) || false;
         };
-        const pageWithBookmark = (bookmark: B.Bookmark | null | undefined) => (p: UnwrapNestedRefs<AsyncPage<V>>) => B.getComparator(getBookmarkKind())(p.bookmark, bookmark ?? this.metadata.nullBookmark);
+        const pageWithBookmark = (bookmark: B.Bookmark | null) => (p: UnwrapNestedRefs<AsyncPage<V>>) => B.equals(p.bookmark, bookmark ?? this.metadata.nullBookmark);
         const assertValidBookmark = (bookmark: B.Bookmark): void => {
           if (!B.isAfterOrAt(bookmark, 0)) {
             throw new Error('Invalid bookmark. Bookmark attempts to index before first element.');
@@ -130,10 +133,7 @@ export function defineBinderStore<P extends unknown[], V>(
           bookmark: bookmark ?? this.metadata.nullBookmark,
           value: [],
           error: undefined,
-          metadata: {
-            full: false,
-            last: false,
-          },
+          metadata: {},
         } as AsyncPage<V>);
         const removePage = (predicate: (p: UnwrapNestedRefs<AsyncPage<V>>) => boolean): void => {
           const currentPageIndex = this.pages.findIndex(predicate);
@@ -160,7 +160,7 @@ export function defineBinderStore<P extends unknown[], V>(
 
           let currentPage: UnwrapNestedRefs<AsyncPage<V>>;
           cacheCheck(() => {
-            const existingPage = this.pages.find(pageWithBookmark(bookmark));
+            const existingPage = this.pages.find(pageWithBookmark(bookmark ?? null));
 
             if (existingPage) {
               currentPage = existingPage;
@@ -187,16 +187,40 @@ export function defineBinderStore<P extends unknown[], V>(
               this.status = 'nested';
             });
           });
-          const updateCurrentPage = (effectiveBookmark: B.Bookmark, page: Page<V>, error?: unknown): void => {
-            currentPage.bookmark = effectiveBookmark;
+          const updateCurrentPage = (effectiveBookmark: B.Bookmark, page: Page<V, Meta>, error?: unknown): void => {
+            if (effectiveBookmark.kind === 'progressive') {
+              // Progressive bookmarks represents the next page.
+              // We use the previous bookmark for this page...
+              currentPage.bookmark = this.metadata.nextBookmark;
+
+              // ...and stores the current one for the next call.
+              this.metadata.nextBookmark = effectiveBookmark;
+            } else {
+              // Other bookmarks represents the current page.
+              // We store the current one for this page...
+              currentPage.bookmark = effectiveBookmark;
+
+              // ...and assume the first one as "zeroth" page when previously unknown.
+              if (this.metadata.nullBookmark == null) {
+                this.metadata.nullBookmark = effectiveBookmark;
+              }
+            }
+
+            const { full, last, ...meta } = page.metadata;
+
             currentPage.value = reactive(page.value);
             currentPage.error = error;
-            currentPage.metadata = page.metadata;
+            currentPage.metadata = { full, last };
             currentPage.status = error
               ? 'error'
               : (options?.emptyPredicate ?? defaultEmptyPredicate)(page)
                 ? 'empty'
                 : 'content';
+
+            // Extract and update global metadata
+            if (Object.keys(meta).length !== 0) {
+              this.metadata = { ...this.metadata, ...meta };
+            }
           };
 
           return accessor(bookmark)
@@ -219,9 +243,6 @@ export function defineBinderStore<P extends unknown[], V>(
                 }
 
                 updateCurrentPage(effectiveBookmark, page);
-                if (this.metadata.nullBookmark == null) {
-                  this.metadata.nullBookmark = effectiveBookmark;
-                }
               });
             }))
             .catch((error: unknown) => cacheCheck(() => {
@@ -229,11 +250,8 @@ export function defineBinderStore<P extends unknown[], V>(
               assertBookmarkKindTransition(effectiveBookmark);
 
               this.$patch(() => {
-                const errorPage = { bookmark: effectiveBookmark, value: [], metadata: { full: false, last: false } };
+                const errorPage = { bookmark: effectiveBookmark, value: [], metadata: {} as Meta };
                 updateCurrentPage(effectiveBookmark, errorPage, error);
-                if (this.metadata.nullBookmark == null) {
-                  this.metadata.nullBookmark = effectiveBookmark;
-                }
               });
             }))
             .catch((error: unknown) => this.$patch(() => {
