@@ -27,22 +27,26 @@ export function useProgressiveBinder<P extends unknown[], V>(
       store,
       currentPage,
       trigger() {
-        const lastBookmark = currentPage.value?.bookmark;
-        switch (lastBookmark?.kind) {
+        const bookmark = store.metadata.nextBookmark ?? currentPage.value?.bookmark;
+        switch (bookmark?.kind) {
           case undefined:
           case null:
+            // Unknown kind, assumes trigger will provide one through its results.
             return trigger();
           case 'absolute': {
-            return trigger({ kind: 'absolute', offset: lastBookmark.offset + lastBookmark.limit, limit: lastBookmark.limit });
+            // Detected bookmark represents the existing page. Builds a "next" bookmark.
+            return trigger({ kind: 'absolute', offset: bookmark.offset + bookmark.limit, limit: bookmark.limit });
           }
           case 'relative': {
-            return trigger({ kind: 'relative', page: lastBookmark.page + 1, pageSize: lastBookmark.pageSize });
+            // Detected bookmark represents the existing page. Builds a "next" bookmark.
+            return trigger({ kind: 'relative', page: bookmark.page + 1, pageSize: bookmark.pageSize });
           }
           case 'progressive': {
-            return trigger({ kind: 'progressive', token: lastBookmark.token });
+            // Detected bookmark represents the next page. Uses as is.
+            return trigger(bookmark);
           }
           default:
-            return _never(lastBookmark);
+            return _never(bookmark);
         }
       },
     } as ProgressiveBinder<P, V>);
