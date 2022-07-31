@@ -181,7 +181,6 @@ module.exports = {
         '@typescript-eslint/array-type': ['error', { default: 'array', readonly: 'array' }],
         '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'as', objectLiteralTypeAssertions: 'allow' }],
         '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
-        '@typescript-eslint/explicit-function-return-type': ['error', { allowExpressions: true }],
         '@typescript-eslint/explicit-member-accessibility': 'error',
         '@typescript-eslint/member-delimiter-style': [
           'error',
