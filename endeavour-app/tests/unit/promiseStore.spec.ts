@@ -23,7 +23,7 @@ describe('Promise Store', () => {
       expect(trigger).not.toHaveBeenCalled();
 
       expect(sut.status).toBe('initial');
-      expect(sut.cacheKey).toBe('');
+      expect(sut.state.cacheKey).toBe('');
       expect(sut.value).toBeUndefined();
       expect(sut.error).toBeUndefined();
     });
@@ -158,10 +158,10 @@ describe('Promise Store', () => {
       const trigger = vi.fn(() => stall());
       const sut = definePromiseStore('test', trigger)();
 
-      const previousKey = sut.cacheKey;
+      const previousKey = sut.state.cacheKey;
       sut.trigger();
 
-      expect(sut.cacheKey).not.toBe(previousKey);
+      expect(sut.state.cacheKey).not.toBe(previousKey);
     });
 
     it('should not change the cache key on resolve', async () => {
@@ -169,11 +169,11 @@ describe('Promise Store', () => {
       const sut = definePromiseStore('test', trigger, { keySelector: mockKeySelector })();
 
       const call = sut.trigger();
-      const previousKey = sut.cacheKey;
+      const previousKey = sut.state.cacheKey;
       await call;
 
       expect(mockKeySelector).toHaveBeenCalledOnce();
-      expect(sut.cacheKey).toBe(previousKey);
+      expect(sut.state.cacheKey).toBe(previousKey);
     });
 
     it('should not change the cache key on reject', async () => {
@@ -181,11 +181,11 @@ describe('Promise Store', () => {
       const sut = definePromiseStore('test', trigger, { keySelector: mockKeySelector })();
 
       const call = sut.trigger();
-      const previousKey = sut.cacheKey;
+      const previousKey = sut.state.cacheKey;
       await call;
 
       expect(mockKeySelector).toHaveBeenCalledOnce();
-      expect(sut.cacheKey).toBe(previousKey);
+      expect(sut.state.cacheKey).toBe(previousKey);
     });
 
     it('should clear cache on re-trigger when key changes', async () => {
@@ -193,11 +193,11 @@ describe('Promise Store', () => {
       const sut = definePromiseStore('test', trigger)();
 
       await sut.trigger();
-      const previousKey = sut.cacheKey;
+      const previousKey = sut.state.cacheKey;
       // noinspection ES6MissingAwait
       sut.trigger();
 
-      expect(sut.cacheKey).not.toBe(previousKey);
+      expect(sut.state.cacheKey).not.toBe(previousKey);
       expect(sut.status).toBe('loading');
       expect(sut.value).toBeUndefined();
       expect(sut.error).toBeUndefined();
@@ -208,12 +208,12 @@ describe('Promise Store', () => {
       const sut = definePromiseStore('test', trigger)();
 
       await sut.trigger('key');
-      const previousKey = sut.cacheKey;
+      const previousKey = sut.state.cacheKey;
       // noinspection ES6MissingAwait
       sut.trigger('key');
 
-      expect(sut.cacheKey).toBe(previousKey);
-      expect(sut.cacheKey).toBe('key');
+      expect(sut.state.cacheKey).toBe(previousKey);
+      expect(sut.state.cacheKey).toBe('key');
     });
   });
 
@@ -285,7 +285,7 @@ describe('Promise Store', () => {
       await call2;
 
       expect(sut.status).toBe('content');
-      expect(sut.cacheKey).toBe('key2');
+      expect(sut.state.cacheKey).toBe('key2');
       expect(sut.value).toBe('success2');
     });
 
@@ -304,7 +304,7 @@ describe('Promise Store', () => {
       await call2;
 
       expect(sut.status).toBe('error');
-      expect(sut.cacheKey).toBe('key2');
+      expect(sut.state.cacheKey).toBe('key2');
       expect(sut.error).toBe('failure2');
     });
   });
