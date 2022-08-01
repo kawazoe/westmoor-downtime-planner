@@ -144,8 +144,8 @@
 import { ref } from 'vue';
 
 import { usePlayersCurrentStore, usePlayersDataStore } from '@/stores';
-import { useIntersectionObserver } from '@/components/intersectionObserverComposable';
-import { useProgressiveBinder } from '@/components/binderComposables';
+import { useIntersectionObserver } from '@/composables/intersectionObserverComposable';
+import { useProgressiveBinder } from '@/composables/binderComposables';
 
 import type { PlayerEntity } from '@/stores/businessTypes';
 

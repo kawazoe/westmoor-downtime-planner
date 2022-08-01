@@ -1,7 +1,7 @@
 import { acceptHMRUpdate, defineStore } from 'pinia';
 
-import type { PromiseStoreOptions } from '@/components/promiseComposables';
-import { usePromise } from '@/components/promiseComposables';
+import type { PromiseStoreOptions } from '@/composables/promiseComposables';
+import { usePromise } from '@/composables/promiseComposables';
 
 export function definePromiseStore<P extends unknown[], V>(
   id: string,
