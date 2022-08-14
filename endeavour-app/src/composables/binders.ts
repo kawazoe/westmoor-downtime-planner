@@ -8,7 +8,7 @@ import * as O from 'fp-ts/Option';
 import { _never } from '@/lib/_never';
 import { _throw } from '@/lib/_throw';
 
-import * as B from '@/stores/bookmarks';
+import * as B from '@/lib/bookmarks';
 
 function replaceAt<T>(array: T[], index: number, value: T): T[] {
   return O.getOrElseW(() => _throw(new Error('Index out of range')))(A.modifyAt(index, () => value)(array));

@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia';
 
-import type { Bookmark } from '@/stores/bookmarks';
+import type { Bookmark } from '@/lib/bookmarks';
 
 import type { BinderComposableOptions, Metadata, Page } from '@/composables/binders';
 import { useBinder } from '@/composables/binders';

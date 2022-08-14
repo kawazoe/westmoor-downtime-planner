@@ -14,8 +14,8 @@ import type {
 } from '@/stores/coreTypes';
 import { makeRef, Uuid } from '@/stores/coreTypes';
 
-import type { AbsoluteBookmark, ProgressiveBookmark, RelativeBookmark } from '@/stores/bookmarks';
-import { toBookmark } from '@/stores/bookmarks';
+import type { AbsoluteBookmark, ProgressiveBookmark, RelativeBookmark } from '@/lib/bookmarks';
+import { toBookmark } from '@/lib/bookmarks';
 
 import * as A from 'fp-ts/Array';
 import * as NEA from 'fp-ts/NonEmptyArray';
