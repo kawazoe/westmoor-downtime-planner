@@ -7,7 +7,7 @@ import { _never } from '@/lib/_never';
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type CacheKey = {};
 
-export type PromiseStoreOptions<P extends unknown[], V> = {
+export type PromiseComposableOptions<P extends unknown[], V> = {
   keySelector?: (...args: P) => CacheKey,
   emptyPredicate?: (value: V) => boolean,
 };
@@ -28,7 +28,7 @@ export interface AsyncValue<V> {
 
 export function usePromise<P extends unknown[], V>(
   factory: (...args: P) => Promise<V>,
-  options?: PromiseStoreOptions<P, V>,
+  options?: PromiseComposableOptions<P, V>,
 ) {
   function pickStateTransition(stateStatus: AsyncStatus, cacheKey: CacheKey): ((state: AsyncValue<V>) => AsyncValue<V>) | null {
     switch (stateStatus) {
