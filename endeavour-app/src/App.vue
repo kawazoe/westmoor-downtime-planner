@@ -1,19 +1,19 @@
 <template>
   <the-svg-icon-cache></the-svg-icon-cache>
 
-  <app-async-value :value="store">
+  <app-promise-presenter :value="store">
     <template v-slot:content>
       <the-main-nav></the-main-nav>
       <router-view/>
       <the-footer></the-footer>
     </template>
-  </app-async-value>
+  </app-promise-presenter>
 </template>
 
 <script lang="ts" setup>
 import { useStore } from '@/stores';
 
-import AppAsyncValue from '@/components/AppAsyncValue';
+import AppPromisePresenter from '@/components/AppPromisePresenter';
 import TheFooter from '@/containers/TheFooter.vue';
 import TheMainNav from '@/containers/TheMainNav.vue';
 import TheSvgIconCache from '@/components/TheSvgIconCache';

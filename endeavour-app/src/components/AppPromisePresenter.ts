@@ -1,12 +1,11 @@
-import { createCommentVNode, defineComponent } from 'vue';
+import { createCommentVNode, defineComponent, unref } from 'vue';
 import type { PropType, Slot, Slots, VNode } from 'vue';
 
-import type { Store } from 'pinia';
+import type { PromiseAdapter, PromiseStatus } from '@/composables/promises';
+import type { PromiseStore } from '@/stores/promiseStore';
 
-import type { AsyncStatus, AsyncValue } from '@/composables/promises';
-
-const undefinedSlot = (status: AsyncStatus) => (): VNode[] => [createCommentVNode(`app-async-value:unresolved-slot-mapping:${status}`)];
-const pickSlot = (status: AsyncStatus, slots: Slots): Slot => {
+const undefinedSlot = (status: PromiseStatus) => (): VNode[] => [createCommentVNode(`app-promise-presenter:unresolved-slot-mapping:${status}`)];
+const pickSlot = (status: PromiseStatus, slots: Slots): Slot => {
   switch (status) {
     case 'initial':
       return slots['initial'] || slots['loading'] || undefinedSlot(status);
@@ -28,14 +27,14 @@ const pickSlot = (status: AsyncStatus, slots: Slots): Slot => {
 };
 
 export default defineComponent({
-  name: 'AppAsyncValue',
+  name: 'AppPromisePresenter',
   props: {
     value: {
-      type: Object as PropType<AsyncValue<unknown> | Store<string, AsyncValue<unknown>, unknown, unknown>>,
+      type: Object as PropType<PromiseAdapter<unknown[], unknown> | PromiseStore<unknown[], unknown>>,
       required: true,
     },
   },
   setup(props, { slots }) {
-    return () => pickSlot(props.value.status, slots)(props.value);
+    return () => pickSlot(unref(props.value.status), slots)(props.value);
   },
 });

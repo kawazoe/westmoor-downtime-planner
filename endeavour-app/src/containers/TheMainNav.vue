@@ -4,7 +4,7 @@
       <router-link class="nav-brand sz-2" to="/">endeavour</router-link>
 
       <div class="nav-menu items-center">
-        <app-async-value :value="campaignsStore">
+        <app-promise-presenter :value="campaignsStore">
           <template v-slot:content="{ value }">
             <router-link class="nav-link text-2xl sz-2"
                          v-for="campaign of value.data"
@@ -14,9 +14,9 @@
               <app-icon :icon="campaign.icon" />
             </router-link>
           </template>
-        </app-async-value>
+        </app-promise-presenter>
 
-        <app-async-value :value="playerStore">
+        <app-promise-presenter :value="playerStore">
           <template v-slot:content>
             <router-link class="nav-link text-2xl sz-2" to="/player">
               <app-icon :icon="faUser" />
@@ -26,7 +26,7 @@
             <router-link class="nav-link sz-2" to="/pricing">Pricing</router-link>
             <router-link class="nav-link sz-2" to="/sign-in">Sign In</router-link>
           </template>
-        </app-async-value>
+        </app-promise-presenter>
       </div>
     </nav>
   </header>
@@ -38,14 +38,19 @@ import { makeCid } from '@/stores/coreTypes';
 
 import { faUser } from '@fortawesome/pro-solid-svg-icons';
 
-import AppAsyncValue from '@/components/AppAsyncValue';
 import AppIcon from '@/components/AppIcon';
+import AppPromisePresenter from '@/components/AppPromisePresenter';
+import { usePromise } from '@/composables/promises';
 
 const campaignsStore = useCampaignsDataStore();
 const playerStore = usePlayersCurrentStore();
 
 campaignsStore.trigger();
 playerStore.trigger();
+
+const test = usePromise(() => Promise.resolve(42));
+
+test.trigger();
 </script>
 
 <style scoped>

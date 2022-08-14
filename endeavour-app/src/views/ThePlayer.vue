@@ -1,6 +1,6 @@
 <template>
   <main class="container px-4">
-    <app-async-value :value="playerStore">
+    <app-promise-presenter :value="playerStore">
       <template v-slot:content="{ value }">
         <h2>Welcome {{value.summary}}</h2>
 
@@ -19,7 +19,7 @@
           <app-subscription-presenter class="w-full" :subscription="value.subscription" />
         </section>
       </template>
-    </app-async-value>
+    </app-promise-presenter>
   </main>
 </template>
 
@@ -28,10 +28,10 @@ import { faAtlas, faMoneyBill, faPortrait } from '@fortawesome/pro-regular-svg-i
 
 import { usePlayersCurrentStore } from '@/stores';
 
-import AppAsyncValue from '@/components/AppAsyncValue';
 import AppCampaignCard from '@/components/AppCampaignCard.vue';
 import AppCharacterCard from '@/components/AppCharacterCard.vue';
 import AppIcon from '@/components/AppIcon';
+import AppPromisePresenter from '@/components/AppPromisePresenter';
 import AppSubscriptionPresenter from '@/components/AppSubscriptionPresenter.vue';
 
 const playerStore = usePlayersCurrentStore();

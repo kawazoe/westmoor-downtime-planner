@@ -9,18 +9,18 @@
     "html": {
       "elements": [
         {
-          "name": "app-async-value",
+          "name": "app-promise-presenter",
           "priority": "highest",
           "source": {
-            "file": "./src/components/AppAsyncValue.ts",
+            "file": "./src/components/AppPromisePresenter.ts",
             "offset": 0
           },
           "description": "Selects the right template to render an `AsyncValue` based on its status.",
           "props": [
             {
               "name": "value",
-              "description": "An `AsyncValue` ref",
-              "type": ["AsyncValue<unknown> | Store<string, AsyncValue<unknown>, unknown, unknown>"]
+              "description": "A `PromiseAdapter<P, V>` or a `PromiseStore<P, V>`",
+              "type": ["PromiseAdapter<P, V> | PromiseStore<P, V>"]
             }
           ],
           "slots": [
@@ -69,8 +69,8 @@
           "props": [
             {
               "name": "value",
-              "description": "A `Binder` ref",
-              "type": ["Binder<unknown> | Store<string, Binder<unknown>, unknown, unknown>"]
+              "description": "A `BinderAdapter<P, V, Meta>` or a `BinderStore<P, V, Meta>`",
+              "type": ["BinderAdapter<unknown[], unknown> | BinderStore<unknown[], unknown>"]
             }
           ],
           "slots": [

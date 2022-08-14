@@ -5,7 +5,7 @@
       <app-icon v-else :icon="faBars" class="fa-w-16"></app-icon>
     </app-toggle-button>
 
-    <app-async-value :value="campaignStore">
+    <app-promise-presenter :value="campaignStore">
       <template v-slot:content="{ value }">
         <div class="nav-menu" :class="{ expanded }">
           <router-link class="nav-link sz-2" :to="`${rel}/endeavours`">Endeavours</router-link>
@@ -17,7 +17,7 @@
 
         <h2 class="nav-brand sz-2" :title="value.summary">{{value.summary}}</h2>
       </template>
-    </app-async-value>
+    </app-promise-presenter>
   </nav>
 </template>
 
@@ -32,8 +32,8 @@ import { useRelativeRoute } from '@/composables/routes';
 
 import { useCampaignsCurrentStore } from '@/stores';
 
-import AppAsyncValue from '@/components/AppAsyncValue';
 import AppIcon from '@/components/AppIcon';
+import AppPromisePresenter from '@/components/AppPromisePresenter';
 import AppToggleButton from '@/components/AppToggleButton.vue';
 
 const props = defineProps({

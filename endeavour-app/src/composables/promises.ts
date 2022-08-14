@@ -18,19 +18,20 @@ export function defaultEmptyPredicate(value: unknown): boolean {
   return value == null || value === '' || (Array.isArray(value) && value.length === 0);
 }
 
-export type AsyncStatus = 'initial' | 'loading' | 'content' | 'empty' | 'error' | 'refreshing' | 'retrying';
-export interface AsyncValue<V> {
-  status: AsyncStatus;
+export type PromiseStatus = 'initial' | 'loading' | 'content' | 'empty' | 'error' | 'refreshing' | 'retrying';
+interface PromiseState<V> {
+  status: PromiseStatus;
   cacheKey: CacheKey;
   value: V | undefined;
   error: unknown | undefined;
 }
 
+export type PromiseAdapter<P extends unknown[], V> = ReturnType<typeof usePromise<P, V>>;
 export function usePromise<P extends unknown[], V>(
   factory: (...args: P) => Promise<V>,
   options?: PromiseComposableOptions<P, V>,
 ) {
-  function pickStateTransition(stateStatus: AsyncStatus, cacheKey: CacheKey): ((state: AsyncValue<V>) => AsyncValue<V>) | null {
+  function pickStateTransition(stateStatus: PromiseStatus, cacheKey: CacheKey): ((state: PromiseState<V>) => PromiseState<V>) | null {
     switch (stateStatus) {
       case 'initial':
       case 'empty':
@@ -49,7 +50,7 @@ export function usePromise<P extends unknown[], V>(
     }
   }
 
-  const state = shallowRef<AsyncValue<V>>({
+  const state = shallowRef<PromiseState<V>>({
     status: 'initial',
     cacheKey: '' as CacheKey,
     value: undefined,
@@ -71,7 +72,7 @@ export function usePromise<P extends unknown[], V>(
       return Promise.resolve();
     }
 
-    state.value = processingState(state.value as AsyncValue<V>) as AsyncValue<V>;
+    state.value = processingState(state.value as PromiseState<V>) as PromiseState<V>;
 
     return factory(...args)
       .then(value => {

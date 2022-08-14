@@ -1,6 +1,6 @@
 <template>
   <main class="container px-4">
-    <app-async-value :value="characterStore">
+    <app-promise-presenter :value="characterStore">
       <template v-slot:content="{ value }">
         <h2>
           {{value.fullName}}
@@ -36,7 +36,7 @@
           <app-modifier-list></app-modifier-list>
         </section>
       </template>
-    </app-async-value>
+    </app-promise-presenter>
   </main>
 </template>
 
@@ -47,9 +47,9 @@ import type { PropType } from 'vue';
 import type { CombinedId } from '@/stores/coreTypes';
 import { useCharactersCurrentStore } from '@/stores';
 
-import AppAsyncValue from '@/components/AppAsyncValue';
 import AppFungibleResources from '@/components/AppFungibleResources.vue';
 import AppNonFungibleResources from '@/components/AppNonFungibleResources.vue';
+import AppPromisePresenter from '@/components/AppPromisePresenter';
 
 const props = defineProps({
   characterCid: {
