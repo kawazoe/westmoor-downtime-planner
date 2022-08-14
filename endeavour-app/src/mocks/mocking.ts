@@ -20,7 +20,7 @@ import { toBookmark } from '@/stores/bookmarks';
 import * as A from 'fp-ts/Array';
 import * as NEA from 'fp-ts/NonEmptyArray';
 import * as R from 'fp-ts/Record';
-import type { Page } from '@/composables/binderComposables';
+import type { Page } from '@/composables/binders';
 import { pipe } from 'fp-ts/function';
 
 export function mockMeta(schema: string, creator: EntityRef<OwnershipId>, metas: Record<string, unknown> = {}): EntityMeta {

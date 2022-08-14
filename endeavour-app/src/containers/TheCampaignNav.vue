@@ -28,7 +28,7 @@ import type { PropType } from 'vue';
 import { faBars, faTimes } from '@fortawesome/pro-regular-svg-icons';
 
 import type { CombinedId } from '@/stores/coreTypes';
-import { useRelativeRoute } from '@/router/routes';
+import { useRelativeRoute } from '@/composables/routes';
 
 import { useCampaignsCurrentStore } from '@/stores';
 

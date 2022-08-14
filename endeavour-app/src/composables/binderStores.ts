@@ -5,7 +5,7 @@ import type { Pinia, StoreGeneric } from 'pinia';
 
 import { _never } from '@/lib/_never';
 
-import type { AsyncPage, Metadata } from '@/composables/binderComposables';
+import type { AsyncPage, Metadata } from '@/composables/binders';
 import type { BinderStore, BinderStoreDefinition } from '@/stores/binderStore';
 
 export interface ProgressiveBinder<P extends unknown[], V, Meta extends Metadata = Metadata> {

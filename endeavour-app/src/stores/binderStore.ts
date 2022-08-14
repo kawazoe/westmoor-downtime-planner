@@ -2,8 +2,8 @@ import { acceptHMRUpdate, defineStore } from 'pinia';
 
 import type { Bookmark } from '@/stores/bookmarks';
 
-import type { BinderComposableOptions, Metadata, Page } from '@/composables/binderComposables';
-import { useBinder } from '@/composables/binderComposables';
+import type { BinderComposableOptions, Metadata, Page } from '@/composables/binders';
+import { useBinder } from '@/composables/binders';
 
 
 export type BinderStoreDefinition<P extends unknown[], V, Meta extends Metadata = Metadata> = ReturnType<typeof defineBinderStore<P, V, Meta>>;

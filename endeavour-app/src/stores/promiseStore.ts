@@ -1,7 +1,7 @@
 import { acceptHMRUpdate, defineStore } from 'pinia';
 
-import type { PromiseComposableOptions } from '@/composables/promiseComposables';
-import { usePromise } from '@/composables/promiseComposables';
+import type { PromiseComposableOptions } from '@/composables/promises';
+import { usePromise } from '@/composables/promises';
 
 export type PromiseStoreDefinition<P extends unknown[], V> = ReturnType<typeof definePromiseStore<P, V>>;
 export type PromiseStore<P extends unknown[], V> = ReturnType<PromiseStoreDefinition<P, V>>;

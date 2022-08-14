@@ -55,7 +55,7 @@ export function defaultEmptyPredicate(page: Page<unknown>): boolean {
 }
 
 export type BinderStatus = 'initial' | 'nested' | 'error' | 'retrying';
-export interface Binder<V, Meta extends Metadata = Metadata> {
+export interface Binders<V, Meta extends Metadata = Metadata> {
   status: BinderStatus;
   cacheKey: CacheKey;
   pages: AsyncPage<V>[];
@@ -74,19 +74,19 @@ type UpdateContext<V, Meta extends Metadata> = {
   error?: unknown,
   targetPage: PageCursor<V>,
 };
-type NextFn<V, Meta extends Metadata> = (binder: Binder<V, Meta>) => Binder<V, Meta>;
-type UpdateMiddleware<V, Meta extends Metadata> = (binder: Binder<V, Meta>, ctx: UpdateContext<V, Meta>, next: NextFn<V, Meta>) => Binder<V, Meta>;
+type NextFn<V, Meta extends Metadata> = (binder: Binders<V, Meta>) => Binders<V, Meta>;
+type UpdateMiddleware<V, Meta extends Metadata> = (binder: Binders<V, Meta>, ctx: UpdateContext<V, Meta>, next: NextFn<V, Meta>) => Binders<V, Meta>;
 
 export function useBinder<P extends unknown[], V, Meta extends Metadata = Metadata>(
   trigger: (...args: P) => (bookmark: B.Bookmark | null) => Promise<Page<V, Meta>>,
   options?: BinderComposableOptions<P, V, Meta>,
 ) {
-  const state = shallowRef<Binder<V, Meta>>({
+  const state = shallowRef<Binders<V, Meta>>({
     status: 'initial',
     cacheKey: '' as CacheKey,
     pages: [],
     error: undefined,
-    metadata: { nullBookmark: null, nextBookmark: null } as Binder<V, Meta>['metadata'],
+    metadata: { nullBookmark: null, nextBookmark: null } as Binders<V, Meta>['metadata'],
   });
 
   function bind(...args: P) {
@@ -145,7 +145,7 @@ export function useBinder<P extends unknown[], V, Meta extends Metadata = Metada
     /**
      * Prepare an AsyncPage for use by a given bookmark. Attempts to reuse existing pages when the bookmark matches.
      */
-    const prepareCurrentPage = (binder: Binder<V, Meta>, bookmark: B.Bookmark | null) => {
+    const prepareCurrentPage = (binder: Binders<V, Meta>, bookmark: B.Bookmark | null) => {
       const createPage = (): AsyncPage<V> => ({
         status: 'loading',
         key: Symbol('AsyncPage'),
@@ -155,7 +155,7 @@ export function useBinder<P extends unknown[], V, Meta extends Metadata = Metada
         metadata: {},
       });
 
-      return cacheCheck<{ binder: Binder<V, Meta>, currentPageKey: symbol }>(() => {
+      return cacheCheck<{ binder: Binders<V, Meta>, currentPageKey: symbol }>(() => {
         const ind = binder.pages.findIndex(p => B.equals(p.bookmark, bookmark));
         if (ind >= 0) {
           const page = binder.pages[ind] ?? _throw(new Error('Invalid page index'));
@@ -295,7 +295,7 @@ export function useBinder<P extends unknown[], V, Meta extends Metadata = Metada
     const applyMiddlewares = (bookmark: B.Bookmark | null, currentPageKey: symbol, response: Page<V, Meta>, error?: unknown) => {
       const effectiveBookmark = assertBookmarkKindTransition(response.bookmark ?? bookmark);
 
-      const ctxFactory = (binder: Binder<V, Meta>) => {
+      const ctxFactory = (binder: Binders<V, Meta>) => {
         // ind and page cannot be cached. Individual middlewares might modify the pages array and de-sync the values.
         // TODO: use properties and make a getter instead?
         const ind = binder.pages.findIndex(p => p.key === currentPageKey);

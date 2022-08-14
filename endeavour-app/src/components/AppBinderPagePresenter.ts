@@ -1,7 +1,7 @@
 import { createCommentVNode, defineComponent } from 'vue';
 import type { PropType, Slot, Slots, VNode } from 'vue';
 
-import type { AsyncPage, AsyncPageStatus, BinderStatus } from '@/composables/binderComposables';
+import type { AsyncPage, AsyncPageStatus, BinderStatus } from '@/composables/binders';
 
 const undefinedSlot = (status: BinderStatus | AsyncPageStatus) => (): VNode[] => [createCommentVNode(`app-binder-page-presenter:unresolved-slot-mapping:${status}`)];
 function pickSlot(status: AsyncPageStatus, slots: Slots): Slot {

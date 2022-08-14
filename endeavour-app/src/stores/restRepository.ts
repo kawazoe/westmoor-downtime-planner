@@ -1,6 +1,6 @@
 import type { CombinedId, SearchDocumentsPageResult, SearchMeta, SearchResult, Uri } from '@/stores/coreTypes';
 import type { Bookmark } from '@/stores/bookmarks';
-import type { Page } from '@/composables/binderComposables';
+import type { Page } from '@/composables/binders';
 
 export class RestRepository<T> {
   public constructor(private endpoint: Uri) {

@@ -41,8 +41,8 @@ import { ref } from 'vue';
 
 import { useFungibleResourcesSearchDataStore } from '@/stores';
 
-import { useIntersectionObserver } from '@/composables/intersectionObserverComposable';
-import { useProgressiveBinder } from '@/composables/binderStoreComposables';
+import { useIntersectionObserver } from '@/composables/intersectionObservers';
+import { useProgressiveBinder } from '@/composables/binderStores';
 
 import AppBinderPagePresenter from '@/components/AppBinderPagePresenter';
 import AppBinderPresenter from '@/components/AppBinderPresenter';
