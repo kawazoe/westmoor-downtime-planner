@@ -63,7 +63,7 @@ module.exports = {
     'key-spacing': 'error',
     'keyword-spacing': 'error',
     'linebreak-style': ['error', process.platform === 'win32' ? 'windows' : 'unix'],
-    'lines-around-comment': 'error',
+    'lines-around-comment': ['error', { allowBlockStart: true }],
     'multiline-ternary': ['error', 'always-multiline'],
     'new-parens': ['error', 'always'],
     'newline-per-chained-call': ['error', { ignoreChainWithDepth: 2 }],
