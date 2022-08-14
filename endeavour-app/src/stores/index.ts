@@ -20,17 +20,17 @@ const campaignsRepository = new RestRepository<CampaignEntity>(Uri.cast('/api/v1
 const charactersRepository = new RestRepository<CharacterEntity>(Uri.cast('/api/v1/characters'));
 
 export const useGameSystemsDataStore = defineBinderStore('game-systems-data', () => gameSystemsRepository.getPage());
-export const useFungibleResourcesDataStore = definePromiseStore('fungible-resources-data', () => fungibleResourcesRepository.getPage()());
-export const useNonFungibleResourcesDataStore = definePromiseStore('non-fungible-resources-data', () => nonFungibleResourcesRepository.getPage()());
+export const useFungibleResourcesDataStore = definePromiseStore('fungible-resources-data', () => fungibleResourcesRepository.getPage()(null));
+export const useNonFungibleResourcesDataStore = definePromiseStore('non-fungible-resources-data', () => nonFungibleResourcesRepository.getPage()(null));
 export const useFungibleResourcesSearchDataStore = defineBinderStore('fungible-resources-search', () => fungibleResourcesRepository.search());
 export const useNonFungibleResourcesSearchDataStore = defineBinderStore('fungible-resources-search', () => fungibleResourcesRepository.search());
 export const usePlayersDataStore = defineBinderStore('players-data', () => playersRepository.getPage());
 // TODO: default id is only there temporarily. This call shouldn't trigger if there isn't an id.
 const getCurrentPlayerCid = (): CombinedId => CombinedId.cast(sessionStorage.getItem('current-player') ?? 'mismis');
 export const usePlayersCurrentStore = definePromiseStore('players-current', () => playersRepository.getById(getCurrentPlayerCid()), { keySelector: getCurrentPlayerCid });
-export const useCampaignsDataStore = definePromiseStore('campaigns-data', () => campaignsRepository.getPage()());
+export const useCampaignsDataStore = definePromiseStore('campaigns-data', () => campaignsRepository.getPage()(null));
 export const useCampaignsCurrentStore = definePromiseStore('campaigns-current', (cid: CombinedId) => campaignsRepository.getById(cid));
-export const useCharactersDataStore = definePromiseStore('characters-data', () => charactersRepository.getPage()());
+export const useCharactersDataStore = definePromiseStore('characters-data', () => charactersRepository.getPage()(null));
 export const useCharactersCurrentStore = definePromiseStore('characters-current', (cid: CombinedId) => charactersRepository.getById(cid));
 
 export const useStore = definePromiseStore('main', async () => {

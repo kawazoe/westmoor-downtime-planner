@@ -39,7 +39,6 @@ export function equalsRelative(left: RelativeBookmark, right: RelativeBookmark):
 export function equalsProgressive(left: ProgressiveBookmark, right: ProgressiveBookmark): boolean {
   return left.token === right.token;
 }
-
 export function equals(left: Bookmark | null, right: Bookmark | null): boolean {
   return (
     left == null && right == null ||
@@ -83,15 +82,17 @@ export function isAfterOrAtRelative(value: RelativeBookmark, index: number): boo
 export function isAfterOrAtProgressive(value: ProgressiveBookmark, index: number): boolean {
   return indexOfProgressive(value) >= index;
 }
-export function isAfterOrAt(value: Bookmark, index: number): boolean {
-  switch (value.kind) {
-    case 'absolute':
-      return isAfterOrAtAbsolute(value, index);
-    case 'relative':
-      return isAfterOrAtRelative(value, index);
-    case 'progressive':
-      return isAfterOrAtProgressive(value, index);
-    default:
-      return _never(value);
-  }
+export function isAfterOrAt(index: number): (value: Bookmark) => boolean {
+  return value => {
+    switch (value.kind) {
+      case 'absolute':
+        return isAfterOrAtAbsolute(value, index);
+      case 'relative':
+        return isAfterOrAtRelative(value, index);
+      case 'progressive':
+        return isAfterOrAtProgressive(value, index);
+      default:
+        return _never(value);
+    }
+  };
 }
