@@ -8,6 +8,7 @@ import { _never } from '@/lib/_never';
 import type { AsyncPage, Metadata } from '@/composables/binders';
 import type { BinderStore, BinderStoreDefinition } from '@/stores/binderStore';
 
+// TODO: This whole thing probably needs to go as it partially duplicates behaviors that are already handled by the binder composable's middlewares.
 export interface ProgressiveBinder<P extends unknown[], V, Meta extends Metadata = Metadata> {
   store: BinderStore<P, V, Meta>;
   currentPage: ComputedRef<AsyncPage<V> | undefined>;

@@ -77,6 +77,7 @@ type UpdateContext<V, Meta extends Metadata> = {
 type NextFn<V, Meta extends Metadata> = (binder: BinderState<V, Meta>) => BinderState<V, Meta>;
 type UpdateMiddleware<V, Meta extends Metadata> = (binder: BinderState<V, Meta>, ctx: UpdateContext<V, Meta>, next: NextFn<V, Meta>) => BinderState<V, Meta>;
 
+// TODO: review the API of BinderAdapter to include a concept of indexable vs enumerable triggers
 export type BinderAdapter<P extends unknown[], V, Meta extends Metadata = Metadata> = ReturnType<typeof useBinder<P, V, Meta>>;
 export function useBinder<P extends unknown[], V, Meta extends Metadata = Metadata>(
   trigger: (...args: P) => (bookmark: B.Bookmark | null) => Promise<Page<V, Meta>>,
