@@ -2,7 +2,7 @@
   <article class="container px-4">
     <h2>The Campaign's Resources Page</h2>
 
-    <app-binder-presenter :value="progressiveResources.store">
+    <app-binder-presenter :value="fungibleResourcesSearchDataStore">
       <template #initial>
         <div ref="resourcesLoader">...</div>
       </template>
@@ -42,16 +42,15 @@ import { ref } from 'vue';
 import { useFungibleResourcesSearchDataStore } from '@/stores';
 
 import { useIntersectionObserver } from '@/composables/intersectionObservers';
-import { useProgressiveBinder } from '@/composables/binderStores';
 
 import AppBinderPagePresenter from '@/components/AppBinderPagePresenter';
 import AppBinderPresenter from '@/components/AppBinderPresenter';
 
-const useProgressiveResources = useProgressiveBinder(useFungibleResourcesSearchDataStore);
-const progressiveResources = useProgressiveResources();
+const fungibleResourcesSearchDataStore = useFungibleResourcesSearchDataStore();
+const enumerableResources = fungibleResourcesSearchDataStore.bind();
 
 const resourcesLoader = ref<HTMLElement | null>(null);
-useIntersectionObserver(resourcesLoader, e => e.isIntersecting && progressiveResources.trigger().then(() => !progressiveResources.currentPage?.metadata.last));
+useIntersectionObserver(resourcesLoader, e => e.isIntersecting && enumerableResources.next().then(() => !fungibleResourcesSearchDataStore.currentPage?.metadata.last));
 </script>
 
 <style scoped>

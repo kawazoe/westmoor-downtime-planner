@@ -44,7 +44,7 @@
     </app-binder-presenter>
     -->
 
-    <app-binder-presenter :value="progressivePlayers.store">
+    <app-binder-presenter :value="playersDataStore">
       <template #initial>
         <div ref="playersLoader">...</div>
       </template>
@@ -145,19 +145,18 @@ import { ref } from 'vue';
 
 import { usePlayersCurrentStore, usePlayersDataStore } from '@/stores';
 import { useIntersectionObserver } from '@/composables/intersectionObservers';
-import { useProgressiveBinder } from '@/composables/binderStores';
 
 import type { PlayerEntity } from '@/stores/businessTypes';
 
 import AppBinderPagePresenter from '@/components/AppBinderPagePresenter';
 import AppBinderPresenter from '@/components/AppBinderPresenter';
 
-const useProgressivePlayers = useProgressiveBinder(usePlayersDataStore);
-const progressivePlayers = useProgressivePlayers();
+const playersDataStore = usePlayersDataStore();
+const enumerablePlayers = playersDataStore.bind();
 const playerStore = usePlayersCurrentStore();
 
 const playersLoader = ref<HTMLElement | null>(null);
-useIntersectionObserver(playersLoader, e => e.isIntersecting && progressivePlayers.trigger().then(() => !progressivePlayers.currentPage?.metadata.last));
+useIntersectionObserver(playersLoader, e => e.isIntersecting && enumerablePlayers.next().then(() => !playersDataStore.currentPage?.metadata.last));
 
 function setPlayer(player: PlayerEntity): void {
   sessionStorage.setItem('current-player', player.cid);
