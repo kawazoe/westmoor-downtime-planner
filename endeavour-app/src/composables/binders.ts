@@ -105,7 +105,7 @@ type NextFn<V, Meta extends Metadata> = (binder: BinderState<V, Meta>) => Binder
 type UpdateMiddleware<V, Meta extends Metadata> = (binder: BinderState<V, Meta>, ctx: UpdateContext<V, Meta>, next: NextFn<V, Meta>) => BinderState<V, Meta>;
 type UpdateMiddlewareFn = <V, Meta extends Metadata>(binder: BinderState<V, Meta>, ctx: UpdateContext<V, Meta>, next: NextFn<V, Meta>) => BinderState<V, Meta>;
 
-export function useBinderFactory<P extends unknown[], V, Meta extends Metadata = Metadata>(
+function useBinderFactory<P extends unknown[], V, Meta extends Metadata = Metadata>(
   trigger: (...args: P) => (bookmark: B.Bookmark | null) => Promise<Page<V, Meta>>,
   options?: BinderComposableOptions<P, V, Meta>,
 ) {
@@ -196,7 +196,6 @@ export function useBinderFactory<P extends unknown[], V, Meta extends Metadata =
         binder: {
           ...createBinder(),
           status: 'nested',
-          cacheKey,
           pages: [newPage],
           error: undefined,
         },
@@ -204,9 +203,7 @@ export function useBinderFactory<P extends unknown[], V, Meta extends Metadata =
       };
     }
 
-    const accessor = trigger(...args);
-
-    return function action(
+    function action(
       bookmark: B.Bookmark | null,
       then: (
         bookmark: B.Bookmark | null,
@@ -255,7 +252,16 @@ export function useBinderFactory<P extends unknown[], V, Meta extends Metadata =
             error,
           };
         });
+    }
+
+    state.value = {
+      ...state.value,
+      cacheKey,
     };
+
+    const accessor = trigger(...args);
+
+    return action;
   }
 
   return {
