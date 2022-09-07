@@ -139,68 +139,58 @@ function useBinderFactory<P extends unknown[], V, Meta extends Metadata = Metada
       bookmark: B.Bookmark | null,
     ): { binder: BinderState<V, Meta>, currentPageKey: symbol } |
       { binder: undefined, currentPageKey: undefined } {
-      if (binder.cacheKey === cacheKey) {
-        switch (binder.status) {
-          case 'initial':
-          case 'nested': {
-            const ind = binder.pages.findIndex(p => B.equals(p.bookmark, bookmark));
-            if (ind >= 0) {
-              const page = binder.pages[ind] ?? _throw(new Error('Invalid page index'));
-              return {
-                binder: {
-                  ...binder,
-                  status: 'nested',
-                  pages: replaceAt(binder.pages, ind, {
-                    ...(page),
-                    status: 'refreshing' as AsyncPageStatus,
-                  }),
-                  error: undefined,
-                },
-                currentPageKey: page.key,
-              };
-            }
-
-            const newPage = createPage(bookmark);
+      if (binder.cacheKey !== cacheKey) {
+        throw new Error('Expired BinderAdapter.');
+      }
+      switch (binder.status) {
+        case 'initial':
+        case 'nested': {
+          const ind = binder.pages.findIndex(p => B.equals(p.bookmark, bookmark));
+          if (ind >= 0) {
+            const page = binder.pages[ind] ?? _throw(new Error('Invalid page index'));
             return {
               binder: {
                 ...binder,
                 status: 'nested',
-                pages: [...binder.pages, newPage],
+                pages: replaceAt(binder.pages, ind, {
+                  ...(page),
+                  status: 'refreshing' as AsyncPageStatus,
+                }),
                 error: undefined,
               },
-              currentPageKey: newPage.key,
+              currentPageKey: page.key,
             };
           }
-          case 'error': {
-            const newPage = createPage(bookmark);
-            return {
-              binder: {
-                ...binder,
-                status: 'retrying',
-                pages: [newPage],
-                error: undefined,
-              },
-              currentPageKey: newPage.key,
-            };
-          }
-          case 'retrying':
-            console.info('[BinderComposable] [state transition] Batching concurrent trigger.');
-            return { binder: undefined, currentPageKey: undefined };
-          default:
-            return _never(binder.status);
-        }
-      }
 
-      const newPage = createPage(bookmark);
-      return {
-        binder: {
-          ...createBinder(),
-          status: 'nested',
-          pages: [newPage],
-          error: undefined,
-        },
-        currentPageKey: newPage.key,
-      };
+          const newPage = createPage(bookmark);
+          return {
+            binder: {
+              ...binder,
+              status: 'nested',
+              pages: [...binder.pages, newPage],
+              error: undefined,
+            },
+            currentPageKey: newPage.key,
+          };
+        }
+        case 'error': {
+          const newPage = createPage(bookmark);
+          return {
+            binder: {
+              ...binder,
+              status: 'retrying',
+              pages: [newPage],
+              error: undefined,
+            },
+            currentPageKey: newPage.key,
+          };
+        }
+        case 'retrying':
+          console.info('[BinderComposable] [state transition] Batching concurrent trigger.');
+          return { binder: undefined, currentPageKey: undefined };
+        default:
+          return _never(binder.status);
+      }
     }
 
     function action(
