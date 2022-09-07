@@ -9,8 +9,10 @@
             Facebook
           </li>
           <li>
-            <app-icon class="fa-w-20" :icon="faGithubSquare"></app-icon>
-            GitHub
+            <a href="https://github.com/kawazoe/westmoor-downtime-planner">
+              <app-icon class="fa-w-20" :icon="faGithubSquare"></app-icon>
+              GitHub
+            </a>
           </li>
         </ul>
       </div>
@@ -18,8 +20,10 @@
         <h2 class="mb-2">Made by these folks:</h2>
         <ul>
           <li>
-            <app-icon class="fa-w-20" :icon="faUser"></app-icon>
-            Etienne Maheu
+            <a href="https://etiennemaheu.com/">
+              <app-icon class="fa-w-20" :icon="faUser"></app-icon>
+              Etienne Maheu
+            </a>
           </li>
           <li>
             <app-icon class="fa-w-20" :icon="faUsers"></app-icon>
