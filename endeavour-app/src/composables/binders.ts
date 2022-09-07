@@ -78,7 +78,7 @@ export type BinderComposableOptions<P extends unknown[], V, Meta extends Metadat
 };
 
 export function defaultEmptyPredicate(page: Page<unknown>): boolean {
-  return page == null || page.bookmark == null || page.value.length === 0;
+  return page == null || page.bookmark == null || page.value == null || page.value.length === 0;
 }
 
 export type BinderStatus = 'initial' | 'nested' | 'error' | 'retrying';
