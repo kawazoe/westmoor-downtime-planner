@@ -245,7 +245,7 @@ function useBinderFactory<P extends unknown[], V, Meta extends Metadata = Metada
     }
 
     state.value = {
-      ...state.value,
+      ...createBinder(),
       cacheKey,
     };
 
