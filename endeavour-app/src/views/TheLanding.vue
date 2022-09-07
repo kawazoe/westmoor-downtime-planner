@@ -65,12 +65,13 @@
     <div class="hero hero-left">
       <img src="../assets/placeholder.png" alt="placeholder">
       <section>
-        <h3>The most versatile tool for RPG Campaign management</h3>
+        <h3>The most versatile tool for Role-Playing Game campaign management</h3>
         <p>
           Endeavourapp.io is a completely configurable tool to help you deal with the most complex RPG campaigns you can
-          think of. It was build from the ground up to handle anything from the simplest, 3 or 4 players, once in a
-          month, couch session all the way to massive 20+ player endeavours like a Westmarch hex-crawl with multiple
-          sessions a week.
+          think of. It was build from the ground up to handle anything from the simplest, 3 or 4 players, once a month,
+          couch session all the way to massive 200+ players endeavours like a Westmarch hex-crawl with multiple
+          sessions a week. Whether you just want to have a place to play with your friends, or dream of a massively
+          multiplayer campaign coupled with asynchronous role playing, we've got you covered.
         </p>
       </section>
     </div>
@@ -80,10 +81,12 @@
       <section>
         <h3>Focus on the game, not on the grind</h3>
         <p>
-          A lot of RPG campaigns will feature downtime activities that the player can do in between chapters. Taking
-          care of those can be very time consuming for a Dungeon Master and players and some of them need to be in
-          private or in groups, might have various associated costs and take time. Never forget that magic item one of
-          your player started to work on 3 months ago again.
+          A lot of RPG campaigns will feature downtime activities that the player can do in between sessions or chapters.
+          Taking care of those can be very time consuming for Game Masters and players alike. Sometimes, you might need
+          to host mini sessions, either private or in group, to accomplish them. They might have various costs associated
+          to each of them and take time to accomplish. Magic items found by characters 3 months ago might also impact
+          those downtime activities. Keeping track of all of this can be a real grind. Thankfully, endeavourapp.io will
+          not only handle all of this for you, it will also let you create your own activities as needed.
         </p>
       </section>
     </div>
@@ -94,9 +97,12 @@
         <h3>Go further, where you never dared before</h3>
         <p>
           Have you already considered how interesting it would be to have a real market simulation in your games only to
-          realize how insane that would be to manage on your own? Maybe now is the time to consider again.
+          realize how insane it would be to manage on your own? Maybe now is the time to consider again.
           Endeavourapp.io comes with the ability to define factions and mints of varying values while tracking the price
-          of every item in you campaign across multiple world changing events.
+          of every item in you campaign across multiple world changing events. Someone raided a local potion producing
+          town? The simulated demand will cause prices to go up in the region until the town recovers. Your adventurers
+          finally cleaned up that old mine from an ooze infestation? The simulated offer will flood the market with new
+          jobs and ores making weapons and armors more affordable.
         </p>
       </section>
     </div>
@@ -116,11 +122,12 @@
     <div class="hero hero-left">
       <img src="../assets/placeholder.png" alt="placeholder">
       <section>
-        <h3>Factions and resources</h3>
+        <h3>Factions and influence</h3>
         <p>
-          In here, everything can be a tradeable resource. If more political campaigns are your jam, you can use
-          endeavourapp.io to manage your player's relationship and allegiance to factions and see how it will sway the
-          balance of power in your world.
+          If more political campaigns are your jam, you can use endeavourapp.io to manage your player's relationship and
+          allegiance to factions. See how they sway the balance of power in your world and create twisted political
+          dynamics between players that carouses with mutual enemies. Use these allegiances as resources for actions to
+          build a complex network of political possibilities for your players.
         </p>
       </section>
     </div>
@@ -130,10 +137,11 @@
       <section>
         <h3>The DM isn't the only writer in this story</h3>
         <p>
-          Role Playing Games are known to be a great collaborative story-writing experience, but often, it is the DM
-          that do all the writing, with the players doing all the telling... Endeavourapp.io is meant to be used
-          collaboratively, with all players on deck. As a DM, you get to give them as much power as you want, from
-          viewing only to full self-service downtime actions.
+          Role Playing Games are known to be great collaborative story-writing experiences, but often, it is the GM
+          that does all the writing with the players doing all the telling... Endeavourapp.io is meant to be used
+          collaboratively, with all players on deck. As a GM, you get to give them as much power as you want, from
+          viewing only to full self-service campaigns like in ye old forum days. Whether you want to share your amazing
+          story with the world, or test drive a new module on your own, the decision is yours.
         </p>
       </section>
     </div>
