@@ -221,19 +221,27 @@ function useBinderFactory<P extends unknown[], V, Meta extends Metadata = Metada
           ? state.value = then(bookmark, currentPageKey, response)
           : undefined
         ))
-        .catch((error: unknown) => (state.value.cacheKey === cacheKey
-          ? state.value = then(
-            bookmark,
-            currentPageKey,
-            {
-              bookmark: (error as Page<V, Meta>)?.bookmark ?? bookmark ?? null,
-              value: [],
-              metadata: {} as Meta,
-            },
-            error,
-          )
-          : undefined
-        ))
+        .catch((error: unknown) => {
+          if (state.value.cacheKey === cacheKey) {
+            const errorBookmark = (error as Page<V, Meta>)?.bookmark ?? bookmark ?? null;
+            if (!errorBookmark) {
+              return Promise.reject(error);
+            }
+
+            state.value = then(
+              bookmark,
+              currentPageKey,
+              {
+                bookmark: errorBookmark,
+                value: [],
+                metadata: {} as Meta,
+              },
+              error,
+            );
+          }
+
+          return Promise.resolve();
+        })
         .catch((error: unknown) => {
           state.value = {
             ...state.value,
