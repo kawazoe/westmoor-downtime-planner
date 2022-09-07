@@ -30,18 +30,18 @@
       <h3>Personal Information Handling</h3>
       <p>
         This application makes extensive use of Microsoft Azure products as well as
-        the Auth0 identity provider. This ensures that private information is stored
-        according to industry standard practices. More information is available on
-        each specific service provider's website. The developers of this application
-        will do their BEST EFFORT not to compromise your data but, in accordance with
-        the "AS IS" clause, offers NO GUARANTY as to the security of the information
-        that they control or that is given freely to any third-party service provider
-        used by the application.
+        the Auth0 (by Ookla) identity service provider. This ensures that private
+        information is stored according to industry standard practices. More information
+        is available on each specific service provider's website. The developers of this
+        application will do their BEST EFFORT not to compromise your data but, in
+        accordance with the "AS IS" clause of the MIT licence, ir offers NO GUARANTY as
+        to the security of the information that they control or that is given freely to
+        any third-party service provider used by the application.
       </p>
       <p>
         In the event of a breach, including known breaches from third parties, the
         developers will attempt to notify you with their BEST EFFORT and will guide
-        you toward steps you can take to protect your information.
+        you toward the steps you can take to protect your information.
       </p>
 
       <h4>GDPR & DMCA Requests</h4>
