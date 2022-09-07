@@ -55,8 +55,7 @@ describe('Promise Composable', () => {
     describe('default empty predicate', () => {
       for (const emptyValue of [null, '', []]) {
         it(`should enter an empty state when the trigger returns "${JSON.stringify(emptyValue)}"`, async () => {
-          const trigger = vi.fn(async () => emptyValue);
-          const sut = usePromise(trigger);
+          const sut = usePromise(async () => emptyValue);
 
           await sut.trigger();
 
@@ -68,8 +67,10 @@ describe('Promise Composable', () => {
     });
 
     it('should enter an empty state when the content matches the empty predicate', async () => {
-      const trigger = vi.fn(async () => 'success');
-      const sut = usePromise(trigger, { emptyPredicate: mockEmptyPredicate });
+      const sut = usePromise(
+        async () => 'success',
+        { emptyPredicate: mockEmptyPredicate },
+      );
 
       await sut.trigger();
 
@@ -153,8 +154,7 @@ describe('Promise Composable', () => {
 
   describe('Caching', () => {
     it('should set a cache key when the trigger is called', () => {
-      const trigger = vi.fn(() => stall());
-      const sut = usePromise(trigger);
+      const sut = usePromise(() => stall());
 
       const previousKey = sut.state.value.cacheKey;
       sut.trigger();
@@ -163,8 +163,10 @@ describe('Promise Composable', () => {
     });
 
     it('should not change the cache key on resolve', async () => {
-      const trigger = vi.fn(async () => 'success');
-      const sut = usePromise(trigger, { keySelector: mockKeySelector });
+      const sut = usePromise(
+        async () => 'success',
+        { keySelector: mockKeySelector },
+      );
 
       const call = sut.trigger();
       const previousKey = sut.state.value.cacheKey;
@@ -175,8 +177,10 @@ describe('Promise Composable', () => {
     });
 
     it('should not change the cache key on reject', async () => {
-      const trigger = vi.fn(async () => _throw('failure'));
-      const sut = usePromise(trigger, { keySelector: mockKeySelector });
+      const sut = usePromise(
+        async () => _throw('failure'),
+        { keySelector: mockKeySelector },
+      );
 
       const call = sut.trigger();
       const previousKey = sut.state.value.cacheKey;
@@ -186,9 +190,8 @@ describe('Promise Composable', () => {
       expect(sut.state.value.cacheKey).toBe(previousKey);
     });
 
-    it('should clear cache on re-trigger when key changes', async () => {
-      const trigger = vi.fn(async () => 'success');
-      const sut = usePromise(trigger);
+    it('should clear the cache on re-trigger when key changes', async () => {
+      const sut = usePromise(async () => 'success');
 
       await sut.trigger();
       const previousKey = sut.state.value.cacheKey;
@@ -201,16 +204,11 @@ describe('Promise Composable', () => {
       expect(sut.error.value).toBeUndefined();
     });
 
-    it('should use first param as cache key by default', async () => {
-      const trigger = vi.fn(async (arg1: string) => arg1);
-      const sut = usePromise(trigger);
+    it('should use first param as cache key if available by default', async () => {
+      const sut = usePromise(async (arg1: string) => arg1);
 
       await sut.trigger('key');
-      const previousKey = sut.state.value.cacheKey;
-      // noinspection ES6MissingAwait
-      sut.trigger('key');
 
-      expect(sut.state.value.cacheKey).toBe(previousKey);
       expect(sut.state.value.cacheKey).toBe('key');
     });
   });
