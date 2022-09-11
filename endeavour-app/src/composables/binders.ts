@@ -481,7 +481,8 @@ export function useEnumerableBinder<P extends unknown[], V, Meta extends Metadat
     bind(...args: P) {
       const action = bindThen(...args);
 
-      const next = () => action(computeNewBookmark(), (...ctx) => chainMiddlewares<V, Meta>(middlewares, ...ctx)(state.value));
+      const load = (bookmark: B.Bookmark | null) => action(bookmark, (...ctx) => chainMiddlewares<V, Meta>(middlewares, ...ctx)(state.value));
+      const next = () => load(computeNewBookmark());
       return { next };
     },
   };
@@ -542,11 +543,16 @@ export function useIndexableBinder<P extends unknown[], V, Meta extends Metadata
       const openOrDefault = (bookmark: B.Bookmark | null) => open(bookmarkOrDefault(bookmark));
       const previous = () => openOrDefault(computeNewBookmark((l, r) => l - r));
       const next = () => openOrDefault(computeNewBookmark((l, r) => l + r));
+      const refresh = (index: number) => {
+        const bookmark = state.value.pages[index]?.bookmark;
+        return bookmark ? load(bookmark) : Promise.resolve();
+      };
       return {
         load: loadOrDefault,
         open: openOrDefault,
         previous,
         next,
+        refresh,
       };
     },
   };
