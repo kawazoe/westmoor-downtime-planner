@@ -52,7 +52,7 @@ export function defaultKeySelector<P extends unknown[]>(...args: P): CacheKey {
 
 export type Page<V, Meta extends Metadata = Metadata> = {
   bookmark: B.Bookmark,
-  value: V[],
+  value: V[] | null | undefined,
   metadata: {
     full?: true,
     last?: true,
@@ -390,7 +390,7 @@ const responseMiddleware = <P extends unknown[], V, Meta extends Metadata>(
     ...binder,
     pages: replaceAt(binder.pages, ind, {
       ...page,
-      value: response.value,
+      value: response.value ?? [],
       error,
       metadata: { full, last },
       status: error
