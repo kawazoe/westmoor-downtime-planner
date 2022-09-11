@@ -5,7 +5,7 @@ export type BookmarkKind = 'absolute' | 'relative' | 'progressive';
 
 export type AbsoluteBookmark = { kind: 'absolute', offset: number, limit: number };
 export type RelativeBookmark = { kind: 'relative', page: number, pageSize: number };
-export type ProgressiveBookmark = { kind: 'progressive', token: string };
+export type ProgressiveBookmark = { kind: 'progressive', token: string | null | undefined };
 export type Bookmark = AbsoluteBookmark | RelativeBookmark | ProgressiveBookmark;
 
 function parsePositiveSafe(value: unknown, defaultValue: number): number {
@@ -57,8 +57,7 @@ export function indexOfRelative(value: RelativeBookmark): number {
   return value.page * value.pageSize;
 }
 export function indexOfProgressive(value: ProgressiveBookmark): number {
-  // TODO: clarify how to represent "the last page"
-  return value.token === '' ? Number.MAX_SAFE_INTEGER : 0;
+  return value.token == null || value.token === '' ? Number.MAX_SAFE_INTEGER : 0;
 }
 export function indexOf(value: Bookmark): number {
   switch (value.kind) {
@@ -96,3 +95,4 @@ export function isAfterOrAt(index: number): (value: Bookmark) => boolean {
     }
   };
 }
+export const isAtInfinity = isAfterOrAt(Number.MAX_SAFE_INTEGER);

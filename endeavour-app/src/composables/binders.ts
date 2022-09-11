@@ -323,6 +323,12 @@ const progressiveBookmarkBinderMiddleware: UpdateMiddlewareFn = (binder, {
   pages: replaceAt(binder.pages, ind, {
     ...page,
     bookmark: binder.metadata.nextBookmark,
+    metadata: B.isAtInfinity(effectiveBookmark)
+      ? {
+        ...page.metadata,
+        last: true,
+      }
+      : page.metadata,
   }),
   metadata: {
     ...binder.metadata,
@@ -452,7 +458,7 @@ export function useEnumerableBinder<P extends unknown[], V, Meta extends Metadat
   const currentPage = computed(() => state.value.pages[state.value.pages.length - 1] ?? null);
 
   function computeNewBookmark(): B.Bookmark | null {
-    const currentBookmark = currentPage.value?.bookmark;
+    const currentBookmark = currentPage.value?.bookmark ?? state.value.metadata.nextBookmark;
     switch (currentBookmark?.kind) {
       case undefined:
       case null:
