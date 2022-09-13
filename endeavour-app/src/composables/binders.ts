@@ -279,7 +279,6 @@ function useBinderFactory<P extends unknown[], V, Meta extends Metadata = Metada
 /**
  * Server replied with a bookmark for a page past the end of the data.
  * Give up current operation and cleanup.
- * TODO: Scan existing data and figure out if the cache is out of date.
  */
 const afterEndOfRangeMiddleware: UpdateMiddlewareFn = (binder, {
   effectiveBookmark,
@@ -298,7 +297,7 @@ const afterEndOfRangeMiddleware: UpdateMiddlewareFn = (binder, {
 /**
  * Server replied with a bookmark for a different page than requested; such as requests made without a bookmark.
  * Remove existing pages using the effective bookmark from the binder to avoid duplicates,
- * and reassign the current target page to that bookmark.
+ * and reorder pages to ensure they match their position.
  */
 const pageRebookmarkingMiddleware: UpdateMiddlewareFn = (binder, {
   requestBookmark,
