@@ -16,7 +16,9 @@ function replaceAt<T>(array: T[], index: number, value: T): T[] {
 
 function isAfterEndOfRange<V>(pages: AsyncPage<V>[], bookmark: B.Bookmark): boolean {
   const endOfRange = pages.find(p => p.metadata.last)?.bookmark;
-  return endOfRange && B.isAfterOrAt(B.indexOf(endOfRange))(bookmark) || false;
+  return endOfRange === null //< Last page is known; but has null (first page) bookmark. This can only happen with progressive bookmarks.
+    || (endOfRange && B.isAfterOrAt(B.indexOf(endOfRange))(bookmark)) //< Last page is known. Compare bookmarks together.
+    || false; //< Last page is unknown. Cannot verify if the bookmark is after last page.
 }
 
 function assertValidBookmark(bookmark: B.Bookmark): void {
