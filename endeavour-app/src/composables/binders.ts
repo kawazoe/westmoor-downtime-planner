@@ -7,9 +7,19 @@ import { _throw } from '@/lib/_throw';
 
 import * as B from '@/lib/bookmarks';
 
+function insertAt<T>(array: T[], index: number, value: T): T[] {
+  const result = [...array];
+  result.splice(index, 0, value);
+  return result;
+}
 function replaceAt<T>(array: T[], index: number, value: T): T[] {
   const result = [...array];
   result.splice(index, 1, value);
+  return result;
+}
+function removeAt<T>(array: T[], index: number): T[] {
+  const result = [...array];
+  result.splice(index, 1);
   return result;
 }
 
@@ -18,6 +28,19 @@ function isAfterEndOfRange<V>(pages: AsyncPage<V>[], bookmark: B.Bookmark): bool
   return endOfRange === null //< Last page is known; but has null (first page) bookmark. This can only happen with progressive bookmarks.
     || (endOfRange && B.isAfterOrAt(B.indexOf(endOfRange))(bookmark)) //< Last page is known. Compare bookmarks together.
     || false; //< Last page is unknown. Cannot verify if the bookmark is after last page.
+}
+
+function findAssumedBookmarkIndex<V>(pages: AsyncPage<V>[], bookmark: B.Bookmark | null): number {
+  if (!bookmark) {
+    return 0;
+  }
+
+  const bookmarkIndex = B.indexOf(bookmark);
+  const pageIndex = pages
+    .findIndex(p => (p.bookmark == null ? 0 : B.indexOf(p.bookmark)) >= bookmarkIndex);
+  return pageIndex === -1
+    ? pages.length
+    : pageIndex;
 }
 
 function assertValidBookmark(bookmark: B.Bookmark): void {
@@ -168,7 +191,9 @@ function useBinderFactory<P extends unknown[], V, Meta extends Metadata = Metada
             binder: {
               ...binder,
               status: 'nested',
-              pages: [...binder.pages, newPage],
+              pages: bookmark?.kind === 'progressive' ?
+                [...binder.pages, newPage]
+                : insertAt(binder.pages, findAssumedBookmarkIndex(binder.pages, bookmark), newPage),
               error: undefined,
             },
             currentPageKey: newPage.key,
@@ -302,15 +327,24 @@ const afterEndOfRangeMiddleware: UpdateMiddlewareFn = (binder, {
 const pageRebookmarkingMiddleware: UpdateMiddlewareFn = (binder, {
   requestBookmark,
   effectiveBookmark,
+  targetPage,
 }, next) => {
-  if (!B.equals(requestBookmark, effectiveBookmark)) {
-    return next({
-      ...binder,
-      pages: binder.pages.filter(p => !B.equals(p.bookmark, effectiveBookmark)),
-    });
+  // Does not apply to progressive bookmarks since the response will always be one bookmark ahead of the request.
+  if (effectiveBookmark.kind === 'progressive') {
+    return next(binder);
   }
 
-  return next(binder);
+  if (B.equals(requestBookmark, effectiveBookmark)) {
+    return next(binder);
+  }
+
+  const pages = removeAt(binder.pages, targetPage.ind)
+    .filter(p => !B.equals(p.bookmark, effectiveBookmark));
+
+  return next({
+    ...binder,
+    pages: insertAt(pages, findAssumedBookmarkIndex(pages, effectiveBookmark), targetPage.page),
+  });
 };
 
 /**
