@@ -452,7 +452,7 @@ function chainMiddlewares<V, Meta extends Metadata>(
   const ctxFactory = (binder: BinderState<V, Meta>) => {
     const effectiveBookmark = assertBookmarkKindTransition(
       response.bookmark ?? bookmark,
-      binder.pages[0]?.bookmark ?? null,
+      binder.pages[0]?.bookmark ?? binder.metadata.nextBookmark ?? null,
     );
 
     // ind and page cannot be cached. Individual middlewares might modify the pages array and de-sync the values.
