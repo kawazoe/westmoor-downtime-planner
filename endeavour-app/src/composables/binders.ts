@@ -2,16 +2,15 @@ import { computed, ref, shallowRef } from 'vue';
 
 import { nanoid } from 'nanoid';
 
-import * as A from 'fp-ts/Array';
-import * as O from 'fp-ts/Option';
-
 import { _never } from '@/lib/_never';
 import { _throw } from '@/lib/_throw';
 
 import * as B from '@/lib/bookmarks';
 
 function replaceAt<T>(array: T[], index: number, value: T): T[] {
-  return O.getOrElseW(() => _throw(new Error('Index out of range')))(A.modifyAt(index, () => value)(array));
+  const result = [...array];
+  result.splice(index, 1, value);
+  return result;
 }
 
 function isAfterEndOfRange<V>(pages: AsyncPage<V>[], bookmark: B.Bookmark): boolean {
