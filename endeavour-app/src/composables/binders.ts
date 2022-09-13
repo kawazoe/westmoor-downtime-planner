@@ -187,7 +187,6 @@ function useBinderFactory<P extends unknown[], V, Meta extends Metadata = Metada
           };
         }
         case 'retrying':
-          console.info('[BinderComposable] [state transition] Batching concurrent trigger.');
           return { binder: undefined, currentPageKey: undefined };
         default:
           return _never(binder.status);
@@ -207,12 +206,14 @@ function useBinderFactory<P extends unknown[], V, Meta extends Metadata = Metada
         assertValidBookmark(bookmark);
 
         if (isAfterEndOfRange(state.value.pages, bookmark)) {
+          console.info('[BinderComposable] [safety] Prevented loading a page past end of range.');
           return Promise.resolve();
         }
       }
 
       const { binder, currentPageKey } = prepareCurrentPage(state.value, bookmark);
       if (!binder) {
+        console.info('[BinderComposable] [safety] Prevented concurrent requests.');
         return Promise.resolve();
       }
       state.value = binder;
@@ -220,7 +221,7 @@ function useBinderFactory<P extends unknown[], V, Meta extends Metadata = Metada
       return accessor(bookmark)
         .then(response => (state.value.cacheKey === cacheKey
           ? state.value = then(bookmark, currentPageKey, response)
-          : undefined
+          : console.info('[BinderComposable] [safety] Prevented mutating obsolete data (on resolve).')
         ))
         .catch((error: unknown) => {
           if (state.value.cacheKey === cacheKey) {
@@ -239,8 +240,10 @@ function useBinderFactory<P extends unknown[], V, Meta extends Metadata = Metada
               },
               error,
             );
+            return Promise.resolve();
           }
 
+          console.info('[BinderComposable] [safety] Prevented mutating obsolete data (on reject).');
           return Promise.resolve();
         })
         .catch((error: unknown) => {
