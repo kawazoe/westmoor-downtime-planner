@@ -557,6 +557,7 @@ describe('Binder Composable', () => {
 
           const binder = sut.bind();
           await binder.next();
+          // noinspection ES6MissingAwait
           binder.next();
 
           expect(sut.pages.value).toHaveLength(1);
@@ -754,6 +755,7 @@ describe('Binder Composable', () => {
           await binder.next();
 
           pager.mockResolvedValueOnce({ bookmark: bookmarker(1), value: [4, 5, 6], metadata: {} });
+          // noinspection ES6MissingAwait
           binder.load(bookmarker(1));
 
           const page = sut.pages.value[1];
@@ -770,12 +772,16 @@ describe('Binder Composable', () => {
 
           const binder = sut.bind();
           pager.mockResolvedValueOnce({ bookmark: bookmarker(3), value: [], metadata: {} });
+          // noinspection ES6MissingAwait
           binder.load(bookmarker(3));
           pager.mockResolvedValueOnce({ bookmark: bookmarker(1), value: [], metadata: {} });
+          // noinspection ES6MissingAwait
           binder.load(bookmarker(1));
           pager.mockResolvedValueOnce({ bookmark: bookmarker(2), value: [], metadata: {} });
+          // noinspection ES6MissingAwait
           binder.load(bookmarker(2));
           pager.mockResolvedValueOnce({ bookmark: bookmarker(-1), value: [], metadata: {} });
+          // noinspection ES6MissingAwait
           binder.load(bookmarker(-1));
 
           expect(sut.pages.value[0]?.bookmark).toStrictEqual(bookmarker(-1));
@@ -823,7 +829,7 @@ describe('Binder Composable', () => {
 
       it('should do following absolute calls by building the next bookmark', async () => {
         const pager = vi.fn(autoPager('absolute', [[1, 2, 3], [4, 5, 6]]));
-        const sut = useEnumerableBinder(() => pager);
+        const sut = useIndexableBinder(() => pager);
 
         const binder = sut.bind();
 
@@ -836,7 +842,7 @@ describe('Binder Composable', () => {
 
       it('should do following relative calls by building the next bookmark', async () => {
         const pager = vi.fn(autoPager('relative', [[1, 2, 3], [4, 5, 6]]));
-        const sut = useEnumerableBinder(() => pager);
+        const sut = useIndexableBinder(() => pager);
 
         const binder = sut.bind();
 
@@ -847,19 +853,64 @@ describe('Binder Composable', () => {
         expect(pager).toHaveBeenLastCalledWith({ kind: 'relative', page: 1, pageSize: 3 });
       });
 
-      it.skip('should do following absolute calls by building the previous bookmark', () => {
+      it('should do following absolute calls by building the previous bookmark', async () => {
+        const pager = vi.fn(autoPager('absolute', [[1, 2, 3], [4, 5, 6]]));
+        const sut = useIndexableBinder(() => pager);
+
+        const binder = sut.bind();
+
+        await binder.open({ kind: 'absolute', offset: 3, limit: 3 });
+        // noinspection ES6MissingAwait
+        binder.previous();
+
+        console.log(pager.mock.calls);
+        expect(pager).toHaveBeenLastCalledWith({ kind: 'absolute', offset: 0, limit: 3 });
       });
 
-      it.skip('should do following relative calls by building the previous bookmark', () => {
+      it('should do following relative calls by building the previous bookmark', async () => {
+        const pager = vi.fn(autoPager('relative', [[1, 2, 3], [4, 5, 6]]));
+        const sut = useIndexableBinder(() => pager);
+
+        const binder = sut.bind();
+
+        await binder.open({ kind: 'relative', page: 1, pageSize: 3 });
+        // noinspection ES6MissingAwait
+        binder.previous();
+
+        console.log(pager.mock.calls);
+        expect(pager).toHaveBeenLastCalledWith({ kind: 'relative', page: 0, pageSize: 3 });
       });
 
-      it.skip('should forward provided bookmarks to the pager when loading', () => {
+      it('should forward provided bookmarks to the pager when loading', async () => {
+        const pager = vi.fn(autoPager('relative', [[1, 2, 3]]));
+        const sut = useIndexableBinder(() => pager);
+
+        const binder = sut.bind();
+
+        const bookmark: B.Bookmark = { kind: 'relative', page: 0, pageSize: 3 };
+        await binder.load(bookmark);
+
+        expect(pager).toHaveBeenLastCalledWith(bookmark);
       });
 
-      it.skip('should forward provided bookmarks to the pager when opening', () => {
+      it('should forward provided bookmarks to the pager when opening', async () => {
+        const pager = vi.fn(autoPager('relative', [[1, 2, 3]]));
+        const sut = useIndexableBinder(() => pager);
+
+        const binder = sut.bind();
+
+        const bookmark: B.Bookmark = { kind: 'relative', page: 0, pageSize: 3 };
+        await binder.open(bookmark);
+
+        expect(pager).toHaveBeenLastCalledWith(bookmark);
       });
 
-      it.skip('should fail when using progressive bookmarks', () => {
+      it('should fail when using progressive bookmarks', () => {
+        const sut = useIndexableBinder(() => async () => stall<Page<unknown>>());
+
+        const binder = sut.bind();
+
+        expect(() => binder.load({ kind: 'progressive', token: '' })).throw('Cannot index a progressive bookmark.');
       });
 
       it.skip('should fail when the pager resolves a progressive bookmark', () => {
@@ -914,6 +965,7 @@ describe('Binder Composable', () => {
 
           const binder = sut.bind();
           await binder.next();
+          // noinspection ES6MissingAwait
           binder.next();
 
           expect(sut.pages.value).toHaveLength(1);
