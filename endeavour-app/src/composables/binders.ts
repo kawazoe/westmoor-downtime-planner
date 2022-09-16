@@ -568,7 +568,13 @@ export function useIndexableBinder<P extends unknown[], V, Meta extends Metadata
 
       const bookmarkOrDefault = (bookmark: B.Bookmark | null) => bookmark ?? state.value.metadata.nullBookmark;
 
-      const load = (bookmark: B.Bookmark | null) => action(bookmark, (...ctx) => chainMiddlewares<V, Meta>(middlewares, ...ctx)(state.value));
+      const load = (bookmark: B.Bookmark | null) => {
+        if (bookmark?.kind === 'progressive') {
+          return _throw(new Error('Unsupported operation. Cannot index a progressive bookmark.'));
+        }
+
+        return action(bookmark, (...ctx) => chainMiddlewares<V, Meta>(middlewares, ...ctx)(state.value));
+      };
       const open = (bookmark: B.Bookmark | null) => {
         const loader = load(bookmark);
 
