@@ -2,48 +2,6 @@
   <main class="container px-8 sm:px-4 pb-16 text-center sm:text-left">
     <h2>Play D&D, don't manage spreadsheets</h2>
 
-    <!--
-    <app-binder-presenter :value="playersStore">
-      <template v-slot:initial>
-        Waiting...
-      </template>
-      <template v-slot:nested="{pages}">
-        <div v-for="page in pages">
-          <app-binder-page-presenter :value="page">
-            <template v-slot:content="{value}">
-            </template>
-          </app-binder-page-presenter>
-        </div>
-        <div v-for="page in anyBookmarkKind.visible(pages)">
-          <app-binder-page-presenter :value="page">
-            <template v-slot:content="{value}">
-            </template>
-          </app-binder-page-presenter>
-        </div>
-
-        <div id="progressive">
-          <button @click="progressive.trigger()"></button>
-          <app-scroll-detector @reached="progressive.trigger()"></app-scroll-detector>
-        </div>
-
-        <div id="relative">
-          <button @click="relative.go(relative.previous)">Previous</button>
-          <button v-for="bookmark in relative" @click="relative.go(bookmark)" :class="bookmark === relative.current ? 'current' : ''">
-            {{bookmark.title}}
-          </button>
-          <button @click="relative.go(relative.next)">Next</button>
-        </div>
-
-        <div id="absolute">
-          <label>Offset:</label>
-          <input type="number" @change="absolute.load($value, absolute.limit)" :value="absolute.offset">
-          <label>Limit:</label>
-          <input type="number" @change="absolute.load(absolute.offset, $value)" :value="absolute.limit">
-        </div>
-      </template>
-    </app-binder-presenter>
-    -->
-
     <app-binder-presenter :value="playersDataStore">
       <template #initial>
         <div ref="playersLoader">...</div>
