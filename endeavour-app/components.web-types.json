@@ -7,20 +7,21 @@
   "description-markup": "markdown",
   "contributions": {
     "html": {
-      "elements": [
+      "vue-components": [
         {
           "name": "app-promise-presenter",
           "priority": "highest",
           "source": {
             "file": "./src/components/AppPromisePresenter.ts",
-            "offset": 0
+            "offset": 1234
           },
           "description": "Selects the right template to render an `AsyncValue` based on its status.",
           "props": [
             {
               "name": "value",
               "description": "A `PromiseAdapter<P, V>` or a `PromiseStore<P, V>`",
-              "type": ["PromiseAdapter<P, V> | PromiseStore<P, V>"]
+              "type": ["PromiseAdapter<P, V>", "PromiseStore<P, V>"],
+              "required": true
             }
           ],
           "slots": [
@@ -63,14 +64,20 @@
           "priority": "highest",
           "source": {
             "file": "./src/components/AppBinderPresenter.ts",
-            "offset": 0
+            "offset": 995
           },
           "description": "Selects the right template to render a `Binder` based on its status.",
           "props": [
             {
               "name": "value",
               "description": "A `BinderAdapter<P, V, Meta>` or a `BinderStore<P, V, Meta>`",
-              "type": ["BinderAdapter<unknown[], unknown> | BinderStore<unknown[], unknown>"]
+              "type": [
+                "EnumerableBinderAdapter<P, V[], Meta>",
+                "EnumerableBinderStore<P, V[], Meta>",
+                "IndexableBinderAdapter<P, V[], Meta>",
+                "IndexableBinderStore<P, V[], Meta>"
+              ],
+              "required": true
             }
           ],
           "slots": [
@@ -101,14 +108,15 @@
           "priority": "highest",
           "source": {
             "file": "./src/components/AppBinderPagePresenter.ts",
-            "offset": 0
+            "offset": 1100
           },
           "description": "Selects the right template to render an `AsyncPage` based on its status.",
           "props": [
             {
               "name": "value",
               "description": "An `AsyncPage` ref",
-              "type": ["AsyncPage<unknown>"]
+              "type": ["AsyncPage<V>"],
+              "required": true
             }
           ],
           "slots": [
