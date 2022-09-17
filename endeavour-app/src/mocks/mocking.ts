@@ -2,6 +2,9 @@ import type { Request } from 'miragejs';
 
 import { nanoid } from 'nanoid';
 
+import { Bookmarks as B } from 'velours';
+import type { Page } from 'velours';
+
 import { parseIntSafe } from '@/lib/parsing';
 
 import type {
@@ -14,13 +17,9 @@ import type {
 } from '@/stores/coreTypes';
 import { makeRef, Uuid } from '@/stores/coreTypes';
 
-import type { AbsoluteBookmark, ProgressiveBookmark, RelativeBookmark } from '@/lib/bookmarks';
-import { toBookmark } from '@/lib/bookmarks';
-
 import * as A from 'fp-ts/Array';
 import * as NEA from 'fp-ts/NonEmptyArray';
 import * as R from 'fp-ts/Record';
-import type { Page } from '@/composables/binders';
 import { pipe } from 'fp-ts/function';
 
 export function mockMeta(schema: string, creator: EntityRef<OwnershipId>, metas: Record<string, unknown> = {}): EntityMeta {
@@ -119,8 +118,8 @@ export const stampEpoch = <T>(selector: (v: T) => number) => (request: Request):
   return (d: T[]) => d.filter(v => selector(v) <= stamp);
 };
 
-export const absolutePager = <T>(request: Request): (d: T[]) => Omit<Page<T>, 'status'> & { bookmark: AbsoluteBookmark } => {
-  const bookmark = toBookmark({
+export const absolutePager = <T>(request: Request): (d: T[]) => Omit<Page<T>, 'status'> & { bookmark: B.AbsoluteBookmark } => {
+  const bookmark = B.toBookmark({
     offset: request.queryParams.offset,
     limit: request.queryParams.limit,
   });
@@ -137,8 +136,8 @@ export const absolutePager = <T>(request: Request): (d: T[]) => Omit<Page<T>, 's
     };
   };
 };
-export const relativePager = <T>(pageSize: number) => (request: Request): (d: T[]) => Omit<Page<T>, 'status'> & { bookmark: RelativeBookmark } => {
-  const bookmark = toBookmark({
+export const relativePager = <T>(pageSize: number) => (request: Request): (d: T[]) => Omit<Page<T>, 'status'> & { bookmark: B.RelativeBookmark } => {
+  const bookmark = B.toBookmark({
     page: request.queryParams.page,
     pageSize,
   });
@@ -155,9 +154,9 @@ export const relativePager = <T>(pageSize: number) => (request: Request): (d: T[
     };
   };
 };
-export const progressivePager = <T>(storage: ProgressiveDataTokenStorage) => (request: Request): (d: T[]) => Omit<Page<T>, 'status'> & { bookmark: ProgressiveBookmark } => {
+export const progressivePager = <T>(storage: ProgressiveDataTokenStorage) => (request: Request): (d: T[]) => Omit<Page<T>, 'status'> & { bookmark: B.ProgressiveBookmark } => {
   const token = storage.getOrCreate(request.queryParams.token);
-  const bookmark = toBookmark({ token: token.id });
+  const bookmark = B.toBookmark({ token: token.id });
 
   return (d: T[]) => {
     const value = d.filter((_, index) => between(index, token.offset, token.limit));

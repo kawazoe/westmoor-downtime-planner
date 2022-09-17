@@ -1,12 +1,12 @@
+import type { Bookmarks as B, Page } from 'velours';
+
 import type { CombinedId, SearchDocumentsPageResult, SearchMeta, SearchResult, Uri } from '@/stores/coreTypes';
-import type { Bookmark } from '@/lib/bookmarks';
-import type { Page } from '@/composables/binders';
 
 export class RestRepository<T> {
   public constructor(private endpoint: Uri) {
   }
 
-  public getPage(): (bookmark: Bookmark | null) => Promise<Page<T>> {
+  public getPage(): (bookmark: B.Bookmark | null) => Promise<Page<T>> {
     return async bookmark => {
       function prepareQueryString(): string {
         if (!bookmark) {
@@ -21,7 +21,7 @@ export class RestRepository<T> {
     };
   }
 
-  public search(): (bookmark: Bookmark | null) => Promise<Page<SearchResult<T>, SearchMeta<T>>> {
+  public search(): (bookmark: B.Bookmark | null) => Promise<Page<SearchResult<T>, SearchMeta<T>>> {
     return async bookmark => {
       if (bookmark && bookmark.kind !== 'progressive') {
         throw new Error('Unsupported bookmark kind');

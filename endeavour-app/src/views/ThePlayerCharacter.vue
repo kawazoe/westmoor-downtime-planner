@@ -1,6 +1,6 @@
 <template>
   <main class="container px-4">
-    <app-promise-presenter :value="characterStore">
+    <vl-promise-presenter :value="characterStore">
       <template v-slot:content="{ value }">
         <h2>
           {{value.fullName}}
@@ -36,7 +36,7 @@
           <app-modifier-list></app-modifier-list>
         </section>
       </template>
-    </app-promise-presenter>
+    </vl-promise-presenter>
   </main>
 </template>
 
@@ -44,12 +44,13 @@
 import { defineProps } from 'vue';
 import type { PropType } from 'vue';
 
+import { VlPromisePresenter } from 'velours';
+
 import type { CombinedId } from '@/stores/coreTypes';
 import { useCharactersCurrentStore } from '@/stores';
 
 import AppFungibleResources from '@/components/AppFungibleResources.vue';
 import AppNonFungibleResources from '@/components/AppNonFungibleResources.vue';
-import AppPromisePresenter from '@/components/AppPromisePresenter';
 
 const props = defineProps({
   characterCid: {

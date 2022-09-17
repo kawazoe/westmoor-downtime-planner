@@ -2,7 +2,7 @@
   <article class="container px-4">
     <h2>The Campaign's Resources Page</h2>
 
-    <app-binder-presenter :value="fungibleResourcesSearchDataStore">
+    <vl-binder-presenter :value="fungibleResourcesSearchDataStore">
       <template #initial>
         <div ref="resourcesLoader">...</div>
       </template>
@@ -20,19 +20,19 @@
             </div>
           </aside>
           <ol class="flex-1">
-            <app-binder-page-presenter v-for="page in pages" :value="page" :key="page.key">
+            <vl-binder-page-presenter v-for="page in pages" :value="page" :key="page.key">
               <template #content>
                 <li v-for="{document, score} in page.value" :key="score">
                   <span>{{document.id}}</span>
                   <span>{{document.summary}}</span>
                 </li>
               </template>
-            </app-binder-page-presenter>
+            </vl-binder-page-presenter>
           </ol>
         </div>
         <div ref="resourcesLoader">...</div>
       </template>
-    </app-binder-presenter>
+    </vl-binder-presenter>
   </article>
 </template>
 
@@ -41,10 +41,7 @@ import { ref } from 'vue';
 
 import { useFungibleResourcesSearchDataStore } from '@/stores';
 
-import { useIntersectionObserver } from '@/composables/intersectionObservers';
-
-import AppBinderPagePresenter from '@/components/AppBinderPagePresenter';
-import AppBinderPresenter from '@/components/AppBinderPresenter';
+import { useIntersectionObserver, VlBinderPagePresenter, VlBinderPresenter } from 'velours';
 
 const fungibleResourcesSearchDataStore = useFungibleResourcesSearchDataStore();
 const enumerableResources = fungibleResourcesSearchDataStore.bind();

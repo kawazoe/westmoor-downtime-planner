@@ -1,5 +1,4 @@
-import { defineEnumerableBinderStore } from '@/stores/binderStore';
-import { definePromiseStore } from '@/stores/promiseStore';
+import { defineEnumerableBinderStore, definePromiseStore } from 'velours';
 
 import type {
   CampaignEntity,

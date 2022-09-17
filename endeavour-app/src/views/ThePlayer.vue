@@ -1,6 +1,6 @@
 <template>
   <main class="container px-4">
-    <app-promise-presenter :value="playerStore">
+    <vl-promise-presenter :value="playerStore">
       <template v-slot:content="{ value }">
         <h2>Welcome {{value.summary}}</h2>
 
@@ -19,19 +19,20 @@
           <app-subscription-presenter class="w-full" :subscription="value.subscription" />
         </section>
       </template>
-    </app-promise-presenter>
+    </vl-promise-presenter>
   </main>
 </template>
 
 <script lang="ts" setup>
 import { faAtlas, faMoneyBill, faPortrait } from '@fortawesome/pro-regular-svg-icons';
 
+import { VlPromisePresenter } from 'velours';
+
 import { usePlayersCurrentStore } from '@/stores';
 
 import AppCampaignCard from '@/components/AppCampaignCard.vue';
 import AppCharacterCard from '@/components/AppCharacterCard.vue';
 import AppIcon from '@/components/AppIcon';
-import AppPromisePresenter from '@/components/AppPromisePresenter';
 import AppSubscriptionPresenter from '@/components/AppSubscriptionPresenter.vue';
 
 const playerStore = usePlayersCurrentStore();

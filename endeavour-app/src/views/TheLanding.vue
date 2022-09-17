@@ -2,23 +2,23 @@
   <main class="container px-8 sm:px-4 pb-16 text-center sm:text-left">
     <h2>Play D&D, don't manage spreadsheets</h2>
 
-    <app-binder-presenter :value="playersDataStore">
+    <vl-binder-presenter :value="playersDataStore">
       <template #initial>
         <div ref="playersLoader">...</div>
       </template>
       <template #nested="{pages}">
         <p>binder</p>
         <ul class="text-4xl">
-          <app-binder-page-presenter v-for="page in pages" :value="page" :key="page.key">
+          <vl-binder-page-presenter v-for="page in pages" :value="page" :key="page.key">
             <template #content>
               <li>page {{page.bookmark?.page}}</li>
               <li v-for="player in page.value" :key="player.cid"><a class="nav-link" href="#" @click="setPlayer(player)">{{player.summary}}</a></li>
             </template>
-          </app-binder-page-presenter>
+          </vl-binder-page-presenter>
         </ul>
         <div ref="playersLoader">...</div>
       </template>
-    </app-binder-presenter>
+    </vl-binder-presenter>
 
     <div class="hero hero-left">
       <img src="../assets/placeholder.png" alt="placeholder">
@@ -109,13 +109,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
+import { useIntersectionObserver, VlBinderPagePresenter, VlBinderPresenter } from 'velours';
+
 import { usePlayersCurrentStore, usePlayersDataStore } from '@/stores';
-import { useIntersectionObserver } from '@/composables/intersectionObservers';
 
 import type { PlayerEntity } from '@/stores/businessTypes';
-
-import AppBinderPagePresenter from '@/components/AppBinderPagePresenter';
-import AppBinderPresenter from '@/components/AppBinderPresenter';
 
 const playersDataStore = usePlayersDataStore();
 const enumerablePlayers = playersDataStore.bind();

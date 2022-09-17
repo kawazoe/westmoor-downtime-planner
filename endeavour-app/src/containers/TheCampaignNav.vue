@@ -5,7 +5,7 @@
       <app-icon v-else :icon="faBars" class="fa-w-16"></app-icon>
     </app-toggle-button>
 
-    <app-promise-presenter :value="campaignStore">
+    <vl-promise-presenter :value="campaignStore">
       <template v-slot:content="{ value }">
         <div class="nav-menu" :class="{ expanded }">
           <router-link class="nav-link sz-2" :to="`${rel}/endeavours`">Endeavours</router-link>
@@ -17,7 +17,7 @@
 
         <h2 class="nav-brand sz-2" :title="value.summary">{{value.summary}}</h2>
       </template>
-    </app-promise-presenter>
+    </vl-promise-presenter>
   </nav>
 </template>
 
@@ -26,6 +26,7 @@ import { defineProps, ref, watch } from 'vue';
 import type { PropType } from 'vue';
 
 import { faBars, faTimes } from '@fortawesome/pro-regular-svg-icons';
+import { VlPromisePresenter } from 'velours';
 
 import type { CombinedId } from '@/stores/coreTypes';
 import { useRelativeRoute } from '@/composables/routes';
@@ -33,7 +34,6 @@ import { useRelativeRoute } from '@/composables/routes';
 import { useCampaignsCurrentStore } from '@/stores';
 
 import AppIcon from '@/components/AppIcon';
-import AppPromisePresenter from '@/components/AppPromisePresenter';
 import AppToggleButton from '@/components/AppToggleButton.vue';
 
 const props = defineProps({
